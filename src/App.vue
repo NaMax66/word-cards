@@ -5,8 +5,9 @@ import { RouterView, RouterLink } from 'vue-router'
 <template>
   <header>
     <nav>
-      <RouterLink to="/">Учить слова</RouterLink>
-      <RouterLink to="/words-list">Список слов</RouterLink>
+      <RouterLink class="mr-10" to="/">Учить слова</RouterLink>
+      <RouterLink class="mr-10" to="/words-list">Список слов</RouterLink>
+      <RouterLink to="/auth">Вход</RouterLink>
     </nav>
   </header>
   <RouterView />

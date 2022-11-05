@@ -9,5 +9,18 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(data) {
+        console.log(data, 'login')
+      }
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: '810235341719-vieqvpsg54cphf3c49ra0s86msu0cjgd.apps.googleusercontent.com',
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.prompt();
+      };
+    </script>
   </body>
 </html>
