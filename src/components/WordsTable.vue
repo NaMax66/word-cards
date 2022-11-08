@@ -20,7 +20,7 @@ export default defineComponent({
     <tbody>
     <tr>
       <td>Яблоко</td>
-      <td>Apple</td>
+      <td>{{ $t('test') }}</td>
     </tr>
     </tbody>
   </table>

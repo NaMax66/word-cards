@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import WordList from "@/components/WordList.vue";
+import WordsTable from '@/components/WordsTable.vue'
 
 export default defineComponent({
+  components: { WordsTable },
   setup() {
     const firstLang = 'ru'
     const secondLang = 'en'
@@ -17,7 +18,7 @@ export default defineComponent({
 
 <template>
   <main>
-    <words-list />
+    <words-table  />
     <form>
       <label for="firstLang">{{ firstLang }}</label>
       <label for="secondLang">{{ secondLang }}</label>
