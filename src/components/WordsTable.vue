@@ -13,14 +13,14 @@ export default defineComponent({
   <table class='word-list'>
     <thead>
     <tr>
-      <th>Ru</th>
-      <th>En</th>
+      <th class="header-cell">Ru</th>
+      <th class="header-cell">En</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-      <td>Яблоко</td>
-      <td>{{ $t('test') }}</td>
+      <td class="body-cell">Яблоко</td>
+      <td class="body-cell">{{ $t('test') }}</td>
     </tr>
     </tbody>
   </table>

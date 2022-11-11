@@ -11,3 +11,7 @@
 .d-inline-block {
   display: inline-block !important;
 }
+
+.w-100 {
+  width: 100%;
+}
