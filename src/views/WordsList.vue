@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import WordsTable from '@/components/WordsTable.vue'
 import { useLangStore } from '@/stores/languages'
 import { useWordListStore } from '@/stores/word-list'
@@ -10,19 +10,28 @@ export default defineComponent({
     const { userLang, targetLang } = useLangStore()
     const { addBond: addBondInStore } = useWordListStore()
 
-    const addBond = (e: SubmitEvent) => {
+    const img = ref('')
+
+    const addBond =  async (e: SubmitEvent) => {
       const formData = new FormData(e.target as HTMLFormElement)
       addBondInStore({
         [userLang]: formData.get('userLang'),
         [targetLang]: formData.get('targetLang')
       })
+
+      const res = await fetch(`http://localhost:5000/get-img?query=${formData.get('targetLang')}&lang=en`)
+
+      img.value = await res.text()
     }
+
 
     return {
       userLang,
       targetLang,
 
-      addBond
+      addBond,
+
+      img
     }
   }
 })
@@ -42,5 +51,8 @@ export default defineComponent({
       </div>
       <button class="ml-2" type="submit">{{ $t('add') }}</button>
     </form>
+    <div class="mt-3">
+      <img :src="img">
+    </div>
   </main>
 </template>
