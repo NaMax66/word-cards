@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 
 export default defineComponent({

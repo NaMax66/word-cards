@@ -1,20 +1,22 @@
 <script lang="ts">
  import { computed, ref, defineComponent } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
- import { useLangStore } from "@/stores/languages";
-
- import type { Locale } from "@/types/Locale";
+ import { useLangStore } from '@/stores/languages'
 
  export default defineComponent({
    setup() {
      const { list } = useWordListStore()
      const { userLang, targetLang } = useLangStore()
 
-     let index = ref(0)
+     const getRandomIndex = (maxIndex: number) => {
+       return Math.floor(Math.random() * maxIndex)
+     }
+
+     let index = ref(getRandomIndex(list.length))
 
      setInterval(() => {
-       index.value = Math.floor(Math.random() * list.length)
-     }, 25000)
+       index.value = getRandomIndex(list.length)
+     }, 5000)
 
      const currentCard = computed(() => {
        return list[index.value]
@@ -37,10 +39,10 @@
 
 <template>
   <main class="mt-3">
-    <article class="word-card">
-      <h2>{{ currentCard[lang] }}</h2>
-      <button class="mt-2" @click="switchLang">{{ $t('flip') }}</button>
-    </article>
+      <article class="word-card">
+        <h2>{{ currentCard[lang] }}</h2>
+        <button class="mt-2" @click="switchLang">{{ $t('flip') }}</button>
+      </article>
   </main>
 </template>
 
