@@ -6,21 +6,14 @@ import App from './App.vue'
 import router from './router'
 
 import './assets/main.css'
+import en from '@/locales/en'
+import ru from '@/locales/ru'
 
 const app = createApp(App)
 const i18n = createI18n({
   locale: 'en',
   fallbackLocale: 'en',
-  messages: {
-    en: {
-      'learn words': 'learn words',
-      'words list': 'words list'
-    },
-    ru: {
-      'learn words': 'учить слова',
-      'words list': 'список слов'
-    }
-  }
+  messages: { en, ru }
 })
 
 app.use(createPinia())

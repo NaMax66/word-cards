@@ -5,11 +5,6 @@ import wordList from '@/mock/wordList'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = reactive(wordList)
-  const cardId = setInterval(() => {
-    return Math.floor(Math.random() * list.length)
-  }, 2000)
-
-  const currentCard = computed(() => list[cardId])
 
   function addBond(bond: any) {
     list.push(bond)
@@ -17,8 +12,6 @@ export const useWordListStore = defineStore('word-list', () => {
 
   return {
     list,
-    addBond,
-
-    currentCard,
+    addBond
   }
 })
