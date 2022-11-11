@@ -18,8 +18,22 @@
   margin-top: calc(var(--space) * 3) !important;
 }
 
+.ml-auto {
+  margin-left: auto !important;
+}
+
+.d-block {
+  display: block !important;
+}
+.d-flex {
+  display: flex !important;
+}
 .d-inline-block {
   display: inline-block !important;
+}
+
+.align-end {
+  align-items: end !important;
 }
 
 .w-100 {
