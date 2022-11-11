@@ -1,11 +1,21 @@
 .ml-1 {
-  margin-left: 4px !important;
+  margin-left: var(--space) !important;
 }
 .ml-2 {
-  margin-left: 8px !important;
+  margin-left: calc(var(--space) * 2) !important;
 }
 .ml-3 {
-  margin-left: 12px !important;
+  margin-left: calc(var(--space) * 3) !important;
+}
+
+.mt-1 {
+  margin-top: var(--space) !important;
+}
+.mt-2 {
+   margin-top: calc(var(--space) * 2) !important;
+}
+.mt-3 {
+  margin-top: calc(var(--space) * 3) !important;
 }
 
 .d-inline-block {

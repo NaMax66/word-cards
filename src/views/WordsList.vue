@@ -18,7 +18,7 @@ export default defineComponent({
 
 <template>
   <main>
-    <words-table class="w-100" />
+    <words-table class="mt-3 w-100" />
     <form>
       <label for="firstLang">{{ firstLang }}</label>
       <label for="secondLang">{{ secondLang }}</label>
