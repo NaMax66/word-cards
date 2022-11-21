@@ -1,0 +1,41 @@
+.ml-1 {
+  margin-left: var(--space) !important;
+}
+.ml-2 {
+  margin-left: calc(var(--space) * 2) !important;
+}
+.ml-3 {
+  margin-left: calc(var(--space) * 3) !important;
+}
+
+.mt-1 {
+  margin-top: var(--space) !important;
+}
+.mt-2 {
+   margin-top: calc(var(--space) * 2) !important;
+}
+.mt-3 {
+  margin-top: calc(var(--space) * 3) !important;
+}
+
+.ml-auto {
+  margin-left: auto !important;
+}
+
+.d-block {
+  display: block !important;
+}
+.d-flex {
+  display: flex !important;
+}
+.d-inline-block {
+  display: inline-block !important;
+}
+
+.align-end {
+  align-items: end !important;
+}
+
+.w-100 {
+  width: 100%;
+}

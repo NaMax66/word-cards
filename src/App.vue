@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
+import LangSwitcher from '@/components/LangSwitcher.vue'
+
 </script>
 
 <template>
   <header>
     <nav>
-      <RouterLink class="mr-10" to="/">Учить слова</RouterLink>
-      <RouterLink class="mr-10" to="/words-list">Список слов</RouterLink>
-      <RouterLink to="/auth">Вход</RouterLink>
+      <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
+      <RouterLink class="ml-2" to="/words-list">{{ $t('words list') }}</RouterLink>
+      <LangSwitcher class="ml-3 d-inline-block" />
     </nav>
   </header>
   <RouterView />
