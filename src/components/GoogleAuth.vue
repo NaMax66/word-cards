@@ -8,13 +8,17 @@
 <script setup>
 import axios from 'axios'
 function logout() {
+  axios.get('/logout')
 }
+
+const isSignedIn = false
 
 function handleCredentialResponse({ credential }) {
   axios.post('http://localhost:8080/login', { credential }, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    },
+    withCredentials: true
   })
 }
 window.onload = function () {
@@ -26,6 +30,9 @@ window.onload = function () {
       document.getElementById('google-login-btn'),
       { theme: 'outline', size: 'large' }  // customization attributes
   )
+
+  console.log(google.accounts.id)
+
   // google.accounts.id.prompt() // also display the One Tap dialog
 }
 </script>
