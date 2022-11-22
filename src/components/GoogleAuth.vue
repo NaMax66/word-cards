@@ -6,15 +6,20 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 function logout() {
 }
 
-function handleCredentialResponse(response) {
-  console.log('Encoded JWT ID token: ' + response.credential)
+function handleCredentialResponse({ credential }) {
+  axios.post('http://localhost:8080/login', { credential }, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
 window.onload = function () {
   google.accounts.id.initialize({
-    client_id: '',
+    client_id: import.meta.env.APP_GOOGLE_CLIENT_ID,
     callback: handleCredentialResponse
   })
   google.accounts.id.renderButton(

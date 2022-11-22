@@ -10,7 +10,6 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
     <nav>
       <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
       <RouterLink class="ml-2" to="/words-list">{{ $t('words list') }}</RouterLink>
-      <RouterLink class="ml-2" to="/auth">{{ $t('auth') }}</RouterLink>
       <LangSwitcher class="ml-3 d-inline-block" />
     </nav>
     <GoogleAuth class="ml-auto" />

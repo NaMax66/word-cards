@@ -1,0 +1,19 @@
+{
+  "name": "word-cards-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node -r dotenv/config server.js",
+    "start": "node server.js"
+  },
+  "author": "NaMax66",
+  "license": "ISC",
+
+  "type": "module",
+
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "body-parser": "^1.20.1"
+  }
+}
