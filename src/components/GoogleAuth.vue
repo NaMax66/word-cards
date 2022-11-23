@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div id="google-login-btn"></div>
-    <a href="#" @click.prevent="logout">sign out</a>
-    <h3>{{ isSignedIn }}</h3>
+    <div v-show="!isSignedIn" id="google-login-btn"></div>
+    <div v-show="isSignedIn">
+      <img :src="userInfo.img" alt="user photo">
+      <h4>{{ userInfo.name }}</h4>
+      <a href="#" @click.prevent="logout">sign out</a>
+    </div>
   </div>
 </template>
 
@@ -19,6 +22,11 @@ async function logout() {
 }
 
 const isSignedIn = ref(checkIsSignedIn())
+
+const userInfo = ref({
+  name: '',
+  img: ''
+})
 
 async function handleCredentialResponse({ credential }) {
   await axios.post('http://localhost:8080/login', { credential }, {
@@ -44,8 +52,6 @@ window.onload = function () {
       document.getElementById('google-login-btn'),
       { theme: 'outline', size: 'large' }  // customization attributes
   )
-
-  console.log(google.accounts.id)
 
   // google.accounts.id.prompt() // also display the One Tap dialog
 }
