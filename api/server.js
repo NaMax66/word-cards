@@ -14,10 +14,6 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
 app.post('/login', async (req, res) => {
   try {
     const { credential } = req.body
@@ -37,12 +33,13 @@ app.post('/login', async (req, res) => {
     res.send('error')
   }
 })
-
+/*
 app.get('/word-list', (req, res) => {
 
-})
+})*/
 
 app.get('/logout', (req, res) => {
+  res.append('Access-Control-Allow-Credentials', true)
   res.clearCookie('session-token')
   res.send('success')
 })

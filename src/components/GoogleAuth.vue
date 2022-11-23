@@ -2,25 +2,39 @@
   <div>
     <div id="google-login-btn"></div>
     <a href="#" @click.prevent="logout">sign out</a>
+    <h3>{{ isSignedIn }}</h3>
   </div>
 </template>
 
 <script setup>
 import axios from 'axios'
-function logout() {
-  axios.get('/logout')
+import Cookies from 'js-cookie'
+import { ref } from 'vue'
+
+async function logout() {
+  await axios.get('http://localhost:8080/logout', {
+    withCredentials: true
+  })
+  isSignedIn.value = checkIsSignedIn()
 }
 
-const isSignedIn = false
+const isSignedIn = ref(checkIsSignedIn())
 
-function handleCredentialResponse({ credential }) {
-  axios.post('http://localhost:8080/login', { credential }, {
+async function handleCredentialResponse({ credential }) {
+  await axios.post('http://localhost:8080/login', { credential }, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     withCredentials: true
   })
+
+  isSignedIn.value = checkIsSignedIn()
 }
+
+function checkIsSignedIn() {
+  return !!Cookies.get('session-token')
+}
+
 window.onload = function () {
   google.accounts.id.initialize({
     client_id: import.meta.env.APP_GOOGLE_CLIENT_ID,
