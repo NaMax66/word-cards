@@ -34,12 +34,8 @@ app.get('/word-list', (req, res) => {
 
 })*/
 
-app.get('/user-data', async (req, res) => {
-  res.append('Access-Control-Allow-Credentials', true)
-  const credential = req.cookies['session-token']
-  const userData = await verifyUser(credential)
-
-  res.send({ status: 'success', userData })
+app.get('/user-data', checkAuth, async (req, res) => {
+  res.send({ status: 'success', data: req.user })
 })
 
 app.get('/logout', (req, res) => {
@@ -54,15 +50,41 @@ app.listen(port, () => {
   console.log(`App listening on port ${port}`)
 })
 
-async function verifyUser(credential) {
-  const ticket = await client.verifyIdToken({
-    idToken: credential,
-    audience: process.env.APP_GOOGLE_CLIENT_ID,
-  })
-  const payload = ticket.getPayload()
+// middleware function
+async function checkAuth(req, res, next) {
+  res.append('Access-Control-Allow-Credentials', true)
+  const credential = req.cookies['session-token']
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.APP_GOOGLE_CLIENT_ID,
+    })
+    const payload = ticket.getPayload()
+    req.user = {
+      name: payload.name,
+      picture: payload.picture
+    }
+    next()
+  } catch (e) {
+    console.error('checkAuth: ' + e.message)
+    res.status(403)
+    res.send({ status: 'error', error: 'unverified' })
+  }
+}
 
-  return {
-    name: payload.name,
-    picture: payload.picture
+async function verifyUser(credential) {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.APP_GOOGLE_CLIENT_ID,
+    })
+    const payload = ticket.getPayload()
+
+    return {
+      name: payload.name,
+      picture: payload.picture
+    }
+  } catch (e) {
+    console.error('verifyUser: ' + e.message)
   }
 }

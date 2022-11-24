@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
 import { ref } from 'vue'
 
@@ -36,11 +36,11 @@ const userInfo = ref({
   },
 
   async fetchData() {
-    const { data: { userData } } = await axios.get('http://localhost:8080/user-data', {
+    const { data: { data } } = await httpClient.get('http://localhost:8080/user-data', {
       withCredentials: true
     })
 
-    userInfo.value.setUserInfo(userData)
+    userInfo.value.setUserInfo(data)
   }
 })
 
@@ -49,7 +49,7 @@ if (isSignedIn.value) {
 }
 
 async function logout() {
-  await axios.get('http://localhost:8080/logout', { withCredentials: true })
+  await httpClient.get('http://localhost:8080/logout', { withCredentials: true })
   isSignedIn.value = checkIsSignedIn()
   userInfo.value.clearUserInfo()
 }
@@ -64,16 +64,17 @@ window.onload = function () {
       { theme: 'outline', size: 'large' }
   )
 
-  // google.accounts.id.prompt()
+  google.accounts.id.prompt()
 }
 async function handleCredentialResponse({ credential }) {
-  const { data: { userData } } = await axios.post('http://localhost:8080/login', { credential }, {
+  await httpClient.post('http://localhost:8080/login', { credential }, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     withCredentials: true
   })
-  userInfo.value.setUserInfo(userData)
+
+  userInfo.value.fetchData()
 
   isSignedIn.value = checkIsSignedIn()
 }
