@@ -13,7 +13,7 @@ const router = createRouter({
       path: '/words-list',
       name: 'words list',
       component: () => import('../views/WordsList.vue')
-    }
+    },
   ]
 })
 
