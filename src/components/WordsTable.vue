@@ -1,14 +1,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
+import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   setup() {
-    const { list } = useWordListStore()
+    const { fetchWordList } = useWordListStore()
+    fetchWordList()
 
+    const { list } = storeToRefs(useWordListStore())
 
     return {
-      list
+      wordList: list
     }
   }
 })
@@ -23,7 +26,7 @@ export default defineComponent({
     </tr>
     </thead>
     <tbody>
-    <tr v-for="(bond, index) in list" :key="index">
+    <tr v-for="(bond, index) in wordList" :key="index">
       <td class="body-cell">{{ bond.ru }}</td>
       <td class="body-cell">{{ bond.en }}</td>
     </tr>

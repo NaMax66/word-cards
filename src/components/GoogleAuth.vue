@@ -36,7 +36,7 @@ const userInfo = ref({
   },
 
   async fetchData() {
-    const { data: { data } } = await httpClient.get('http://localhost:8080/user-data', {
+    const { data: { data } } = await httpClient.get('/user-data', {
       withCredentials: true
     })
 
@@ -49,9 +49,10 @@ if (isSignedIn.value) {
 }
 
 async function logout() {
-  await httpClient.get('http://localhost:8080/logout', { withCredentials: true })
+  await httpClient.get('/logout', { withCredentials: true })
   isSignedIn.value = checkIsSignedIn()
   userInfo.value.clearUserInfo()
+  window.location.reload()
 }
 
 window.onload = function () {
@@ -64,10 +65,10 @@ window.onload = function () {
       { theme: 'outline', size: 'large' }
   )
 
-  google.accounts.id.prompt()
+  // google.accounts.id.prompt()
 }
 async function handleCredentialResponse({ credential }) {
-  await httpClient.post('http://localhost:8080/login', { credential }, {
+  await httpClient.post('/login', { credential }, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -77,6 +78,7 @@ async function handleCredentialResponse({ credential }) {
   userInfo.value.fetchData()
 
   isSignedIn.value = checkIsSignedIn()
+  window.location.reload()
 }
 
 </script>
