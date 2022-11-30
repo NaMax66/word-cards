@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="!isSignedIn" id="google-login-btn"></div>
+    <div v-show="!isSignedIn" ref="googleLoginBtn"></div>
     <div class="signed-out-controller" v-show="isSignedIn">
       <img class="user-photo" :src="userInfo.picture" alt="user photo">
       <div class="ml-2">
@@ -14,7 +14,15 @@
 <script setup>
 import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { GoogleAuth } from '@/services/auth'
+
+const googleLoginBtn = ref(null)
+GoogleAuth.init(handleCredentialResponse)
+
+onMounted(() => {
+  GoogleAuth.renderButton(googleLoginBtn.value)
+})
 
 const isSignedIn = ref(checkIsSignedIn())
 
@@ -30,6 +38,7 @@ const userInfo = ref({
     this.name = name
     this.picture = picture
   },
+
   clearUserInfo() {
     this.name = ''
     this.picture = ''
@@ -55,18 +64,6 @@ async function logout() {
   window.location.reload()
 }
 
-window.onload = function () {
-  google.accounts.id.initialize({
-    client_id: import.meta.env.APP_GOOGLE_CLIENT_ID,
-    callback: handleCredentialResponse
-  })
-  google.accounts.id.renderButton(
-      document.getElementById('google-login-btn'),
-      { theme: 'outline', size: 'large' }
-  )
-
-  // google.accounts.id.prompt()
-}
 async function handleCredentialResponse({ credential }) {
   await httpClient.post('/login', { credential }, {
     headers: {

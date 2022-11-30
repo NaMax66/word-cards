@@ -2,6 +2,7 @@
  import { computed, ref, defineComponent } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
  import { useLangStore } from '@/stores/languages'
+ import flipCard from '@/stub/flipCard'
 
  export default defineComponent({
    setup() {
@@ -19,7 +20,7 @@
      }, 5000)
 
      const currentCard = computed(() => {
-       return list[index.value]
+       return list[index.value] || flipCard
      })
 
      let lang = ref(userLang)
