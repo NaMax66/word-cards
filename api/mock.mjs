@@ -36,6 +36,15 @@ db.run(sql, [1], (err) => {
   }
 })*/
 
+// { origin: { lang: 'ru', value: 'Яблоко' }, translation: { lang: 'en', value: 'Apple' } }
+export function addPair(user_uid, pair) {
+  const sql = 'INSERT INTO pairs(user_uid, origin, origin_lang, translation, translation_lang) VALUES (?, ?, ?, ?, ?)'
+
+  db.run(sql, [user_uid, pair.origin.value, pair.origin.lang, pair.translation.value, pair.translation.lang], (err) => {
+    if(err) console.log(err.message)
+  })
+}
+
 export default {
   '103520297794318931805': [
     {
