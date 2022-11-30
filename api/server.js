@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
 import db from './mock.mjs'
 
+
 const app = express()
 
 app.use(cookieParser())
