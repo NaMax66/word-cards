@@ -45,6 +45,19 @@ export function addPair(user_uid, pair) {
   })
 }
 
+export function getAllPairsByUserId(user_uid) {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * from pairs WHERE user_uid = ?', [user_uid] , (err, rows) => {
+      if(err) reject(new Error(err.message))
+      resolve(rows)
+    })
+  })
+}
+
+getAllPairsByUserId('123').then((data) => {
+  console.log(data)
+})
+
 export default {
   '103520297794318931805': [
     {
