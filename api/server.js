@@ -2,7 +2,8 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
-import db from './mock.mjs'
+import { getAllPairsByUserId } from './db.mjs'
+import { getWordList } from "./DTO/getWordList.js"
 
 
 const app = express()
@@ -29,9 +30,8 @@ app.post('/login', async (req, res) => {
     res.send('error')
   }
 })
-app.get('/word-list', checkAuth, (req, res) => {
-  console.log(req.userId)
-  res.send({ status: 'success', data: db[req.userId] })
+app.get('/word-list', checkAuth, async (req, res) => {
+  res.send({ status: 'success', data: getWordList(await getAllPairsByUserId(req.userId)) })
 })
 
 app.get('/user-data', checkAuth, async (req, res) => {

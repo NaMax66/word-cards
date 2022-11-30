@@ -18,9 +18,9 @@ import { ref, onMounted } from 'vue'
 import { GoogleAuth } from '@/services/auth'
 
 const googleLoginBtn = ref(null)
-GoogleAuth.init(handleCredentialResponse)
 
 onMounted(() => {
+  GoogleAuth.init(handleCredentialResponse)
   GoogleAuth.renderButton(googleLoginBtn.value)
 })
 
