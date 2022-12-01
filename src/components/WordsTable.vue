@@ -5,13 +5,18 @@ import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   setup() {
-    const { fetchWordList } = useWordListStore()
+    const { fetchWordList, removePair } = useWordListStore()
     fetchWordList()
 
     const { list } = storeToRefs(useWordListStore())
 
+    function remove(pairId: string) {
+      removePair(pairId)
+    }
+
     return {
-      wordList: list
+      wordList: list,
+      remove
     }
   }
 })
@@ -28,7 +33,12 @@ export default defineComponent({
     <tbody>
     <tr v-for="(pair, index) in wordList" :key="index">
       <td class="body-cell">{{ pair.ru }}</td>
-      <td class="body-cell">{{ pair.en }}</td>
+      <td class="body-cell">
+        <div class="body-cell-content">
+          <span>{{ pair.en }}</span>
+          <button class="btn-delete" @click="remove(pair.id)">x</button>
+        </div>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -41,13 +51,26 @@ export default defineComponent({
 }
 
 .header-cell {
-  text-align: left;
   padding-left: calc(var(--space) * 2);
 }
 
 .body-cell {
-  text-align: left;
+  width: 50%;
+  justify-content: space-between;
   border: 1px solid var(--c-border);
   padding: var(--space) calc(var(--space) * 2);
+}
+
+.body-cell-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.body-cell-content .btn-delete {
+  visibility: hidden;
+}
+
+.body-cell-content:hover .btn-delete {
+  visibility: visible;
 }
 </style>

@@ -14,4 +14,11 @@ axios.interceptors.response.use(
   }
 )
 
+export const postOptions = {
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  withCredentials: true
+}
+
 export default axios

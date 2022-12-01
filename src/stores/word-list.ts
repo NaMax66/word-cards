@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import httpClient from '@/services/httpClient'
+import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
 
@@ -13,12 +13,16 @@ export const useWordListStore = defineStore('word-list', () => {
       [pair.translation.lang]: pair.translation.value
     })
     try {
-      await httpClient.post('/add-pair', pair, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        withCredentials: true
-      })
+      await httpClient.post('/add-pair', pair, postOptions)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function removePair(pairId: string) {
+    list.value = list.value.filter(el => el.id !== pairId)
+    try {
+      await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
     } catch (e) {
       console.error(e)
     }
@@ -35,6 +39,7 @@ export const useWordListStore = defineStore('word-list', () => {
   return {
     list,
     addPair,
+    removePair,
     fetchWordList
   }
 })

@@ -33,8 +33,8 @@ function updatePair(pair) {
   db.run(sql, [pair.origin.value, pair.translation.value, pair.uid], errFn)
 }
 
-export function removePair(pair_uid) {
-  db.run('DELETE FROM pairs WHERE pair_uid = ?', [pair_uid], errFn)
+export function removePair(user_uid, pair_uid) {
+  db.run('DELETE FROM pairs WHERE user_uid = ? AND pair_uid = ?', [user_uid, pair_uid], errFn)
 }
 
 export function getAllPairsByUserId(user_uid) {
@@ -50,21 +50,4 @@ function errFn (err) {
   if (err) {
     console.log(err)
   }
-}
-
-export default {
-  '103520297794318931805': [
-    {
-      ru: 'Яблоко',
-      en: 'Apple'
-    },
-    {
-      ru: 'Страховка',
-      en: 'Insurance'
-    },
-    {
-      ru: 'Космос',
-      en: 'Space'
-    }
-  ]
 }

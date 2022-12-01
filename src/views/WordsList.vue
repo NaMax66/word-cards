@@ -3,7 +3,6 @@ import { defineComponent } from 'vue'
 import WordsTable from '@/components/WordsTable.vue'
 import { useLangStore } from '@/stores/languages'
 import { useWordListStore } from '@/stores/word-list'
-import type { Pair } from '@/types/Pair'
 
 export default defineComponent({
   components: { WordsTable },
