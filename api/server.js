@@ -2,8 +2,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
-import { getAllPairsByUserId } from './db.mjs'
+import { getAllPairsByUserId, addPair } from './db.mjs'
 import { getWordList } from './DTO/getWordList.js'
+import { v4 as getUID } from 'uuid'
 
 const app = express()
 
@@ -21,7 +22,7 @@ app.post('/login', async (req, res) => {
     const { credential } = req.body
 
     const userData = await verifyUser(credential)
-    res.append('Access-Control-Allow-Credentials', true)
+    res.append('Access-Control-Allow-Credentials', 'true')
     res.cookie('session-token', credential)
     res.send({ status: 'success', userData })
   } catch (e) {
@@ -36,8 +37,9 @@ app.get('/word-list', checkAuth, async (req, res) => {
 
 app.post('/add-pair', checkAuth, async (req, res) => {
   try {
-    const { pair } = req.body
-    console.log(pair)
+    const { origin, translation } = req.body
+    addPair(req.userId, { uid: getUID(), origin, translation })
+    res.send({ status: 'success' })
   } catch (e) {
     console.error(e)
     res.send('error')
@@ -49,7 +51,7 @@ app.get('/user-data', checkAuth, async (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-  res.append('Access-Control-Allow-Credentials', true)
+  res.append('Access-Control-Allow-Credentials', 'true')
   res.clearCookie('session-token')
   res.send('success')
 })

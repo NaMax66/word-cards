@@ -17,6 +17,7 @@
     "body-parser": "^1.20.1",
     "google-auth-library": "^8.7.0",
     "cookie-parser": "^1.4.6",
-    "sqlite3": "^5.1.2"
+    "sqlite3": "^5.1.2",
+    "uuid": "^9.0.0"
   }
 }

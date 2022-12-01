@@ -26,9 +26,9 @@ export default defineComponent({
     </tr>
     </thead>
     <tbody>
-    <tr v-for="(bond, index) in wordList" :key="index">
-      <td class="body-cell">{{ bond.ru }}</td>
-      <td class="body-cell">{{ bond.en }}</td>
+    <tr v-for="(pair, index) in wordList" :key="index">
+      <td class="body-cell">{{ pair.ru }}</td>
+      <td class="body-cell">{{ pair.en }}</td>
     </tr>
     </tbody>
   </table>

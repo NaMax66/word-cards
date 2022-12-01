@@ -4,7 +4,7 @@ import { getUser, addUser } from './db.mjs'
 
 // middleware function
 export async function checkAuth(req, res, next) {
-  res.append('Access-Control-Allow-Credentials', true)
+  res.append('Access-Control-Allow-Credentials', 'true')
   const credential = req.cookies['session-token']
 
   try {
