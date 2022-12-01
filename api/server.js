@@ -3,8 +3,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
 import { getAllPairsByUserId } from './db.mjs'
-import { getWordList } from "./DTO/getWordList.js"
-
+import { getWordList } from './DTO/getWordList.js'
 
 const app = express()
 
@@ -30,8 +29,19 @@ app.post('/login', async (req, res) => {
     res.send('error')
   }
 })
+
 app.get('/word-list', checkAuth, async (req, res) => {
   res.send({ status: 'success', data: getWordList(await getAllPairsByUserId(req.userId)) })
+})
+
+app.post('/add-pair', checkAuth, async (req, res) => {
+  try {
+    const { pair } = req.body
+    console.log(pair)
+  } catch (e) {
+    console.error(e)
+    res.send('error')
+  }
 })
 
 app.get('/user-data', checkAuth, async (req, res) => {
