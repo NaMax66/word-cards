@@ -1,9 +1,10 @@
 import { OAuth2Client } from 'google-auth-library'
 const client = new OAuth2Client(process.env.APP_GOOGLE_CLIENT_ID)
+import { getUser, addUser } from './db.mjs'
 
 // middleware function
 export async function checkAuth(req, res, next) {
-  res.append('Access-Control-Allow-Credentials', true)
+  res.append('Access-Control-Allow-Credentials', 'true')
   const credential = req.cookies['session-token']
 
   try {
@@ -32,6 +33,20 @@ export async function verifyUser(credential) {
       audience: process.env.APP_GOOGLE_CLIENT_ID,
     })
     const payload = ticket.getPayload()
+
+    const user = await getUser(payload.sub)
+
+    if (!user) {
+      await addUser(
+        {
+          user_uid: payload.sub,
+          name: payload.name,
+          given_name: payload.given_name,
+          email: payload.email,
+          picture: payload.picture
+        }
+      )
+    }
 
     return {
       name: payload.name,

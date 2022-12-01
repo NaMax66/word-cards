@@ -2,7 +2,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
-import db from './mock.mjs'
+import { getAllPairsByUserId, addPair, removePair } from './db.mjs'
+import { getWordList } from './DTO/getWordList.js'
+import { v4 as getUID } from 'uuid'
 
 const app = express()
 
@@ -20,7 +22,7 @@ app.post('/login', async (req, res) => {
     const { credential } = req.body
 
     const userData = await verifyUser(credential)
-    res.append('Access-Control-Allow-Credentials', true)
+    res.append('Access-Control-Allow-Credentials', 'true')
     res.cookie('session-token', credential)
     res.send({ status: 'success', userData })
   } catch (e) {
@@ -28,9 +30,32 @@ app.post('/login', async (req, res) => {
     res.send('error')
   }
 })
-app.get('/word-list', checkAuth, (req, res) => {
-  console.log(req.userId)
-  res.send({ status: 'success', data: db[req.userId] })
+
+app.get('/word-list', checkAuth, async (req, res) => {
+  res.send({ status: 'success', data: getWordList(await getAllPairsByUserId(req.userId)) })
+})
+
+app.post('/add-pair', checkAuth, async (req, res) => {
+  try {
+    const { origin, translation } = req.body
+    addPair(req.userId, { uid: getUID(), origin, translation })
+    res.send({ status: 'success' })
+  } catch (e) {
+    console.error(e)
+    res.send('error')
+  }
+})
+
+app.post('/remove-pair', checkAuth, async (req, res) => {
+  try {
+    const { pair_uid } = req.body
+    removePair(req.userId, pair_uid)
+
+    res.send({ status: 'success' })
+  } catch (e) {
+    console.error(e)
+    res.send('error')
+  }
 })
 
 app.get('/user-data', checkAuth, async (req, res) => {
@@ -38,7 +63,7 @@ app.get('/user-data', checkAuth, async (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-  res.append('Access-Control-Allow-Credentials', true)
+  res.append('Access-Control-Allow-Credentials', 'true')
   res.clearCookie('session-token')
   res.send('success')
 })
