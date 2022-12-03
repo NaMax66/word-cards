@@ -83,9 +83,11 @@ export default defineComponent({
 
 .table-line {
   background-color: var(--main-color);
-  box-shadow: var(--main-shodow-top);
+  box-shadow: var(--main-shodow-bottom);
   border-radius: var(--default-b-radius);
   margin-bottom: 12px;
+  padding: 4px 8px;
+  display: flex;
 }
 
 </style>
