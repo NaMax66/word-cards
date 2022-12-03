@@ -1,0 +1,11 @@
+:root {
+  --c-background: #DCE6F2;
+  --main-color: #E4EDF7;
+  --main-shodow-top: 5px 5px 11px rgba(0,0,0,.15),
+  -5px -5px 11px rgba(255,255,255, .85);
+  --main-shodow-bottom: 2px 2px 8px rgba(0,0,0,.15),
+  -2px -2px 8px rgba(255,255,255, .85);
+  --main-contrast: #424242;
+  --main-contrast-hard: #212121;
+  --default-b-radius: 3px;
+}
