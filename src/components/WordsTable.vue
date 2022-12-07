@@ -29,6 +29,7 @@ export default defineComponent({
     <tbody>
       <tr class="table-line" v-for="(pair, index) in wordList" :key="index">
         <td class="body-cell">{{ pair.ru }}</td>
+        <div class="separator"></div>
         <td class="body-cell">
           <div class="body-cell-content">
             <span>{{ pair.en }}</span>
@@ -90,4 +91,8 @@ export default defineComponent({
   display: flex;
 }
 
+.separator {
+  width: 2px;
+  background-color: var(--c-accent);
+}
 </style>
