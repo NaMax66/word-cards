@@ -18,6 +18,14 @@
   margin-top: calc(var(--space) * 3) !important;
 }
 
+.mb-1 {
+  margin-bottom: var(--space) !important;
+}
+
+.mb-2 {
+  margin-bottom: calc(var(--space)  * 2) !important;
+}
+
 .ml-auto {
   margin-left: auto !important;
 }
@@ -33,9 +41,21 @@
 }
 
 .align-end {
-  align-items: end !important;
+  align-items: flex-end !important;
+}
+
+.justify-self-end {
+  justify-self: end !important;
+}
+
+.grow {
+  flex-grow: 1 !important;
 }
 
 .w-100 {
   width: 100%;
+}
+
+.p-3 {
+  padding: calc(var(--space) * 3) !important;
 }

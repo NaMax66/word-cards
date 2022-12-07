@@ -2,8 +2,10 @@
 import { defineComponent } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
+import ButtonBase from '@/components/ButtonBase.vue'
 
 export default defineComponent({
+  components: { ButtonBase },
   setup() {
     const { fetchWordList, removePair } = useWordListStore()
     fetchWordList()
@@ -24,30 +26,28 @@ export default defineComponent({
 
 <template>
   <table class='word-table'>
-    <thead>
-    <tr>
-      <th class="header-cell">Ru</th>
-      <th class="header-cell">En</th>
-    </tr>
-    </thead>
     <tbody>
-    <tr v-for="(pair, index) in wordList" :key="index">
-      <td class="body-cell">{{ pair.ru }}</td>
-      <td class="body-cell">
-        <div class="body-cell-content">
-          <span>{{ pair.en }}</span>
-          <button class="btn-delete" @click="remove(pair.id)">x</button>
-        </div>
-      </td>
-    </tr>
+      <tr class="table-line" v-for="(pair, index) in wordList" :key="index">
+        <td class="body-cell">{{ pair.ru }}</td>
+        <div class="separator"></div>
+        <td class="body-cell">
+          <div class="body-cell-content">
+            <span>{{ pair.en }}</span>
+            <button-base class="btn-delete" @click="remove(pair.id)">
+              x
+            </button-base>
+          </div>
+        </td>
+      </tr>
     </tbody>
   </table>
 </template>
 
 <style scoped>
 .word-table {
-  border-spacing:0;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  max-width: 800px;
 }
 
 .header-cell {
@@ -57,8 +57,16 @@ export default defineComponent({
 .body-cell {
   width: 50%;
   justify-content: space-between;
-  border: 1px solid var(--c-border);
   padding: var(--space) calc(var(--space) * 2);
+}
+
+.body-cell:first-child {
+  border-top-left-radius: var(--default-b-radius);
+  border-bottom-left-radius: var(--default-b-radius);
+}
+.body-cell:last-child {
+  border-bottom-right-radius: var(--default-b-radius);
+  border-top-right-radius: var(--default-b-radius);
 }
 
 .body-cell-content {
@@ -72,5 +80,19 @@ export default defineComponent({
 
 .body-cell-content:hover .btn-delete {
   visibility: visible;
+}
+
+.table-line {
+  background-color: var(--main-color);
+  box-shadow: var(--main-shodow-bottom);
+  border-radius: var(--default-b-radius);
+  margin-bottom: 12px;
+  padding: 4px 8px;
+  display: flex;
+}
+
+.separator {
+  width: 2px;
+  background-color: var(--c-accent);
 }
 </style>

@@ -1,10 +1,29 @@
 @import './base.css';
 @import './atomic.css';
+@import 'vars.css';
+
+body {
+  background-color: var(--c-background);
+}
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-
   font-weight: normal;
+  color: var(--main-contrast);
+}
+
+@media (max-width: 800px) {
+  #app {
+    padding: 8px;
+  }
+}
+
+.router-link-active {
+  color: var(--c-accent);
+}
+
+a {
+  color: var(--main-contrast);
 }
