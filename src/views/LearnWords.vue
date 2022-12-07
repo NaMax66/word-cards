@@ -23,7 +23,7 @@
 
      setInterval(() => {
        index.value = getRandomIndex(list.value.length)
-     }, 5000)
+     }, 60000 * 5)
 
      const currentCard = computed(() => {
        return list.value[index.value] || flipCard
