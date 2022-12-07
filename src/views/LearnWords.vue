@@ -4,8 +4,10 @@
  import { useLangStore } from '@/stores/languages'
  import { storeToRefs } from 'pinia'
  import flipCard from '@/stub/flipCard'
+ import ButtonBase from "@/components/ButtonBase.vue";
 
  export default defineComponent({
+   components: { ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()
@@ -45,19 +47,28 @@
 <template>
   <main class="mt-3">
       <article class="word-card">
-        <h2>{{ currentCard[lang] }}</h2>
-        <button class="mt-2" @click="switchLang">{{ $t('flip') }}</button>
+        <h2 class="grow">{{ currentCard[lang] }}</h2>
+        <button-base class="justify-self-end" theme="accent" @click="switchLang">{{ $t('flip') }}</button-base>
       </article>
   </main>
 </template>
 
 <style scoped>
 .word-card {
+  display: flex;
+  gap: 12px;
   max-width: 350px;
   max-height: 600px;
-  border-radius: 2px;
-  border: 1px solid var(--c-border);
+  background-color: var(--main-color);
+  box-shadow: var(--main-shodow-bottom);
+  border-radius: var(--default-b-radius);
   padding: calc(var(--space) * 2);
 }
 
+@media (max-width: 500px) {
+  .word-card {
+    max-height: none;
+    max-width: none;
+  }
+}
 </style>

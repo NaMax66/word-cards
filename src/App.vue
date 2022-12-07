@@ -18,4 +18,10 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 </template>
 
 <style scoped>
+.router-link-active {
+  color: var(--c-accent);
+}
+a {
+  color: var(--main-contrast);
+}
 </style>

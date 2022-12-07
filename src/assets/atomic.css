@@ -41,7 +41,15 @@
 }
 
 .align-end {
-  align-items: end !important;
+  align-items: flex-end !important;
+}
+
+.justify-self-end {
+  justify-self: end !important;
+}
+
+.grow {
+  flex-grow: 1 !important;
 }
 
 .w-100 {

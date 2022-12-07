@@ -46,6 +46,12 @@
   gap: 12px;
 }
 
+@media (max-width: 800px) {
+  .add-pair {
+    flex-direction: column;
+  }
+}
+
 .form-item {
   flex-grow: 1;
   background-color: var(--main-color);

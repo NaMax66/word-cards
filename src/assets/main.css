@@ -13,3 +13,9 @@ body {
   font-weight: normal;
   color: var(--main-contrast);
 }
+
+@media (max-width: 800px) {
+  #app {
+    padding: 8px;
+  }
+}
