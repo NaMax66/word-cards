@@ -10,11 +10,8 @@ import history from 'connect-history-api-fallback'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-
-console.log(__dirname)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 
@@ -30,7 +27,7 @@ app.use(async (req, res, next) => {
   next()
 })
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   try {
     const { credential } = req.body
 
@@ -44,11 +41,11 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/word-list', checkAuth, async (req, res) => {
+app.get('/api/word-list', checkAuth, async (req, res) => {
   res.send({ status: 'success', data: getWordList(await getAllPairsByUserId(req.userId)) })
 })
 
-app.post('/add-pair', checkAuth, async (req, res) => {
+app.post('/api/add-pair', checkAuth, async (req, res) => {
   try {
     const { origin, translation } = req.body
     addPair(req.userId, { uid: getUID(), origin, translation })
@@ -59,7 +56,7 @@ app.post('/add-pair', checkAuth, async (req, res) => {
   }
 })
 
-app.post('/remove-pair', checkAuth, async (req, res) => {
+app.post('/api/remove-pair', checkAuth, async (req, res) => {
   try {
     const { pair_uid } = req.body
     removePair(req.userId, pair_uid)
@@ -71,11 +68,11 @@ app.post('/remove-pair', checkAuth, async (req, res) => {
   }
 })
 
-app.get('/user-data', checkAuth, async (req, res) => {
+app.get('/api/user-data', checkAuth, async (req, res) => {
   res.send({ status: 'success', data: req.user })
 })
 
-app.get('/logout', (req, res) => {
+app.get('/api/logout', (req, res) => {
   res.append('Access-Control-Allow-Credentials', 'true')
   res.clearCookie('session-token')
   res.send('success')
