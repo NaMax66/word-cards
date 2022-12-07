@@ -1,5 +1,7 @@
 :root {
   --c-background: #DCE6F2;
+  --c-accent: #b482ff;
+  --c-accent-contrast: white;
   --main-color: #E4EDF7;
   --main-shodow-top: 5px 5px 11px rgba(0,0,0,.15),
   -5px -5px 11px rgba(255,255,255, .85);
@@ -10,4 +12,5 @@
   --default-b-radius: 3px;
   --main-shodow-inside: inset 5px 5px 11px rgba(0,0,0,.15),
   inset -5px -5px 11px rgba(255,255,255, .85);
+  --fs-main: 16px;
 }

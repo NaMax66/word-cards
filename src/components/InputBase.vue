@@ -13,5 +13,6 @@
   padding: 8px 12px;
   box-shadow: var(--main-shodow-inside);
   border-radius: var(--default-b-radius);
+  font-size: var(--fs-main);
 }
 </style>

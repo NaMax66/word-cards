@@ -35,7 +35,7 @@
       <label class="d-block mb-2" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
     </div>
-    <button-base class="p-3" type="submit">{{ $t('add') }}</button-base>
+    <button-base class="p-3" type="submit" theme="accent">{{ $t('add') }}</button-base>
   </form>
 </template>
 
