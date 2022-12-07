@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
 import { ref, onMounted } from 'vue'
@@ -20,7 +20,9 @@ import { GoogleAuth } from '@/services/auth'
 const googleLoginBtn = ref(null)
 
 onMounted(() => {
+  /* @ts-ignore */
   GoogleAuth.init(handleCredentialResponse)
+  /* @ts-ignore */
   GoogleAuth.renderButton(googleLoginBtn.value)
 })
 
@@ -34,7 +36,7 @@ const userInfo = ref({
   name: '',
   picture: '',
 
-  setUserInfo({ name, picture }) {
+  setUserInfo({ name, picture }: { name: string, picture: string }) {
     this.name = name
     this.picture = picture
   },
@@ -64,7 +66,7 @@ async function logout() {
   window.location.reload()
 }
 
-async function handleCredentialResponse({ credential }) {
+async function handleCredentialResponse({ credential }: { credential: string }) {
   await httpClient.post('/login', { credential }, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

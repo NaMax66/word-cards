@@ -5,11 +5,24 @@ import { checkAuth, verifyUser } from './verify.mjs'
 import { getAllPairsByUserId, addPair, removePair } from './db.mjs'
 import { getWordList } from './DTO/getWordList.js'
 import { v4 as getUID } from 'uuid'
+import history from 'connect-history-api-fallback'
+
+import { fileURLToPath } from 'url'
+import path from 'path'
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+console.log(__dirname)
 
 const app = express()
 
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(history())
+app.use(express.static(path.join(__dirname, 'dist')))
+
 app.use(async (req, res, next) => {
   res.append('Access-Control-Allow-Origin', [process.env.APP_ORIGIN])
   res.append('Access-Control-Allow-Methods', 'GET,POST')
