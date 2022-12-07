@@ -19,3 +19,11 @@ body {
     padding: 8px;
   }
 }
+
+.router-link-active {
+  color: var(--c-accent);
+}
+
+a {
+  color: var(--main-contrast);
+}
