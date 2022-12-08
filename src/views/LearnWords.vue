@@ -4,7 +4,7 @@
  import { useLangStore } from '@/stores/languages'
  import { storeToRefs } from 'pinia'
  import flipCard from '@/stub/flipCard'
- import ButtonBase from "@/components/ButtonBase.vue";
+ import ButtonBase from '@/components/ButtonBase.vue'
 
  export default defineComponent({
    components: { ButtonBase },
@@ -31,13 +31,23 @@
 
      let lang = ref(userLang)
 
-     const switchLang = () => {
+     const flip = () => {
        lang.value = lang.value === userLang ? targetLang : userLang
+     }
+
+     const next = () => {
+       const id = index.value
+       let newIndex = getRandomIndex(list.value.length)
+       while(id === newIndex) {
+         newIndex = getRandomIndex(list.value.length)
+       }
+       index.value = newIndex
      }
 
      return {
        currentCard,
-       switchLang,
+       flip,
+       next,
        lang
      }
    }
@@ -45,15 +55,23 @@
 </script>
 
 <template>
-  <main class="mt-3">
+  <main class="learn-words mt-3">
       <article class="word-card">
         <h2 class="grow">{{ currentCard[lang] }}</h2>
-        <button-base class="justify-self-end" theme="accent" @click="switchLang">{{ $t('flip') }}</button-base>
       </article>
+    <div class="card-controls">
+      <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
+      <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
+    </div>
   </main>
 </template>
 
 <style scoped>
+.learn-words {
+  display: flex;
+  flex-direction: column;
+}
+
 .word-card {
   display: flex;
   gap: 12px;
@@ -65,10 +83,31 @@
   padding: calc(var(--space) * 2);
 }
 
+.card-controls {
+  position: relative;
+  display: flex;
+  width: auto;
+  max-width: 350px;
+  gap: 12px;
+  margin-top: 24px;
+}
+.next-btn,
+.flip-btn {
+  flex-grow: 1;
+  width: 40px;
+  height: 40px;
+}
+
 @media (max-width: 500px) {
   .word-card {
     max-height: none;
     max-width: none;
+  }
+  .card-controls {
+    max-width: none;
+    position: fixed;
+    width: calc(100% - 16px);
+    bottom: 8px;
   }
 }
 </style>

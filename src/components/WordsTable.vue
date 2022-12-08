@@ -28,11 +28,11 @@ export default defineComponent({
   <table class='word-table'>
     <tbody>
       <tr class="table-line" v-for="(pair, index) in wordList" :key="index">
-        <td class="body-cell">{{ pair.ru }}</td>
+        <td class="body-cell">{{ pair.en }}</td>
         <div class="separator"></div>
         <td class="body-cell">
           <div class="body-cell-content">
-            <span>{{ pair.en }}</span>
+            <span>{{ pair.ru }}</span>
             <button-base class="btn-delete" @click="remove(pair.id)">
               x
             </button-base>

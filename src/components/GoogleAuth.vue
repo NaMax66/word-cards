@@ -14,14 +14,13 @@
 <script lang="ts" setup>
 import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
 
 const googleLoginBtn = ref(null)
 
-onMounted(() => {
-  /* @ts-ignore */
-  GoogleAuth.init(handleCredentialResponse)
+/* @ts-ignore */
+GoogleAuth.init(handleCredentialResponse).then(() => {
   /* @ts-ignore */
   GoogleAuth.renderButton(googleLoginBtn.value)
 })

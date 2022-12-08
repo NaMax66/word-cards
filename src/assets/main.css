@@ -2,12 +2,17 @@
 @import './atomic.css';
 @import 'vars.css';
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: var(--c-background);
 }
 
 #app {
   max-width: 1280px;
+  height: 100vh;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;

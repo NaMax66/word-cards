@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
-import LangSwitcher from '@/components/LangSwitcher.vue'
 import GoogleAuth from '@/components/GoogleAuth.vue'
 
 </script>
 
 <template>
   <header class="d-flex">
-    <nav>
-      <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
-      <RouterLink class="ml-2" to="/words-list">{{ $t('words list') }}</RouterLink>
-      <LangSwitcher class="ml-3 d-inline-block" />
+    <nav class="d-flex align-center gap-2">
+      <div class="link-row">
+        <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
+        <RouterLink to="/words-list">{{ $t('words list') }}</RouterLink>
+      </div>
     </nav>
     <GoogleAuth class="ml-auto" />
   </header>
@@ -18,4 +18,14 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 </template>
 
 <style scoped>
+.link-row {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .link-row {
+    flex-direction: column;
+  }
+}
 </style>
