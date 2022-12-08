@@ -28,12 +28,12 @@
 <template>
   <form class="add-pair" @submit.prevent="addPair">
     <div class="form-item">
-      <label class="d-block mb-2" for="userLang">{{ userLang }}</label>
-      <input-base class="w-100" required id="userLang" name="userLang" />
-    </div>
-    <div class="form-item">
       <label class="d-block mb-2" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
+    </div>
+    <div class="form-item">
+      <label class="d-block mb-2" for="userLang">{{ userLang }}</label>
+      <input-base class="w-100" required id="userLang" name="userLang" />
     </div>
     <button-base class="p-3" type="submit" theme="accent">{{ $t('add') }}</button-base>
   </form>
@@ -49,6 +49,9 @@
 @media (max-width: 800px) {
   .add-pair {
     flex-direction: column;
+    position: fixed;
+    bottom: 8px;
+    width: calc(100% - 16px);
   }
 }
 
