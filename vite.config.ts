@@ -20,6 +20,10 @@ export default ({ mode }) => {
       host: env.APP_IP,
       port: Number(env.APP_PORT),
     },
-    envPrefix: ENV_PREFIX
+    envPrefix: ENV_PREFIX,
+
+    build: {
+      outDir: './server/dist'
+    }
   })
 }

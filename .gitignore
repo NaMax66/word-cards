@@ -28,4 +28,4 @@ coverage
 *.sw?
 
 .env
-/api/main.db
+/server/main.db

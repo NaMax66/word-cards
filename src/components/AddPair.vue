@@ -7,7 +7,7 @@
   const { userLang, targetLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
 
-  const addPair = (e: SubmitEvent) => {
+  const addPair = (e: Event) => {
     const form = e.target as HTMLFormElement
     const formData = new FormData(form)
     addPairInStore({
