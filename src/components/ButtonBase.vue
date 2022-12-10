@@ -8,7 +8,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   theme: 'default',
-  vibration: 30
+  vibration: 20
 })
 const theme = ref(props.theme)
 const vibration = (e: Event) => {
