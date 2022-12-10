@@ -28,11 +28,11 @@
 <template>
   <form class="add-pair" @submit.prevent="addPair">
     <div class="form-item">
-      <label class="d-block mb-2" for="targetLang">{{ targetLang }}</label>
+      <label class="input-label" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
     </div>
     <div class="form-item">
-      <label class="d-block mb-2" for="userLang">{{ userLang }}</label>
+      <label class="input-label" for="userLang">{{ userLang }}</label>
       <input-base class="w-100" required id="userLang" name="userLang" />
     </div>
     <button-base class="p-3" type="submit" theme="accent">{{ $t('add') }}</button-base>
@@ -52,6 +52,7 @@
     position: fixed;
     bottom: 8px;
     width: calc(100% - 16px);
+    background-color: var(--main-color);
   }
 }
 
@@ -61,5 +62,29 @@
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
   padding: 12px 16px;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 800px) {
+  .add-pair {
+    background-color: var(--main-color);
+    box-shadow: var(--main-shodow-top);
+    border-radius: var(--default-b-radius);
+    padding: 8px;
+  }
+
+  .form-item {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .input-label {
+    display: none;
+  }
 }
 </style>

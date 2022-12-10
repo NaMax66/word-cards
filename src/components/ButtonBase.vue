@@ -2,17 +2,24 @@
 import { ref } from 'vue'
 
 interface Props {
-  theme: 'default' | 'accent'
+  theme: 'default' | 'accent',
+  vibration: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  theme: 'default'
+  theme: 'default',
+  vibration: 20
 })
 const theme = ref(props.theme)
+const vibration = (e: Event) => {
+  if(props.vibration) window?.navigator?.vibrate(props.vibration)
+  return e
+}
+
 </script>
 
 <template>
-  <button class="button-base" :class="`button-base--${theme}`">
+  <button @click="vibration" class="button-base" :class="`button-base--${theme}`">
     <slot></slot>
   </button>
 </template>

@@ -4,8 +4,8 @@
     <div class="signed-out-controller" v-show="isSignedIn">
       <img class="user-photo" :src="userInfo.picture" alt="user photo">
       <div class="ml-2">
-        <h4>{{ userInfo.name }}</h4>
-        <a href="#" @click.prevent="logout">sign out</a>
+        <h4 class="user-name">{{ userInfo.name }}</h4>
+        <a class="sign-out" href="#" @click.prevent="logout">sign out</a>
       </div>
     </div>
   </div>
@@ -82,10 +82,28 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
 </script>
 
 <style scoped>
+.google-auth {
+  background-color: var(--main-color);
+  box-shadow: var(--main-shodow-top);
+  border-radius: var(--default-b-radius);
+  padding: 12px 16px;
+}
+
 .user-photo {
   max-width: 50px;
   max-height: 50px;
   border-radius: 50%;
+}
+
+@media (max-width: 800px) {
+  .google-auth {
+    padding: 8px 12px;
+  }
+
+  .user-photo {
+    max-width: 35px;
+    max-height: 35px;
+  }
 }
 
 .signed-out-controller {
@@ -93,10 +111,21 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
   align-items: center;
 }
 
-.google-auth {
-  background-color: var(--main-color);
-  box-shadow: var(--main-shodow-top);
-  border-radius: var(--default-b-radius);
-  padding: 12px 16px;
+.user-name {
+  font-size: 16px;
+}
+
+.sign-out {
+  font-size: 14px;
+}
+
+@media (max-width: 800px) {
+  .user-name {
+    font-size: 14px;
+  }
+
+  .sign-out {
+    font-size: 12px;
+  }
 }
 </style>
