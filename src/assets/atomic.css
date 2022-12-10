@@ -63,9 +63,16 @@
 }
 
 .w-100 {
-  width: 100%;
+  width: 100% !important;
 }
 
 .p-3 {
   padding: calc(var(--space) * 3) !important;
+}
+
+.fs-small {
+  font-size: var(--fs-small) !important;
+}
+.fs-medium {
+  font-size: var(--fs-medium) !important;
 }

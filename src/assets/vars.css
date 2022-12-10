@@ -10,7 +10,9 @@
   --main-contrast: #424242;
   --main-contrast-hard: #212121;
   --default-b-radius: 3px;
-  --main-shodow-inside: inset 5px 5px 11px rgba(0,0,0,.15),
-  inset -5px -5px 11px rgba(255,255,255, .85);
+  --main-shodow-inside: inset 2px 2px 11px rgba(0,0,0,.15),
+  inset -2px -2px 11px rgba(255,255,255, .85);
   --fs-main: 16px;
+  --fs-small: 10px;
+  --fs-medium: 12px;
 }
