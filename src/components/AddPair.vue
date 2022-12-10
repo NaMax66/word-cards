@@ -3,7 +3,6 @@
   import { useWordListStore } from '@/stores/word-list'
   import ButtonBase from '@/components/ButtonBase.vue'
   import InputBase from '@/components/InputBase.vue'
-  import { onMounted, ref } from 'vue'
 
   const { userLang, targetLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
@@ -24,21 +23,10 @@
 
     form.reset()
   }
-
-  const addPairForm = ref(null)
-
-  const scrollBottom = (el: HTMLElement | null) => {
-    if(!el) return
-    el.scrollTop = el.scrollHeight
-  }
-
-  onMounted(() => {
-    scrollBottom(addPairForm.value)
-  })
 </script>
 
 <template>
-  <form ref="addPairForm" class="add-pair" @submit.prevent="addPair" autocomplete="off">
+  <form class="add-pair" @submit.prevent="addPair" autocomplete="off">
     <div class="form-item">
       <label class="input-label" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
@@ -69,6 +57,7 @@
     box-shadow: var(--main-shodow-top);
     border-radius: var(--default-b-radius);
     padding: 8px;
+    left: 8px;
   }
 }
 

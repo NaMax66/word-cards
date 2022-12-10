@@ -35,9 +35,7 @@ onMounted(() => {
 }
 
 .word-table {
-  padding-top: 12px;
-  width: 100%;
-  padding-bottom: 112px;
+  padding: 12px 8px 112px;
 }
 @media (max-width: 800px) {
   .word-table {

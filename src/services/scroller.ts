@@ -1,5 +1,4 @@
 export function scrollBottom(element: HTMLElement | null, isSmooth = false) {
-  console.log(element)
   if(!element) return
 
   if(isSmooth) {

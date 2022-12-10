@@ -20,6 +20,7 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 <style scoped>
 .header-main {
   display: flex;
+  padding: 8px;
 }
 
 .link-row {
