@@ -14,15 +14,8 @@ body {
   max-width: 1280px;
   height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
   color: var(--main-contrast);
-}
-
-@media (max-width: 800px) {
-  #app {
-    padding: 8px;
-  }
 }
 
 .router-link-active {

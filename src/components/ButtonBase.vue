@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 
 interface Props {
-  theme: 'default' | 'accent',
-  vibration: number
+  theme?: 'default' | 'accent',
+  vibration?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
