@@ -5,7 +5,7 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 </script>
 
 <template>
-  <header class="d-flex">
+  <header class="header-main">
     <nav class="d-flex align-center gap-2">
       <div class="link-row">
         <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
@@ -18,6 +18,10 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 </template>
 
 <style scoped>
+.header-main {
+  display: flex;
+}
+
 .link-row {
   display: flex;
   gap: 8px;

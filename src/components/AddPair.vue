@@ -3,6 +3,7 @@
   import { useWordListStore } from '@/stores/word-list'
   import ButtonBase from '@/components/ButtonBase.vue'
   import InputBase from '@/components/InputBase.vue'
+  import { onMounted, ref } from 'vue'
 
   const { userLang, targetLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
@@ -23,10 +24,21 @@
 
     form.reset()
   }
+
+  const addPairForm = ref(null)
+
+  const scrollBottom = (el: HTMLElement | null) => {
+    if(!el) return
+    el.scrollTop = el.scrollHeight
+  }
+
+  onMounted(() => {
+    scrollBottom(addPairForm.value)
+  })
 </script>
 
 <template>
-  <form class="add-pair" @submit.prevent="addPair">
+  <form ref="addPairForm" class="add-pair" @submit.prevent="addPair" autocomplete="off">
     <div class="form-item">
       <label class="input-label" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
@@ -44,15 +56,19 @@
   display: flex;
   max-width: 800px;
   gap: 12px;
+  position: fixed;
+  bottom: 8px;
+  width: calc(100% - 16px);
+  backdrop-filter: blur(2px);
 }
 
 @media (max-width: 800px) {
   .add-pair {
     flex-direction: column;
-    position: fixed;
-    bottom: 8px;
-    width: calc(100% - 16px);
     background-color: var(--main-color);
+    box-shadow: var(--main-shodow-top);
+    border-radius: var(--default-b-radius);
+    padding: 8px;
   }
 }
 
@@ -70,13 +86,6 @@
 }
 
 @media (max-width: 800px) {
-  .add-pair {
-    background-color: var(--main-color);
-    box-shadow: var(--main-shodow-top);
-    border-radius: var(--default-b-radius);
-    padding: 8px;
-  }
-
   .form-item {
     background-color: transparent;
     box-shadow: none;
