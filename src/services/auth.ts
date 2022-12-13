@@ -1,3 +1,5 @@
+import httpClient from '@/services/httpClient'
+
 const hasLib = new Promise(resolve => {
     const script = document.createElement('script')
     script.src = 'https://accounts.google.com/gsi/client'

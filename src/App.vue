@@ -1,36 +1,12 @@
 <script setup lang="ts">
-import { RouterView, RouterLink } from 'vue-router'
-import GoogleAuth from '@/components/GoogleAuth.vue'
-
+import { RouterView } from 'vue-router'
+import HeaderMain from '@/components/HeaderMain.vue'
 </script>
 
 <template>
-  <header class="header-main">
-    <nav class="d-flex align-center gap-2">
-      <div class="link-row">
-        <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
-        <RouterLink to="/words-list">{{ $t('words list') }}</RouterLink>
-      </div>
-    </nav>
-    <GoogleAuth class="ml-auto" />
-  </header>
+  <HeaderMain />
   <RouterView />
 </template>
 
-<style scoped>
-.header-main {
-  display: flex;
-  padding: 8px;
-}
-
-.link-row {
-  display: flex;
-  gap: 8px;
-}
-
-@media (max-width: 700px) {
-  .link-row {
-    flex-direction: column;
-  }
-}
+<style lang="scss" scoped>
 </style>

@@ -2,7 +2,8 @@
   <div class="google-auth">
     <div v-show="!isSignedIn" ref="googleLoginBtn"></div>
     <div class="signed-out-controller" v-show="isSignedIn">
-      <img class="user-photo" :src="userInfo.picture" alt="user photo">
+      <img v-show="isImgLoaded" @load="onImgLoad" class="user-photo" :src="userInfo.picture" alt="user photo">
+      <div v-show="!isImgLoaded" class="user-photo-stab">U</div>
       <div class="ml-2">
         <h4 class="user-name">{{ userInfo.name }}</h4>
         <a class="sign-out" href="#" @click.prevent="logout">sign out</a>
@@ -16,8 +17,16 @@ import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
 import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
+import { observeTabOpen } from '@/services/tabOpenObserver'
+
 
 const googleLoginBtn = ref(null)
+
+observeTabOpen(() => {
+  httpClient.get('/user-data', {
+    withCredentials: true
+  })
+})
 
 /* @ts-ignore */
 GoogleAuth.init(handleCredentialResponse).then(() => {
@@ -79,6 +88,11 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
   window.location.reload()
 }
 
+const isImgLoaded = ref(false)
+function onImgLoad() {
+  isImgLoaded.value = true
+}
+
 </script>
 
 <style scoped>
@@ -86,23 +100,27 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
   background-color: var(--main-color);
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
-  padding: 12px 16px;
+  padding: 8px 12px;
 }
-
+.user-photo-stab,
 .user-photo {
-  max-width: 50px;
-  max-height: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
 }
 
-@media (max-width: 800px) {
-  .google-auth {
-    padding: 8px 12px;
-  }
+.user-photo-stab {
+  border: 1px solid var(--main-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+@media (max-width: 800px) {
+  .user-photo-stab,
   .user-photo {
-    max-width: 35px;
-    max-height: 35px;
+    width: 35px;
+    height: 35px;
   }
 }
 
