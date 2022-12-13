@@ -17,8 +17,16 @@ import httpClient from '@/services/httpClient'
 import Cookies from 'js-cookie'
 import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
+import { observeTabOpen } from '@/services/tabOpenObserver'
+
 
 const googleLoginBtn = ref(null)
+
+observeTabOpen(() => {
+  httpClient.get('/user-data', {
+    withCredentials: true
+  })
+})
 
 /* @ts-ignore */
 GoogleAuth.init(handleCredentialResponse).then(() => {

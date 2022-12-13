@@ -1,4 +1,4 @@
-import httpClient from "@/services/httpClient";
+import httpClient from '@/services/httpClient'
 
 const hasLib = new Promise(resolve => {
     const script = document.createElement('script')
@@ -6,14 +6,6 @@ const hasLib = new Promise(resolve => {
     document.body.appendChild(script)
     script.onload = resolve
   })
-
-document.addEventListener('visibilitychange', async () => {
-  if(!document.hidden) {
-    await httpClient.get('/user-data', {
-      withCredentials: true
-    })
-  }
-})
 
 export const GoogleAuth = {
   init(callback: () => void) {
