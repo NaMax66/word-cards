@@ -55,14 +55,16 @@
 </script>
 
 <template>
-  <main class="learn-words mt-3">
-      <article class="word-card">
-        <h2 class="grow">{{ currentCard[lang] }}</h2>
-      </article>
-    <div class="card-controls">
-      <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
-      <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
-    </div>
+  <main class="learn-words container">
+     <div class="under-header">
+       <article class="word-card">
+         <h2 class="grow">{{ currentCard[lang] }}</h2>
+       </article>
+       <div class="card-controls">
+         <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
+         <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
+       </div>
+     </div>
   </main>
 </template>
 
@@ -70,6 +72,7 @@
 .learn-words {
   display: flex;
   flex-direction: column;
+  padding: 0 8px;
 }
 
 .word-card {
@@ -77,6 +80,7 @@
   gap: 12px;
   max-width: 350px;
   max-height: 600px;
+  min-height: 90px;
   background-color: var(--main-color);
   box-shadow: var(--main-shodow-bottom);
   border-radius: var(--default-b-radius);
@@ -108,6 +112,7 @@
     position: fixed;
     width: calc(100% - 16px);
     bottom: 8px;
+    left: 8px;
   }
 }
 </style>

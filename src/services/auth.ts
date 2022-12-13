@@ -1,9 +1,19 @@
+import httpClient from "@/services/httpClient";
+
 const hasLib = new Promise(resolve => {
     const script = document.createElement('script')
     script.src = 'https://accounts.google.com/gsi/client'
     document.body.appendChild(script)
     script.onload = resolve
   })
+
+document.addEventListener('visibilitychange', async () => {
+  if(!document.hidden) {
+    await httpClient.get('/user-data', {
+      withCredentials: true
+    })
+  }
+})
 
 export const GoogleAuth = {
   init(callback: () => void) {

@@ -92,12 +92,12 @@ function onImgLoad() {
   background-color: var(--main-color);
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
-  padding: 12px 16px;
+  padding: 8px 12px;
 }
 .user-photo-stab,
 .user-photo {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
 }
 
@@ -109,9 +109,6 @@ function onImgLoad() {
 }
 
 @media (max-width: 800px) {
-  .google-auth {
-    padding: 8px 12px;
-  }
   .user-photo-stab,
   .user-photo {
     width: 35px;

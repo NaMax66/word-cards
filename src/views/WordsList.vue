@@ -1,19 +1,11 @@
 <script lang="ts" setup>
 import WordsTable from '@/components/WordsTable.vue'
 import AddPair from '@/components/AddPair.vue'
-import { onMounted, ref } from 'vue'
-import { scrollBottom } from '@/services/scroller'
-
-const wordListPage = ref(null)
-
-onMounted(() => {
-  // scrollBottom(wordListPage.value)
-})
 </script>
 
 <template>
-  <main ref="wordListPage" class="word-list">
-    <words-table class="word-table" />
+  <main class="word-list container">
+    <words-table class="word-table under-header" />
     <add-pair class="pb-3" />
   </main>
 </template>

@@ -1,5 +1,6 @@
 :root {
   --c-background: #DCE6F2;
+  --c-background-a85: rgba(220, 230, 242, 0.8);
   --c-accent: #b482ff;
   --c-accent-contrast: white;
   --main-color: #E4EDF7;
@@ -12,7 +13,17 @@
   --default-b-radius: 3px;
   --main-shodow-inside: inset 2px 2px 11px rgba(0,0,0,.15),
   inset -2px -2px 11px rgba(255,255,255, .85);
+
+  --max-width: 1280px;
+  --header-height-desktop: 77px;
+  --header-height-tablet: 72px;
+
   --fs-main: 16px;
   --fs-small: 10px;
   --fs-medium: 12px;
+
+  --z-idx-under: -1;
+  --z-idx-main: 1;
+  --z-idx-over: 2;
+  --z-idx-super: 3;
 }
