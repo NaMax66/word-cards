@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 
-import './assets/main.css'
+import './assets/main.scss'
 import en from '@/locales/en'
 import ru from '@/locales/ru'
 

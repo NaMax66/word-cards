@@ -39,7 +39,9 @@
   </form>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/media.scss";
+
 .add-pair {
   display: flex;
   max-width: 800px;
@@ -48,10 +50,8 @@
   bottom: 8px;
   width: calc(100% - 16px);
   backdrop-filter: blur(2px);
-}
 
-@media (max-width: 800px) {
-  .add-pair {
+  @include devices-tablet {
     flex-direction: column;
     background-color: var(--main-color);
     box-shadow: var(--main-shodow-top);
@@ -67,21 +67,19 @@
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
   padding: 12px 16px;
+
+  @include devices-tablet {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
 }
 
 .input-label {
   display: block;
   margin-bottom: 8px;
-}
 
-@media (max-width: 800px) {
-  .form-item {
-    background-color: transparent;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .input-label {
+  @include devices-tablet {
     display: none;
   }
 }
