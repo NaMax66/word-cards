@@ -7,6 +7,3 @@ import HeaderMain from '@/components/HeaderMain.vue'
   <HeaderMain />
   <RouterView />
 </template>
-
-<style lang="scss" scoped>
-</style>
