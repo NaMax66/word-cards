@@ -82,6 +82,11 @@
   display: flex;
   flex-direction: column;
   padding: 0 8px;
+
+  @include devices-mobile {
+    padding: 16px 8px;
+    overflow: hidden;
+  }
 }
 
 .word-card {
