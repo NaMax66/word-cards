@@ -94,7 +94,6 @@ export default defineComponent({
   margin-top: 4px;
 }
 
-// animation for the word-list
 .word-list-move,
 .word-list-enter-active,
 .word-list-leave-active {

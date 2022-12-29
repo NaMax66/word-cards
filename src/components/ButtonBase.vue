@@ -10,7 +10,9 @@ const props = withDefaults(defineProps<Props>(), {
   theme: 'default',
   vibration: 15
 })
+
 const theme = ref(props.theme)
+
 const vibration = (e: Event) => {
   if(props.vibration) window?.navigator?.vibrate(props.vibration)
   return e
