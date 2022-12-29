@@ -3,24 +3,30 @@ import { defineStore } from 'pinia'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
+import { putToCash, syncCash } from '@/services/cashControl'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
 
   async function addPair(pair: DetailedPair) {
     const tmpId = Date.now()
-    list.value.push({
+    const element = {
       pair: {
         [pair.origin.lang]: pair.origin.value,
         [pair.translation.lang]: pair.translation.value,
       },
       isSyncing: true,
       id: tmpId
-    })
+    }
+    list.value.push(element)
     try {
-      await httpClient.post('/add-pair', pair, postOptions)
+      const {data: { data: { uid } }} = await httpClient.post('/add-pair', pair, postOptions)
+
+      element.id = uid
+      element.isSyncing = false
+      putToCash(element)
     } catch (e) {
-      console.error(e)
+      putToCash(element, 'unsync_pair')
     }
   }
 
@@ -34,11 +40,16 @@ export const useWordListStore = defineStore('word-list', () => {
   }
 
   async function fetchWordList() {
-    const {data: { data }} = await httpClient.get('/word-list', {
-      withCredentials: true
-    })
+    try {
+      const {data: { data }} = await httpClient.get('/word-list', {
+        withCredentials: true
+      }) as { data: { data: Pair[] } }
 
-    list.value = data
+      list.value = data
+      syncCash(data)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return {
