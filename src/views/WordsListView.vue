@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import WordsTable from '@/components/WordsList.vue'
+import WordsList from '@/components/WordsList.vue'
 import AddPair from '@/components/AddPair.vue'
 </script>
 
 <template>
   <main class="word-list container">
-    <words-table class="word-table under-header" />
+    <words-list class="word-table under-header" />
     <add-pair class="pb-3" />
   </main>
 </template>

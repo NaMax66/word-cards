@@ -68,7 +68,9 @@
   </main>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/media.scss";
+
 .learn-words {
   display: flex;
   flex-direction: column;
@@ -85,6 +87,11 @@
   box-shadow: var(--main-shodow-bottom);
   border-radius: var(--default-b-radius);
   padding: calc(var(--space) * 2);
+
+  @include devices-mobile {
+    max-height: none;
+    max-width: none;
+  }
 }
 
 .card-controls {
@@ -94,25 +101,20 @@
   max-width: 350px;
   gap: 12px;
   margin-top: 24px;
-}
-.next-btn,
-.flip-btn {
-  flex-grow: 1;
-  width: 40px;
-  height: 40px;
-}
 
-@media (max-width: 500px) {
-  .word-card {
-    max-height: none;
-    max-width: none;
-  }
-  .card-controls {
+  @include devices-mobile {
     max-width: none;
     position: fixed;
     width: calc(100% - 16px);
     bottom: 8px;
     left: 8px;
   }
+}
+
+.next-btn,
+.flip-btn {
+  flex-grow: 1;
+  width: 40px;
+  height: 40px;
 }
 </style>
