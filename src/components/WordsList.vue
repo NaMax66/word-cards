@@ -44,7 +44,6 @@ export default defineComponent({
 .words-list {
   display: flex;
   flex-direction: column-reverse;
-  max-width: 800px;
 
   &__item {
     display: flex;

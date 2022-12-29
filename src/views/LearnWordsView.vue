@@ -48,7 +48,9 @@
        currentCard,
        flip,
        next,
-       lang
+       lang,
+       userLang,
+       targetLang
      }
    }
  })
@@ -57,9 +59,14 @@
 <template>
   <main class="learn-words container">
      <div class="under-header">
-       <article class="word-card">
-         <h2 class="grow">{{ currentCard[lang] }}</h2>
-       </article>
+       <Transition name="card">
+         <article v-if="lang === userLang" class="word-card">
+           <h2 class="grow">{{ currentCard[userLang] }}</h2>
+         </article>
+         <article v-else class="word-card">
+           <h2 class="grow color-accent">{{ currentCard[targetLang] }}</h2>
+         </article>
+       </Transition>
        <div class="card-controls">
          <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
          <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
@@ -116,5 +123,22 @@
   flex-grow: 1;
   width: 40px;
   height: 40px;
+}
+
+.card-move,
+.card-enter-active,
+.card-leave-active {
+  transition: all 0.3s;
+}
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.card-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>
