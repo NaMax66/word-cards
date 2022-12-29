@@ -8,9 +8,14 @@ export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
 
   async function addPair(pair: DetailedPair) {
+    const tmpId = Date.now()
     list.value.push({
-      [pair.origin.lang]: pair.origin.value,
-      [pair.translation.lang]: pair.translation.value
+      pair: {
+        [pair.origin.lang]: pair.origin.value,
+        [pair.translation.lang]: pair.translation.value,
+      },
+      isSyncing: true,
+      id: tmpId
     })
     try {
       await httpClient.post('/add-pair', pair, postOptions)

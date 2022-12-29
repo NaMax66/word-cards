@@ -61,10 +61,10 @@
      <div class="under-header">
        <Transition name="card">
          <article v-if="lang === userLang" class="word-card">
-           <h2 class="grow">{{ currentCard[userLang] }}</h2>
+           <h2 class="grow">{{ currentCard.pair[userLang] }}</h2>
          </article>
          <article v-else class="word-card">
-           <h2 class="grow color-accent">{{ currentCard[targetLang] }}</h2>
+           <h2 class="grow color-accent">{{ currentCard.pair[targetLang] }}</h2>
          </article>
        </Transition>
        <div class="card-controls">
