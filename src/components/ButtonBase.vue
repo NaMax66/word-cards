@@ -48,4 +48,9 @@ const vibration = (e: Event) => {
   color: var(--main-contrast-hard);
   box-shadow: var(--main-shodow-bottom)
 }
+
+.button-base:focus-visible {
+  outline: 2px solid var(--main-contrast-hard);
+  outline-offset: 1px;
+}
 </style>

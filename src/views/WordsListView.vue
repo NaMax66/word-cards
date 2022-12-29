@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import WordsTable from '@/components/WordsTable.vue'
+import WordsTable from '@/components/WordsList.vue'
 import AddPair from '@/components/AddPair.vue'
 </script>
 
@@ -10,20 +10,19 @@ import AddPair from '@/components/AddPair.vue'
   </main>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .word-list {
   position: relative;
   display: flex;
   flex-direction: column-reverse;
-  justify-content: space-between;
   overflow-y: auto;
-  height: calc(100vh - 80px);
+  height: 100vh;
   scrollbar-width: none;
   -ms-overflow-style: none;
-}
 
-.word-list::-webkit-scrollbar {
-  display: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .word-table {
