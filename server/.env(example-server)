@@ -1,0 +1,4 @@
+APP_PORT=8080
+APP_GOOGLE_CLIENT_ID=<your-google-client-id>
+APP_ORIGIN=http://localhost:5173
+APP_DB_NAME=test
