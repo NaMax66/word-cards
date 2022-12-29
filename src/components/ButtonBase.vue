@@ -8,9 +8,11 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   theme: 'default',
-  vibration: 20
+  vibration: 15
 })
+
 const theme = ref(props.theme)
+
 const vibration = (e: Event) => {
   if(props.vibration) window?.navigator?.vibrate(props.vibration)
   return e
@@ -24,7 +26,7 @@ const vibration = (e: Event) => {
   </button>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .button-base {
   color: var(--main-contrast);
   background-color: var(--c-background);
@@ -33,24 +35,24 @@ const vibration = (e: Event) => {
   box-shadow: var(--main-shodow-top);
   outline: none;
   transition: all .1s;
-}
-.button-base.button-base--accent {
-  color: var(--c-accent-contrast);
-  background-color: var(--c-accent);
-}
 
-.button-base.button-base--accent:active {
-  color: var(--c-accent-contrast);
-}
+  &:active {
+    color: var(--main-contrast-hard);
+    box-shadow: var(--main-shodow-bottom)
+  }
 
+  &:focus-visible {
+    outline: 2px solid var(--main-contrast-hard);
+    outline-offset: 1px;
+  }
 
-.button-base:active {
-  color: var(--main-contrast-hard);
-  box-shadow: var(--main-shodow-bottom)
-}
+  &--accent {
+    color: var(--c-accent-contrast);
+    background-color: var(--c-accent);
 
-.button-base:focus-visible {
-  outline: 2px solid var(--main-contrast-hard);
-  outline-offset: 1px;
+    &:active {
+      color: var(--c-accent-contrast);
+    }
+  }
 }
 </style>

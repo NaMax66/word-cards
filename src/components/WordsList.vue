@@ -44,7 +44,6 @@ export default defineComponent({
 .words-list {
   display: flex;
   flex-direction: column-reverse;
-  max-width: 800px;
 
   &__item {
     display: flex;
@@ -95,7 +94,6 @@ export default defineComponent({
   margin-top: 4px;
 }
 
-// animation for the word-list
 .word-list-move,
 .word-list-enter-active,
 .word-list-leave-active {

@@ -95,18 +95,26 @@ function onImgLoad() {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/media.scss";
+
 .google-auth {
   background-color: var(--main-color);
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
   padding: 8px 12px;
 }
+
 .user-photo-stab,
 .user-photo {
   width: 45px;
   height: 45px;
   border-radius: 50%;
+
+  @include devices-tablet {
+    width: 35px;
+    height: 35px;
+  }
 }
 
 .user-photo-stab {
@@ -116,14 +124,6 @@ function onImgLoad() {
   justify-content: center;
 }
 
-@media (max-width: 800px) {
-  .user-photo-stab,
-  .user-photo {
-    width: 35px;
-    height: 35px;
-  }
-}
-
 .signed-out-controller {
   display: flex;
   align-items: center;
@@ -131,18 +131,16 @@ function onImgLoad() {
 
 .user-name {
   font-size: 16px;
+
+  @include devices-tablet {
+    font-size: 14px;
+  }
 }
 
 .sign-out {
   font-size: 14px;
-}
 
-@media (max-width: 800px) {
-  .user-name {
-    font-size: 14px;
-  }
-
-  .sign-out {
+  @include devices-tablet {
     font-size: 12px;
   }
 }

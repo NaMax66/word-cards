@@ -48,7 +48,9 @@
        currentCard,
        flip,
        next,
-       lang
+       lang,
+       userLang,
+       targetLang
      }
    }
  })
@@ -57,9 +59,14 @@
 <template>
   <main class="learn-words container">
      <div class="under-header">
-       <article class="word-card">
-         <h2 class="grow">{{ currentCard[lang] }}</h2>
-       </article>
+       <Transition name="card">
+         <article v-if="lang === userLang" class="word-card">
+           <h2 class="grow">{{ currentCard[userLang] }}</h2>
+         </article>
+         <article v-else class="word-card">
+           <h2 class="grow color-accent">{{ currentCard[targetLang] }}</h2>
+         </article>
+       </Transition>
        <div class="card-controls">
          <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
          <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
@@ -68,7 +75,9 @@
   </main>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/media.scss";
+
 .learn-words {
   display: flex;
   flex-direction: column;
@@ -85,6 +94,11 @@
   box-shadow: var(--main-shodow-bottom);
   border-radius: var(--default-b-radius);
   padding: calc(var(--space) * 2);
+
+  @include devices-mobile {
+    max-height: none;
+    max-width: none;
+  }
 }
 
 .card-controls {
@@ -94,7 +108,16 @@
   max-width: 350px;
   gap: 12px;
   margin-top: 24px;
+
+  @include devices-mobile {
+    max-width: none;
+    position: fixed;
+    width: calc(100% - 16px);
+    bottom: 8px;
+    left: 8px;
+  }
 }
+
 .next-btn,
 .flip-btn {
   flex-grow: 1;
@@ -102,17 +125,20 @@
   height: 40px;
 }
 
-@media (max-width: 500px) {
-  .word-card {
-    max-height: none;
-    max-width: none;
-  }
-  .card-controls {
-    max-width: none;
-    position: fixed;
-    width: calc(100% - 16px);
-    bottom: 8px;
-    left: 8px;
-  }
+.card-move,
+.card-enter-active,
+.card-leave-active {
+  transition: all 0.3s;
+}
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.card-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>
