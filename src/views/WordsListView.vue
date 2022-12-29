@@ -6,11 +6,18 @@ import AddPair from '@/components/AddPair.vue'
 <template>
   <main class="word-list container">
     <words-list class="word-table under-header" />
-    <add-pair class="pb-3" />
+    <add-pair class="add-pair pb-3" />
   </main>
 </template>
 
 <style lang="scss" scoped>
+@import "@/assets/media.scss";
+
+.add-pair,
+.word-list {
+  max-width: 800px;
+}
+
 .word-list {
   position: relative;
   display: flex;
@@ -27,9 +34,8 @@ import AddPair from '@/components/AddPair.vue'
 
 .word-table {
   padding: 12px 8px 112px;
-}
-@media (max-width: 800px) {
-  .word-table {
+
+  @include devices-tablet {
     padding-bottom: 165px;
   }
 }

@@ -44,4 +44,18 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
     flex-direction: column;
   }
 }
+
+.router-link-active {
+  color: var(--c-accent);
+  text-decoration: underline;
+}
+
+a {
+  color: var(--main-contrast-light);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
 </style>

@@ -3,14 +3,6 @@
 @import 'vars';
 @import "media";
 
-.router-link-active {
-  color: var(--c-accent);
-}
-
-a {
-  color: var(--main-contrast);
-}
-
 .container {
   max-width: var(--max-width);
   margin: 0 auto;

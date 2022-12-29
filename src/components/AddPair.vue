@@ -44,7 +44,6 @@
 
 .add-pair {
   display: flex;
-  max-width: 800px;
   gap: 12px;
   position: fixed;
   bottom: 8px;
