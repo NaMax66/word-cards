@@ -12,7 +12,7 @@ export function putToCash<T extends { id: Id }>(item: T, prefix: Prefix = PAIR) 
 }
 
 export function getAllFromCash(prefix: Prefix = PAIR): any[] {
-  const data: any[] = []
+  const data: unknown[] = []
 
   Object.keys(localStorage).filter(el => el.startsWith(prefix)).forEach(el => {
     const result = localStorage.getItem(el)

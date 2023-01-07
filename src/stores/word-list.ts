@@ -19,6 +19,7 @@ export const useWordListStore = defineStore('word-list', () => {
       element.isSyncing = false
       putToCash(element)
     } catch (e) {
+      console.error(e)
       putToCash(Object.assign(pair, { id: tmpId }), 'unsync_pair')
     }
   }
@@ -27,8 +28,11 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
+      /* todo add to-remove logic */
       removeElementByIdAndPrefix(pairId, 'pair')
     } catch (e) {
+      // remove only if the element exist locally
+      removeElementByIdAndPrefix(pairId, 'unsync_pair')
       console.error(e)
     }
   }
@@ -56,16 +60,14 @@ export const useWordListStore = defineStore('word-list', () => {
   }
 })
 
-function syncUnsuncedData(cb: (el: DetailedPair) => Promise<any>) {
+function syncUnsuncedData(cb: (el: DetailedPair) => Promise<void>) {
   const unsynced = getAllFromCash('unsync_pair')
 
-  if (unsynced.length) {
-    unsynced.forEach(el => {
-      cb(el).then(() => {
-        removeElementByIdAndPrefix(el.id, 'unsync_pair')
-      })
+  unsynced.forEach(el => {
+    cb(el).then(() => {
+      removeElementByIdAndPrefix(el.id, 'unsync_pair')
     })
-  }
+  })
 }
 
 function transformAllPairs(pairs: DetailedPair[]): Pair[] {
