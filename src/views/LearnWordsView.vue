@@ -5,6 +5,7 @@
  import { storeToRefs } from 'pinia'
  import flipCard from '@/stub/flipCard'
  import ButtonBase from '@/components/ButtonBase.vue'
+ import isMobile from '@/utils/isMobile'
 
  export default defineComponent({
    components: { ButtonBase },
@@ -44,13 +45,26 @@
        index.value = newIndex
      }
 
+     const flipMobileOnly = () => {
+       isMobile && flip()
+     }
+
+     const copyToClipboard = (txt: string) => {
+       navigator.clipboard.writeText(txt)
+       /* todo add notifications */
+     }
+
      return {
        currentCard,
        flip,
+       flipMobileOnly,
+       copyToClipboard,
        next,
        lang,
        userLang,
-       targetLang
+       targetLang,
+
+       isMobile
      }
    }
  })
@@ -60,16 +74,28 @@
   <main class="learn-words container">
      <div class="under-header">
        <Transition name="card">
-         <article v-if="lang === userLang" class="word-card">
-           <h2 class="grow">{{ currentCard[userLang] }}</h2>
+         <article @click="flipMobileOnly" v-if="lang === userLang" class="word-card">
+           <h2 class="grow">{{ currentCard.pair?.[userLang] }}</h2>
+           <button-base @click="copyToClipboard(currentCard.pair?.[userLang])" class="word-card__btn" @click.stop>
+             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+               <path d="M0 0h24v24H0z" fill="none"/>
+               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+             </svg>
+           </button-base>
          </article>
-         <article v-else class="word-card">
-           <h2 class="grow color-accent">{{ currentCard[targetLang] }}</h2>
+         <article @click="flipMobileOnly" v-else class="word-card">
+           <h2 class="grow color-accent">{{ currentCard.pair?.[targetLang] }}</h2>
+           <button-base @click="copyToClipboard(currentCard.pair?.[targetLang])" class="word-card__btn" @click.stop>
+             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+               <path d="M0 0h24v24H0z" fill="none"/>
+               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+             </svg>
+           </button-base>
          </article>
        </Transition>
        <div class="card-controls">
          <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
-         <button-base  class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
+         <button-base class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
        </div>
      </div>
   </main>
@@ -82,6 +108,11 @@
   display: flex;
   flex-direction: column;
   padding: 0 8px;
+
+  @include devices-mobile {
+    padding: 16px 8px;
+    overflow: hidden;
+  }
 }
 
 .word-card {
@@ -94,6 +125,16 @@
   box-shadow: var(--main-shodow-bottom);
   border-radius: var(--default-b-radius);
   padding: calc(var(--space) * 2);
+
+  &__btn {
+    align-self: flex-end;
+    padding: 4px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
 
   @include devices-mobile {
     max-height: none;

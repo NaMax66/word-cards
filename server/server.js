@@ -48,8 +48,9 @@ app.get('/api/word-list', checkAuth, async (req, res) => {
 app.post('/api/add-pair', checkAuth, async (req, res) => {
   try {
     const { origin, translation } = req.body
-    addPair(req.userId, { uid: getUID(), origin, translation })
-    res.send({ status: 'success' })
+    const uid = getUID()
+    addPair(req.userId, { uid, origin, translation })
+    res.send({ status: 'success', data: { uid } })
   } catch (e) {
     console.error(e)
     res.send('error')

@@ -22,6 +22,7 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 
 .header-main {
   position: fixed;
+  top: 0;
   z-index: var(--z-idx-over);
   width: 100%;
   color: var(--main-contrast);

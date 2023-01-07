@@ -28,6 +28,9 @@ const vibration = (e: Event) => {
 
 <style lang="scss" scoped>
 .button-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--main-contrast);
   background-color: var(--c-background);
   border: none;
@@ -35,6 +38,10 @@ const vibration = (e: Event) => {
   box-shadow: var(--main-shodow-top);
   outline: none;
   transition: all .1s;
+
+  &__icon {
+    fill: red;
+  }
 
   &:active {
     color: var(--main-contrast-hard);

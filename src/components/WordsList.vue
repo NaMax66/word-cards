@@ -29,12 +29,12 @@ export default defineComponent({
 <template>
   <div class="words-list-wrap">
     <TransitionGroup name="word-list" class="word-list" tag="ul">
-      <li class="words-list__item" v-for="pair in wordList" :key="pair.id">
-        <p class="words-list__text">{{ pair.en }}</p>
+      <li class="words-list__item" v-for="item in wordList" :key="item.id">
+        <p class="words-list__text">{{ item.pair.en }}</p>
         <div class="separator"></div>
-        <p class="words-list__text">{{ pair.ru }}</p>
+        <p class="words-list__text">{{ item.pair.ru }}</p>
 
-        <button-base class="btn-delete" @click="remove(pair.id)">x</button-base>
+        <button-base class="btn-delete" @click="remove(item.id)">x</button-base>
       </li>
     </TransitionGroup>
   </div>

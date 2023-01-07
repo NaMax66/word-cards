@@ -8,5 +8,6 @@ export type DetailedPair = {
   translation: {
     value: string,
     lang: Locale
-  }
+  },
+  id?: number | string
 }
