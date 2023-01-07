@@ -14,7 +14,7 @@ export default defineComponent({
 
     const { list } = storeToRefs(useWordListStore())
 
-    function remove(pairId: string) {
+    function remove(pairId: string | number) {
       removePair(pairId)
     }
 

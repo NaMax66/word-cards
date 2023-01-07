@@ -24,7 +24,7 @@ export const useWordListStore = defineStore('word-list', () => {
     }
   }
 
-  async function removePair(pairId: string) {
+  async function removePair(pairId: string | number) {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
