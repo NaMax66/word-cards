@@ -22,6 +22,10 @@ export function getAllFromCash(prefix: Prefix = PAIR): any[] {
   return data
 }
 
+export function removeElementByIdAndPrefix(id: string | number, prefix: Prefix) {
+  localStorage.removeItem(`${prefix}_${id}`)
+}
+
 export function clearCash(prefix: Prefix = PAIR) {
   Object.keys(localStorage).filter(el => el.startsWith(prefix)).forEach(localStorage.removeItem)
 }

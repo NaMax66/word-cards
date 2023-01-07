@@ -51,6 +51,7 @@
 
      const copyToClipboard = (txt: string) => {
        navigator.clipboard.writeText(txt)
+       /* todo add notifications */
      }
 
      return {

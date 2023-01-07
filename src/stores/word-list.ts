@@ -3,21 +3,14 @@ import { defineStore } from 'pinia'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
-import { putToCash, syncCash } from '@/services/cashControl'
+import { getAllFromCash, putToCash, removeElementByIdAndPrefix, syncCash } from "@/services/cashControl";
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
 
   async function addPair(pair: DetailedPair) {
     const tmpId = Date.now()
-    const element = {
-      pair: {
-        [pair.origin.lang]: pair.origin.value,
-        [pair.translation.lang]: pair.translation.value,
-      },
-      isSyncing: true,
-      id: tmpId
-    }
+    const element = transformPair(pair, tmpId, true)
     list.value.push(element)
     try {
       const {data: { data: { uid } }} = await httpClient.post('/add-pair', pair, postOptions)
@@ -26,7 +19,7 @@ export const useWordListStore = defineStore('word-list', () => {
       element.isSyncing = false
       putToCash(element)
     } catch (e) {
-      putToCash(element, 'unsync_pair')
+      putToCash(Object.assign(pair, { id: tmpId }), 'unsync_pair')
     }
   }
 
@@ -34,6 +27,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
+      removeElementByIdAndPrefix(pairId, 'pair')
     } catch (e) {
       console.error(e)
     }
@@ -47,8 +41,10 @@ export const useWordListStore = defineStore('word-list', () => {
 
       list.value = data
       syncCash(data)
+      syncUnsuncedData(addPair)
     } catch (e) {
       console.error(e)
+      list.value = getAllFromCash('pair').concat(transformAllPairs(getAllFromCash('unsync_pair')))
     }
   }
 
@@ -59,3 +55,33 @@ export const useWordListStore = defineStore('word-list', () => {
     fetchWordList
   }
 })
+
+function syncUnsuncedData(cb: (el: DetailedPair) => Promise<any>) {
+  const unsynced = getAllFromCash('unsync_pair')
+
+  if (unsynced.length) {
+    unsynced.forEach(el => {
+      cb(el).then(() => {
+        removeElementByIdAndPrefix(el.id, 'unsync_pair')
+      })
+    })
+  }
+}
+
+function transformAllPairs(pairs: DetailedPair[]): Pair[] {
+  return pairs.map(el => {
+    return transformPair(el, el.id || Date.now())
+  })
+}
+
+function transformPair(pair: DetailedPair, id: number | string, isSyncing?: boolean): Pair {
+
+  return  {
+    pair: {
+      [pair.origin.lang]: pair.origin.value,
+        [pair.translation.lang]: pair.translation.value,
+    },
+    isSyncing,
+    id
+  }
+}
