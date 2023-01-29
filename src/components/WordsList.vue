@@ -3,8 +3,10 @@ import { defineComponent } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
+import eventBus from '@/services/eventBus'
+
 import ButtonBase from '@/components/ButtonBase.vue'
-import IconPencil from "@/components/icons/IconPencil.vue";
+import IconPencil from '@/components/icons/IconPencil.vue'
 
 export default defineComponent({
   components: {IconPencil, ButtonBase },
@@ -19,9 +21,14 @@ export default defineComponent({
       removePair(pairId)
     }
 
+    function openEdit(pairId: string) {
+      eventBus.emit('openModal', pairId)
+    }
+
     return {
       wordList: list,
-      remove
+      remove,
+      openEdit
     }
   }
 })
@@ -37,7 +44,7 @@ export default defineComponent({
 
 
         <div class="hidden-controls">
-          <button-base class="hidden-controls__btn">
+          <button-base class="hidden-controls__btn" @click="openEdit(pair.id)">
             <icon-pencil class="hidden-controls__icon" />
           </button-base>
           <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
