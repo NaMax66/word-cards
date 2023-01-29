@@ -17,7 +17,7 @@ export default defineComponent({
 
     const { list } = storeToRefs(useWordListStore())
 
-    function remove(pairId: string | number) {
+    function remove(pairId: string) {
       removePair(pairId)
     }
 
@@ -37,17 +37,17 @@ export default defineComponent({
 <template>
   <div class="words-list-wrap">
     <TransitionGroup name="word-list" class="word-list" tag="ul">
-      <li class="words-list__item" v-for="item in wordList" :key="item.id">
-        <p class="words-list__text">{{ item.pair.en }}</p>
+      <li class="words-list__item" v-for="pair in wordList" :key="pair.id">
+        <p class="words-list__text">{{ pair.en }}</p>
         <div class="separator"></div>
-        <p class="words-list__text">{{ item.pair.ru }}</p>
+        <p class="words-list__text">{{ pair.ru }}</p>
 
 
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(pair.id)">
             <icon-pencil class="hidden-controls__icon" />
           </button-base>
-          <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+          <button-base class="hidden-controls__btn" @click="remove(pair.id)">x</button-base>
         </div>
       </li>
     </TransitionGroup>
