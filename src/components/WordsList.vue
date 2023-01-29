@@ -4,9 +4,10 @@ import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
 import ButtonBase from '@/components/ButtonBase.vue'
+import IconPencil from "@/components/icons/IconPencil.vue";
 
 export default defineComponent({
-  components: { ButtonBase },
+  components: {IconPencil, ButtonBase },
 
   setup() {
     const { fetchWordList, removePair } = useWordListStore()
@@ -34,7 +35,13 @@ export default defineComponent({
         <div class="separator"></div>
         <p class="words-list__text">{{ item.pair.ru }}</p>
 
-        <button-base class="btn-delete" @click="remove(item.id)">x</button-base>
+
+        <div class="hidden-controls">
+          <button-base class="hidden-controls__btn">
+            <icon-pencil class="hidden-controls__icon" />
+          </button-base>
+          <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+        </div>
       </li>
     </TransitionGroup>
   </div>
@@ -56,7 +63,7 @@ export default defineComponent({
 
     &:hover,
     &:active {
-      .btn-delete {
+      .hidden-controls {
         visibility: visible;
         opacity: 1;
       }
@@ -85,13 +92,27 @@ export default defineComponent({
   background-color: var(--c-accent);
 }
 
-.btn-delete {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
+.hidden-controls {
+  margin-top: 4px;
   visibility: hidden;
   opacity: 0;
-  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 2px;
+  }
+
+  &__icon {
+    fill: currentColor;
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .word-list-move,
