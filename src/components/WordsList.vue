@@ -116,7 +116,6 @@ export default defineComponent({
   }
 
   &__icon {
-    fill: currentColor;
     width: 18px;
     height: 18px;
   }
