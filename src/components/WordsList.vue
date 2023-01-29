@@ -3,10 +3,13 @@ import { defineComponent } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
+import eventBus from '@/services/eventBus'
+
 import ButtonBase from '@/components/ButtonBase.vue'
+import IconPencil from '@/components/icons/IconPencil.vue'
 
 export default defineComponent({
-  components: { ButtonBase },
+  components: {IconPencil, ButtonBase },
 
   setup() {
     const { fetchWordList, removePair } = useWordListStore()
@@ -14,13 +17,18 @@ export default defineComponent({
 
     const { list } = storeToRefs(useWordListStore())
 
-    function remove(pairId: string | number) {
+    function remove(pairId: string) {
       removePair(pairId)
+    }
+
+    function openEdit(pairId: string) {
+      eventBus.emit('openModal', pairId)
     }
 
     return {
       wordList: list,
-      remove
+      remove,
+      openEdit
     }
   }
 })
@@ -34,7 +42,13 @@ export default defineComponent({
         <div class="separator"></div>
         <p class="words-list__text">{{ item.pair.ru }}</p>
 
-        <button-base class="btn-delete" @click="remove(item.id)">x</button-base>
+
+        <div class="hidden-controls">
+          <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
+            <icon-pencil class="hidden-controls__icon" />
+          </button-base>
+          <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+        </div>
       </li>
     </TransitionGroup>
   </div>
@@ -56,7 +70,7 @@ export default defineComponent({
 
     &:hover,
     &:active {
-      .btn-delete {
+      .hidden-controls {
         visibility: visible;
         opacity: 1;
       }
@@ -85,13 +99,25 @@ export default defineComponent({
   background-color: var(--c-accent);
 }
 
-.btn-delete {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
+.hidden-controls {
+  margin-top: 4px;
   visibility: hidden;
   opacity: 0;
-  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .word-list-move,
