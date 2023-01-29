@@ -6,7 +6,7 @@ class EventBus {
         this.eventObject = {}
     }
 
-    emit(eventName: string, data: any) {
+    emit(eventName: string, data?: any) {
         const callbackList = this.eventObject[eventName]
         if (!callbackList) return console.warn(eventName + ' not found!')
         for (const callback of callbackList) {
