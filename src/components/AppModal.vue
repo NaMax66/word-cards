@@ -13,7 +13,7 @@ export default defineComponent({
   components: { ButtonBase },
 
   setup() {
-    const isOpened = ref(true)
+    const isOpened = ref(false)
     eventBus.on('openModal', () => {
       isOpened.value = true
     })

@@ -112,7 +112,6 @@ export default defineComponent({
     justify-content: center;
     width: 22px;
     height: 22px;
-    padding: 2px;
   }
 
   &__icon {
