@@ -3,5 +3,7 @@ export default {
   flip: 'flip',
   'learn words': 'learn words',
   'words list': 'words list',
-  'next': 'next'
+  'next': 'next',
+  'origin': 'origin',
+  'translation': 'translation'
 }

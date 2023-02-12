@@ -1,48 +1,58 @@
 <template>
-  <div class="app-modal" :class="{ isOpened }">
-    <button-base @click="close">X</button-base>
-  </div>
+  <Transition name="modal">
+    <div class="app-modal" v-if="show" @click="$emit('close')">
+      <div class="app-modal__content" @click.stop>
+        <slot></slot>
+        <button-base class="close-btn" @click="$emit('close')">X</button-base>
+      </div>
+    </div>
+  </Transition>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script lang="ts" setup>
 import ButtonBase from './ButtonBase.vue'
-import eventBus from '@/services/eventBus'
 
-export default defineComponent({
-  components: { ButtonBase },
+interface Props {
+  show: boolean
+}
 
-  setup() {
-    const isOpened = ref(false)
-    eventBus.on('openModal', () => {
-      isOpened.value = true
-    })
-
-    function close() {
-      isOpened.value = false
-    }
-
-    return {
-      isOpened,
-      close
-    }
-  }
+withDefaults(defineProps<Props>(), {
+  show: false
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .app-modal {
+  display: flex;
   z-index: var(--z-idx-super);
   position: absolute;
+  align-items: center;
+  justify-content: center;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,.3);
-  display: none;
+  transition: opacity 0.3s ease;
+
+  &__content {
+    position: absolute;
+  }
 }
 
-.app-modal.isOpened {
-  display: block;
+.close-btn {
+  position: absolute;
+  padding: 0.5rem;
+  top: 1rem;
+  right: 1rem;
+}
+
+
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-leave-to {
+  opacity: 0;
 }
 </style>

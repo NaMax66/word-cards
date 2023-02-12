@@ -36,6 +36,11 @@
 .d-flex {
   display: flex !important;
 }
+
+.flex-column {
+  flex-direction: column !important;
+}
+
 .d-inline-block {
   display: inline-block !important;
 }

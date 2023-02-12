@@ -7,5 +7,4 @@ import AppModal from '@/components/AppModal.vue'
 <template>
   <HeaderMain />
   <RouterView />
-  <AppModal />
 </template>

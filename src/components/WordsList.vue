@@ -1,34 +1,67 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
-import eventBus from '@/services/eventBus'
-
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
+import AppModal from './AppModal.vue'
+import type {Pair} from '@/types/Pair'
 
 export default defineComponent({
-  components: {IconPencil, ButtonBase },
+  components: { AppModal, IconPencil, ButtonBase },
 
   setup() {
-    const { fetchWordList, removePair } = useWordListStore()
+    const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
     const { list } = storeToRefs(useWordListStore())
+
+    const isEditOpened = ref(false)
+    const editPair = ref<Pair | {}>({})
+
+    async function updatePair() {
+      const val = editPair.value as Pair
+      await updatePairApi({
+        id: val.id,
+        origin: {
+          lang: 'ru',
+          value: val.pair.ru,
+        },
+        translation: {
+          lang: 'en',
+          value: val.pair.en
+        }
+      })
+      closeEdit()
+    }
 
     function remove(pairId: string) {
       removePair(pairId)
     }
 
     function openEdit(pairId: string) {
-      eventBus.emit('openModal', pairId)
+      const pair: Pair | undefined = list.value.find(el => el.id === pairId)
+      if(pair) editPair.value = pair
+      isEditOpened.value = true
+    }
+
+    function closeEdit() {
+      editPair.value = {}
+      isEditOpened.value = false
     }
 
     return {
       wordList: list,
       remove,
-      openEdit
+
+      isEditOpened,
+      openEdit,
+      closeEdit,
+
+      editPair,
+
+      updatePair
     }
   }
 })
@@ -51,6 +84,25 @@ export default defineComponent({
         </div>
       </li>
     </TransitionGroup>
+    <Teleport to="modals-container">
+      <AppModal :show="isEditOpened" @close="closeEdit">
+        <div class="edit-modal d-flex flex-column">
+          <div class="edit-modal__row">
+            <label for="origin">
+              {{ $t('origin') }}
+            </label>
+            <textarea class="textarea-base" id="origin" v-model="editPair.pair.ru"></textarea>
+          </div>
+          <div class="edit-modal__row">
+            <label for="translation">
+              {{ $t('translation') }}
+            </label>
+            <textarea class="textarea-base" id="translation" v-model="editPair.pair.en"></textarea>
+          </div>
+          <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
+        </div>
+      </AppModal>
+    </Teleport>
   </div>
 </template>
 
@@ -135,5 +187,27 @@ export default defineComponent({
 .word-list-leave-active {
   position: absolute;
   width: 100%;
+}
+
+.edit-modal {
+  padding: 3rem 2rem 1.5rem;
+  width: 90vw;
+  height: 50vh;
+  max-width: 50rem;
+  max-height: 30rem;
+  background: var(--c-background);
+  border-radius: var(--default-b-radius);
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.save-edit-btn {
+  height: 4rem;
+  margin-top: auto;
 }
 </style>

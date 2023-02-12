@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
-import { getAllPairsByUserId, addPair, removePair } from './db.mjs'
+import { getAllPairsByUserId, addPair, removePair, updatePair } from './db.mjs'
 import { getWordList } from './DTO/getWordList.js'
 import { v4 as getUID } from 'uuid'
 import history from 'connect-history-api-fallback'
@@ -62,6 +62,18 @@ app.post('/api/remove-pair', checkAuth, async (req, res) => {
     const { pair_uid } = req.body
     removePair(req.userId, pair_uid)
 
+    res.send({ status: 'success' })
+  } catch (e) {
+    console.error(e)
+    res.send('error')
+  }
+})
+
+app.post('/api/update-pair', checkAuth, async (req, res) => {
+  try {
+    const { origin, translation, id } = req.body
+
+    updatePair({ uid: id, origin, translation })
     res.send({ status: 'success' })
   } catch (e) {
     console.error(e)
