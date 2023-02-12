@@ -34,3 +34,14 @@ modals-container {
   position: relative;
   z-index: var(--z-idx-super);
 }
+
+/* todo move to component */
+.textarea-base {
+  border: none;
+  outline: none;
+  background: none;
+  padding: 8px 12px;
+  box-shadow: var(--main-shodow-inside);
+  border-radius: var(--default-b-radius);
+  font-size: var(--fs-main);
+}

@@ -9,7 +9,7 @@ import AppModal from './AppModal.vue'
 import type {Pair} from '@/types/Pair'
 
 export default defineComponent({
-  components: {AppModal, IconPencil, ButtonBase },
+  components: { AppModal, IconPencil, ButtonBase },
 
   setup() {
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
@@ -20,9 +20,9 @@ export default defineComponent({
     const isEditOpened = ref(false)
     const editPair = ref<Pair | {}>({})
 
-    function updatePair() {
+    async function updatePair() {
       const val = editPair.value as Pair
-      updatePairApi({
+      await updatePairApi({
         id: val.id,
         origin: {
           lang: 'ru',
@@ -33,6 +33,7 @@ export default defineComponent({
           value: val.pair.en
         }
       })
+      closeEdit()
     }
 
     function remove(pairId: string) {
@@ -86,15 +87,19 @@ export default defineComponent({
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
         <div class="edit-modal d-flex flex-column">
-          <label>
-            Origin
-            <textarea v-model="editPair.pair.ru"></textarea>
-          </label>
-          <label>
-            Translation
-            <textarea v-model="editPair.pair.en"></textarea>
-          </label>
-          <button-base @click="updatePair">Save</button-base>
+          <div class="edit-modal__row">
+            <label for="origin">
+              {{ $t('origin') }}
+            </label>
+            <textarea class="textarea-base" id="origin" v-model="editPair.pair.ru"></textarea>
+          </div>
+          <div class="edit-modal__row">
+            <label for="translation">
+              {{ $t('translation') }}
+            </label>
+            <textarea class="textarea-base" id="translation" v-model="editPair.pair.en"></textarea>
+          </div>
+          <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
       </AppModal>
     </Teleport>
@@ -185,6 +190,7 @@ export default defineComponent({
 }
 
 .edit-modal {
+  padding: 3rem 2rem 1.5rem;
   width: 90vw;
   height: 50vh;
   max-width: 50rem;
@@ -192,5 +198,16 @@ export default defineComponent({
   background: var(--c-background);
   border-radius: var(--default-b-radius);
 
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.save-edit-btn {
+  height: 4rem;
+  margin-top: auto;
 }
 </style>

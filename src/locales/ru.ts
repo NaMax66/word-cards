@@ -3,5 +3,7 @@ export default {
   flip: 'перевернуть',
   'learn words': 'учить слова',
   'words list': 'список слов',
-  'next': 'далее'
+  'next': 'далее',
+  'origin': 'основной язык',
+  'translation': 'перевод'
 }
