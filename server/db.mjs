@@ -28,9 +28,9 @@ export function addPair(user_uid, { uid, origin, translation}) {
   db.run(sql, [user_uid, uid, origin.value, origin.lang, translation.value, translation.lang], errFn)
 }
 
-function updatePair(pair) {
-  const sql = 'UPDATE pairs SET origin = ?, translation = ? WHERE pair_uid = ?'
-  db.run(sql, [pair.origin.value, pair.translation.value, pair.uid], errFn)
+export function updatePair({ uid, origin, translation }) {
+  const sql = 'UPDATE pairs SET origin = ?, origin_lang = ?, translation = ?, translation_lang = ? WHERE pair_uid = ?'
+  db.run(sql, [origin.value, origin.lang, translation.value, translation.lang, uid], errFn)
 }
 
 export function removePair(user_uid, pair_uid) {

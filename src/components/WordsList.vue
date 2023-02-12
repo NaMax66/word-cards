@@ -3,44 +3,64 @@ import { defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
-import eventBus from '@/services/eventBus'
-
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
+import type {Pair} from '@/types/Pair'
 
 export default defineComponent({
   components: {AppModal, IconPencil, ButtonBase },
 
   setup() {
-    const { fetchWordList, removePair } = useWordListStore()
+    const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
     const { list } = storeToRefs(useWordListStore())
 
     const isEditOpened = ref(false)
-    const editId = ref('')
+    const editPair = ref<Pair | {}>({})
+
+    function updatePair() {
+      const val = editPair.value as Pair
+      updatePairApi({
+        id: val.id,
+        origin: {
+          lang: 'ru',
+          value: val.pair.ru,
+        },
+        translation: {
+          lang: 'en',
+          value: val.pair.en
+        }
+      })
+    }
 
     function remove(pairId: string) {
       removePair(pairId)
     }
 
     function openEdit(pairId: string) {
-      editId.value = pairId
+      const pair: Pair | undefined = list.value.find(el => el.id === pairId)
+      if(pair) editPair.value = pair
       isEditOpened.value = true
     }
 
     function closeEdit() {
-      editId.value = ''
+      editPair.value = {}
       isEditOpened.value = false
     }
 
     return {
       wordList: list,
       remove,
-      openEdit,
+
       isEditOpened,
-      closeEdit
+      openEdit,
+      closeEdit,
+
+      editPair,
+
+      updatePair
     }
   }
 })
@@ -65,7 +85,17 @@ export default defineComponent({
     </TransitionGroup>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
-        <div class="edit-modal"></div>
+        <div class="edit-modal d-flex flex-column">
+          <label>
+            Origin
+            <textarea v-model="editPair.pair.ru"></textarea>
+          </label>
+          <label>
+            Translation
+            <textarea v-model="editPair.pair.en"></textarea>
+          </label>
+          <button-base @click="updatePair">Save</button-base>
+        </div>
       </AppModal>
     </Teleport>
   </div>

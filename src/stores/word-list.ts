@@ -24,6 +24,15 @@ export const useWordListStore = defineStore('word-list', () => {
     }
   }
 
+  async function updatePair(pair: DetailedPair) {
+    console.log(pair)
+    try {
+      await httpClient.post('/update-pair', pair, postOptions)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   async function removePair(pairId: string | number) {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
@@ -56,6 +65,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list,
     addPair,
     removePair,
+    updatePair,
     fetchWordList
   }
 })
