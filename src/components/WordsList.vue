@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 
@@ -7,9 +7,10 @@ import eventBus from '@/services/eventBus'
 
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
+import AppModal from './AppModal.vue'
 
 export default defineComponent({
-  components: {IconPencil, ButtonBase },
+  components: {AppModal, IconPencil, ButtonBase },
 
   setup() {
     const { fetchWordList, removePair } = useWordListStore()
@@ -17,18 +18,29 @@ export default defineComponent({
 
     const { list } = storeToRefs(useWordListStore())
 
+    const isEditOpened = ref(false)
+    const editId = ref('')
+
     function remove(pairId: string) {
       removePair(pairId)
     }
 
     function openEdit(pairId: string) {
-      eventBus.emit('openModal', pairId)
+      editId.value = pairId
+      isEditOpened.value = true
+    }
+
+    function closeEdit() {
+      editId.value = ''
+      isEditOpened.value = false
     }
 
     return {
       wordList: list,
       remove,
-      openEdit
+      openEdit,
+      isEditOpened,
+      closeEdit
     }
   }
 })
@@ -51,6 +63,11 @@ export default defineComponent({
         </div>
       </li>
     </TransitionGroup>
+    <Teleport to="modals-container">
+      <AppModal v-if="isEditOpened" @close="closeEdit">
+        Hy
+      </AppModal>
+    </Teleport>
   </div>
 </template>
 
