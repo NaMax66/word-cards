@@ -18,7 +18,7 @@ export default defineComponent({
     const { list } = storeToRefs(useWordListStore())
 
     const isEditOpened = ref(false)
-    const editPair = ref<Pair | {}>({})
+    const editPair = ref<Pair | any>({})
 
     async function updatePair() {
       const val = editPair.value as Pair
@@ -36,11 +36,11 @@ export default defineComponent({
       closeEdit()
     }
 
-    function remove(pairId: string) {
+    function remove(pairId: string | number) {
       removePair(pairId)
     }
 
-    function openEdit(pairId: string) {
+    function openEdit(pairId: string | number) {
       const pair: Pair | undefined = list.value.find(el => el.id === pairId)
       if(pair) editPair.value = pair
       isEditOpened.value = true
