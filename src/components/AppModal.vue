@@ -1,10 +1,12 @@
 <template>
-  <div class="app-modal" :class="{ isOpened: props.show }" @click="$emit('close')">
-    <div class="app-modal__content" @click.stop>
-      <slot></slot>
-      <button-base class="close-btn" @click="$emit('close')">X</button-base>
+  <Transition name="modal">
+    <div class="app-modal" v-if="show" @click="$emit('close')">
+      <div class="app-modal__content" @click.stop>
+        <slot></slot>
+        <button-base class="close-btn" @click="$emit('close')">X</button-base>
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
@@ -14,13 +16,14 @@ interface Props {
   show: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   show: false
 })
 </script>
 
 <style lang="scss" scoped>
 .app-modal {
+  display: flex;
   z-index: var(--z-idx-super);
   position: absolute;
   align-items: center;
@@ -30,15 +33,11 @@ const props = withDefaults(defineProps<Props>(), {
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,.3);
-  display: none;
+  transition: opacity 0.3s ease;
 
   &__content {
     position: absolute;
   }
-}
-
-.app-modal.isOpened {
-  display: flex;
 }
 
 .close-btn {
@@ -46,5 +45,14 @@ const props = withDefaults(defineProps<Props>(), {
   padding: 0.5rem;
   top: 1rem;
   right: 1rem;
+}
+
+
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-leave-to {
+  opacity: 0;
 }
 </style>

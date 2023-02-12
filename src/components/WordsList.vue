@@ -155,9 +155,12 @@ export default defineComponent({
 }
 
 .edit-modal {
-  width: 30rem;
-  height: 20rem;
+  width: 90vw;
+  height: 50vh;
+  max-width: 50rem;
+  max-height: 30rem;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
+
 }
 </style>
