@@ -64,8 +64,8 @@ export default defineComponent({
       </li>
     </TransitionGroup>
     <Teleport to="modals-container">
-      <AppModal v-if="isEditOpened" @close="closeEdit">
-        Hy
+      <AppModal :show="isEditOpened" @close="closeEdit">
+        <div class="edit-modal"></div>
       </AppModal>
     </Teleport>
   </div>
@@ -152,5 +152,12 @@ export default defineComponent({
 .word-list-leave-active {
   position: absolute;
   width: 100%;
+}
+
+.edit-modal {
+  width: 30rem;
+  height: 20rem;
+  background: var(--c-background);
+  border-radius: var(--default-b-radius);
 }
 </style>
