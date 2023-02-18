@@ -18,21 +18,11 @@ export default defineComponent({
     const { list } = storeToRefs(useWordListStore())
 
     const isEditOpened = ref(false)
-    const editPair = ref<Pair | any>({})
+    const editPair = ref<Pair | undefined>(undefined)
 
     async function updatePair() {
-      const val = editPair.value as Pair
-      await updatePairApi({
-        id: val.id,
-        origin: {
-          lang: 'ru',
-          value: val.pair.ru,
-        },
-        translation: {
-          lang: 'en',
-          value: val.pair.en
-        }
-      })
+      if(!editPair.value) return
+      await updatePairApi(editPair.value)
       closeEdit()
     }
 
@@ -47,7 +37,7 @@ export default defineComponent({
     }
 
     function closeEdit() {
-      editPair.value = {}
+      editPair.value = undefined
       isEditOpened.value = false
     }
 
@@ -71,9 +61,9 @@ export default defineComponent({
   <div class="words-list-wrap">
     <TransitionGroup name="word-list" class="word-list" tag="ul">
       <li class="words-list__item" v-for="item in wordList" :key="item.id">
-        <p class="words-list__text">{{ item.pair.en }}</p>
+        <p class="words-list__text">{{ item.origin.value }}</p>
         <div class="separator"></div>
-        <p class="words-list__text">{{ item.pair.ru }}</p>
+        <p class="words-list__text">{{ item.translation.value }}</p>
 
 
         <div class="hidden-controls">
@@ -91,13 +81,13 @@ export default defineComponent({
             <label for="origin">
               {{ $t('origin') }}
             </label>
-            <textarea class="textarea-base" id="origin" v-model="editPair.pair.ru"></textarea>
+            <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
           </div>
           <div class="edit-modal__row">
             <label for="translation">
               {{ $t('translation') }}
             </label>
-            <textarea class="textarea-base" id="translation" v-model="editPair.pair.en"></textarea>
+            <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
           </div>
           <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
@@ -194,7 +184,7 @@ export default defineComponent({
   width: 90vw;
   max-width: 50rem;
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
 
