@@ -37,7 +37,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
-      /* todo add to-remove logic */
+      /* todo make without prefix logic */
       removeElementByIdAndPrefix(pairId, 'pair')
     } catch (e) {
       // remove only if the element exist locally

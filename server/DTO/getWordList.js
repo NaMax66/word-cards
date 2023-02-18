@@ -3,8 +3,14 @@ export function getWordList(rowPairs) {
     return {
       id: pair_uid,
       pair: {
-        [origin_lang]: origin,
-        [translation_lang]: translation
+        origin: {
+          value: origin,
+          lang: origin_lang
+        },
+        translation: {
+          value: translation,
+          lang: translation_lang
+        },
       }
     }
   })
