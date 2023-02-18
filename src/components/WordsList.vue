@@ -192,9 +192,9 @@ export default defineComponent({
 .edit-modal {
   padding: 3rem 2rem 1.5rem;
   width: 90vw;
-  height: 50vh;
   max-width: 50rem;
-  max-height: 30rem;
+  max-height: 80vh;
+  overflow-y: scroll;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
 
@@ -209,5 +209,6 @@ export default defineComponent({
 .save-edit-btn {
   height: 4rem;
   margin-top: auto;
+  flex-shrink: 0;
 }
 </style>
