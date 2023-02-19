@@ -9,10 +9,13 @@ import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
 import type {Pair} from '@/types/Pair'
 
+import isOnline from '@/services/isOnline'
+
 export default defineComponent({
   components: { AppModal, IconPencil, ButtonBase },
 
   setup() {
+    setTimeout(isOnline, 3000)
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
