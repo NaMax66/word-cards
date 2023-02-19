@@ -2,6 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
+import cloneDeep from 'lodash.clonedeep'
 
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
@@ -32,7 +33,7 @@ export default defineComponent({
 
     function openEdit(pairId: string | number) {
       const pair: Pair | undefined = list.value.find(el => el.id === pairId)
-      if(pair) editPair.value = pair
+      if(pair) editPair.value = cloneDeep(pair)
       isEditOpened.value = true
     }
 
@@ -64,8 +65,6 @@ export default defineComponent({
         <p class="words-list__text">{{ item.origin.value }}</p>
         <div class="separator"></div>
         <p class="words-list__text">{{ item.translation.value }}</p>
-
-
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
             <icon-pencil class="hidden-controls__icon" />
@@ -96,7 +95,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .words-list {
   display: flex;
   flex-direction: column-reverse;

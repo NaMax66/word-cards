@@ -5,6 +5,7 @@ import type { Pair } from '@/types/Pair'
 import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
 import { getAllFromCash, putToCash, removeElementByIdAndPrefix, syncCash } from '@/services/cashControl'
+import cloneDeep from 'lodash.clonedeep'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
@@ -28,6 +29,7 @@ export const useWordListStore = defineStore('word-list', () => {
   async function updatePair(pair: DetailedPair) {
     try {
       await httpClient.post('/update-pair', pair, postOptions)
+      list.value.splice(list.value.findIndex((el) => el.id === pair.id), 1, cloneDeep(pair))
     } catch (e) {
       console.error(e)
     }

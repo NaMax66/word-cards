@@ -4,3 +4,4 @@ declare global {
 }
 declare module 'js-cookie'
 declare module 'lodash.isequal'
+declare module 'lodash.clonedeep'
