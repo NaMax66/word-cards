@@ -1,4 +1,11 @@
 export default {
-  ru: 'Ничего ещё не добавлено',
-  en: 'There is nothing added here yet'
+  origin: {
+    value: 'добавь слово чтобы запомнить',
+    lang: 'ru'
+  },
+  translation: {
+    value: 'add a word to remember',
+    lang: 'en'
+  },
+  id: 1
 }
