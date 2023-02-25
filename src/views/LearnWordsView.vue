@@ -5,7 +5,7 @@
  import cardStub from '@/stub/flipCard'
  import ButtonBase from '@/components/ButtonBase.vue'
  import isMobile from '@/utils/isMobile'
- import type {Pair} from "@/types/Pair";
+ import type { Pair } from '@/types/Pair'
 
  export default defineComponent({
    components: { ButtonBase },
@@ -79,6 +79,7 @@
                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
              </svg>
            </button-base>
+           <span class="word-card__lang">{{ currentCard.origin.lang }}</span>
          </article>
          <article @click="flipMobileOnly" v-else class="word-card">
            <h2 class="grow color-accent">{{ currentCard.translation.value }}</h2>
@@ -88,8 +89,10 @@
                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
              </svg>
            </button-base>
+           <span class="word-card__lang">{{ currentCard.translation.lang }}</span>
          </article>
        </Transition>
+
        <div class="card-controls">
          <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
          <button-base class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
@@ -113,6 +116,7 @@
 }
 
 .word-card {
+  position: relative;
   display: flex;
   gap: 12px;
   max-width: 350px;
@@ -131,6 +135,14 @@
       width: 16px;
       height: 16px;
     }
+  }
+
+  &__lang {
+    position: absolute;
+    line-height: 1;
+    top: calc(var(--space) * 2);
+    right: calc(var(--space) * 2);
+    color: var(--main-contrast-light);
   }
 
   @include devices-mobile {

@@ -1,8 +1,3 @@
-:root {
-  --space: 4px;
-  --c-border: #969696;
-}
-
 html { font-size: 10px; }
 
 *,
@@ -42,6 +37,16 @@ modals-container {
   background: none;
   padding: 8px 12px;
   box-shadow: var(--main-shodow-inside);
+  border-radius: var(--default-b-radius);
+  font-size: var(--fs-main);
+}
+
+.select-base {
+  border: none;
+  outline: none;
+  background: var(--c-background);
+  padding: 8px 12px;
+  box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
   font-size: var(--fs-main);
 }

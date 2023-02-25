@@ -4,6 +4,7 @@ import type { Locale } from '@/types/Locale'
 import { locale } from '@/types/Locale'
 
 export const useLangStore = defineStore('languages', () => {
+  const allLangs = ref(locale)
   const userLang = ref<Locale>(locale.ru)
   const setUserLang = (lang: Locale) => {
     userLang.value = lang
@@ -19,6 +20,8 @@ export const useLangStore = defineStore('languages', () => {
     setUserLang,
 
     targetLang,
-    setTargetLang
+    setTargetLang,
+
+    allLangs
   }
 })

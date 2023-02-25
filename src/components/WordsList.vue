@@ -10,11 +10,14 @@ import AppModal from './AppModal.vue'
 import type {Pair} from '@/types/Pair'
 
 import isOnline from '@/services/isOnline'
+import {useLangStore} from '@/stores/languages'
 
 export default defineComponent({
   components: { AppModal, IconPencil, ButtonBase },
 
   setup() {
+    const { allLangs } = useLangStore()
+
     setTimeout(isOnline, 3000)
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
@@ -46,6 +49,8 @@ export default defineComponent({
     }
 
     return {
+      allLangs,
+
       wordList: list,
       remove,
 
@@ -66,8 +71,10 @@ export default defineComponent({
     <TransitionGroup name="word-list" class="word-list" tag="ul">
       <li class="words-list__item" v-for="item in wordList" :key="item.id">
         <p class="words-list__text">{{ item.origin.value }}</p>
+        <small class="words-list__lang">{{ item.origin.lang }}</small>
         <div class="separator"></div>
         <p class="words-list__text">{{ item.translation.value }}</p>
+        <small class="words-list__lang">{{ item.translation.lang }}</small>
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
             <icon-pencil class="hidden-controls__icon" />
@@ -79,17 +86,23 @@ export default defineComponent({
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
         <div class="edit-modal d-flex flex-column">
+          <label for="origin">
+            {{ $t('origin') }}
+          </label>
           <div class="edit-modal__row">
-            <label for="origin">
-              {{ $t('origin') }}
-            </label>
             <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
+            <select class="select-base" v-model="editPair.origin.lang">
+              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
+            </select>
           </div>
+          <label for="translation">
+            {{ $t('translation') }}
+          </label>
           <div class="edit-modal__row">
-            <label for="translation">
-              {{ $t('translation') }}
-            </label>
             <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
+            <select class="select-base" v-model="editPair.translation.lang">
+              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
+            </select>
           </div>
           <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
@@ -135,6 +148,13 @@ export default defineComponent({
       border-top-left-radius: var(--default-b-radius);
       border-bottom-left-radius: var(--default-b-radius);
     }
+  }
+
+  &__lang {
+    display: flex;
+    align-items: center;
+    color: var(--main-contrast-lighter);
+    margin-right: calc(var(--space) * 2);
   }
 }
 
@@ -191,10 +211,11 @@ export default defineComponent({
   border-radius: var(--default-b-radius);
 
   &__row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 6.5rem;
+    gap: calc(var(--space) * 3);
     margin-bottom: 2rem;
+    align-items: start;
   }
 }
 
