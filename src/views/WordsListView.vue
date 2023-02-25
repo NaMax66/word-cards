@@ -6,7 +6,7 @@ import AddPair from '@/components/AddPair.vue'
 <template>
   <main class="word-list container">
     <words-list class="word-table under-header" />
-    <add-pair class="add-pair pb-3" />
+    <add-pair class="add-pair" />
   </main>
 </template>
 

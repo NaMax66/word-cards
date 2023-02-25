@@ -1,5 +1,5 @@
 export default {
-  add: 'add',
+  'add pair': 'add pair',
   flip: 'flip',
   'learn words': 'learn words',
   'words list': 'words list',

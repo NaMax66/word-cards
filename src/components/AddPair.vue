@@ -26,60 +26,35 @@
 </script>
 
 <template>
-  <form class="add-pair" @submit.prevent="addPair" autocomplete="off">
-    <div class="form-item">
+  <form @submit.prevent="addPair" autocomplete="off">
+<!--    <div class="form-item">
       <label class="input-label" for="targetLang">{{ targetLang }}</label>
       <input-base class="w-100" required id="targetLang" name="targetLang" />
     </div>
     <div class="form-item">
       <label class="input-label" for="userLang">{{ userLang }}</label>
       <input-base class="w-100" required id="userLang" name="userLang" />
-    </div>
-    <button-base class="p-3" type="submit" theme="accent">{{ $t('add') }}</button-base>
+    </div>-->
+    <button-base class="add-pair-btn" type="submit" theme="accent">{{ $t('add pair') }}</button-base>
   </form>
 </template>
 
 <style lang="scss" scoped>
 @import "@/assets/media.scss";
 
+.add-pair-btn {
+  height: 100%;
+  width: 100%;
+}
+
 .add-pair {
   display: flex;
-  gap: 12px;
   position: fixed;
-  bottom: 8px;
-  width: calc(100% - 16px);
-  backdrop-filter: blur(2px);
-
+  width: 100%;
+  height: 5rem;
+  padding: calc(var(--space) * 2) calc(var(--space));
   @include devices-tablet {
-    flex-direction: column;
-    background-color: var(--main-color);
-    box-shadow: var(--main-shodow-top);
-    border-radius: var(--default-b-radius);
-    padding: 8px;
-    left: 8px;
   }
 }
 
-.form-item {
-  flex-grow: 1;
-  background-color: var(--main-color);
-  box-shadow: var(--main-shodow-top);
-  border-radius: var(--default-b-radius);
-  padding: 12px 16px;
-
-  @include devices-tablet {
-    background-color: transparent;
-    box-shadow: none;
-    padding: 0;
-  }
-}
-
-.input-label {
-  display: block;
-  margin-bottom: 8px;
-
-  @include devices-tablet {
-    display: none;
-  }
-}
 </style>

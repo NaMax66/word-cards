@@ -153,6 +153,7 @@ export default defineComponent({
   &__lang {
     display: flex;
     align-items: center;
+    width: 2rem;
     color: var(--main-contrast-lighter);
     margin-right: calc(var(--space) * 2);
   }
