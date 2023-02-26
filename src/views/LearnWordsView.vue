@@ -1,20 +1,20 @@
 <script lang="ts">
  import { computed, ref, defineComponent } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
- import { useLangStore } from '@/stores/languages'
  import { storeToRefs } from 'pinia'
- import flipCard from '@/stub/flipCard'
+ import cardStub from '@/stub/flipCard'
  import ButtonBase from '@/components/ButtonBase.vue'
  import isMobile from '@/utils/isMobile'
+ import type { Pair } from '@/types/Pair'
+ import AddPair from '@/components/AddPair.vue'
 
  export default defineComponent({
-   components: { ButtonBase },
+   components: {AddPair, ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()
 
      const { list } = storeToRefs(useWordListStore())
-     const { userLang, targetLang } = useLangStore()
 
      const getRandomIndex = (maxIndex: number) => {
        return Math.floor(Math.random() * maxIndex)
@@ -26,14 +26,14 @@
        index.value = getRandomIndex(list.value.length)
      }, 60000 * 5)
 
-     const currentCard = computed(() => {
-       return list.value[index.value] || flipCard
+     const currentCard = computed<Pair>(() => {
+       return list.value[index.value] || cardStub
      })
 
-     let lang = ref(userLang)
+     const currentView = ref<'origin' | 'translation'>('origin')
 
      const flip = () => {
-       lang.value = lang.value === userLang ? targetLang : userLang
+       currentView.value = currentView.value === 'origin' ? 'translation' : 'origin'
      }
 
      const next = () => {
@@ -54,15 +54,22 @@
        /* todo add notifications */
      }
 
+     function setCurrent(pair: Omit<Pair, 'id'>) {
+       index.value = list.value.findIndex(el =>
+           el.translation.value === pair.translation.value &&
+           el.origin.value === pair.origin.value
+       )
+     }
+
      return {
        currentCard,
        flip,
        flipMobileOnly,
        copyToClipboard,
        next,
-       lang,
-       userLang,
-       targetLang,
+       currentView,
+
+       setCurrent,
 
        isMobile
      }
@@ -74,28 +81,32 @@
   <main class="learn-words container">
      <div class="under-header">
        <Transition name="card">
-         <article @click="flipMobileOnly" v-if="lang === userLang" class="word-card">
-           <h2 class="grow">{{ currentCard.pair?.[userLang] }}</h2>
-           <button-base @click="copyToClipboard(currentCard.pair?.[userLang])" class="word-card__btn" @click.stop>
+         <article @click="flipMobileOnly" v-if="currentView === 'origin'" class="word-card">
+           <h2 class="grow">{{ currentCard.origin.value }}</h2>
+           <button-base @click="copyToClipboard(currentCard.origin.value)" class="word-card__btn" @click.stop>
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
                <path d="M0 0h24v24H0z" fill="none"/>
                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
              </svg>
            </button-base>
+           <span class="word-card__lang">{{ currentCard.origin.lang }}</span>
          </article>
          <article @click="flipMobileOnly" v-else class="word-card">
-           <h2 class="grow color-accent">{{ currentCard.pair?.[targetLang] }}</h2>
-           <button-base @click="copyToClipboard(currentCard.pair?.[targetLang])" class="word-card__btn" @click.stop>
+           <h2 class="grow color-accent">{{ currentCard.translation.value }}</h2>
+           <button-base @click="copyToClipboard(currentCard.translation.value)" class="word-card__btn" @click.stop>
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
                <path d="M0 0h24v24H0z" fill="none"/>
                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
              </svg>
            </button-base>
+           <span class="word-card__lang">{{ currentCard.translation.lang }}</span>
          </article>
        </Transition>
+
        <div class="card-controls">
-         <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
-         <button-base class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
+         <button-base theme="accent" @click="flip">{{ $t('flip') }}</button-base>
+         <button-base theme="default" @click="next">{{ $t('next') }}</button-base>
+         <add-pair @added="setCurrent" />
        </div>
      </div>
   </main>
@@ -116,6 +127,7 @@
 }
 
 .word-card {
+  position: relative;
   display: flex;
   gap: 12px;
   max-width: 350px;
@@ -136,6 +148,14 @@
     }
   }
 
+  &__lang {
+    position: absolute;
+    line-height: 1;
+    top: calc(var(--space) * 2);
+    right: calc(var(--space) * 2);
+    color: var(--main-contrast-light);
+  }
+
   @include devices-mobile {
     max-height: none;
     max-width: none;
@@ -144,11 +164,13 @@
 
 .card-controls {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   width: auto;
   max-width: 350px;
   gap: 12px;
   margin-top: 24px;
+  height: 4rem;
 
   @include devices-mobile {
     max-width: none;
@@ -157,13 +179,6 @@
     bottom: 8px;
     left: 8px;
   }
-}
-
-.next-btn,
-.flip-btn {
-  flex-grow: 1;
-  width: 40px;
-  height: 40px;
 }
 
 .card-move,

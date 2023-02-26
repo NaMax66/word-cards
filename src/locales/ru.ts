@@ -1,6 +1,7 @@
 export default {
-  add: 'Добавить',
+  'add pair': 'добавить пару',
   flip: 'перевернуть',
+  add: 'добавить',
   'learn words': 'учить слова',
   'words list': 'список слов',
   'next': 'далее',

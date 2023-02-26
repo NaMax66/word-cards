@@ -2,37 +2,32 @@
 import { defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
+import cloneDeep from 'lodash.clonedeep'
 
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
 import type {Pair} from '@/types/Pair'
 
+import {useLangStore} from '@/stores/languages'
+
 export default defineComponent({
   components: { AppModal, IconPencil, ButtonBase },
 
   setup() {
+    const { allLangs } = useLangStore()
+
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
     const { list } = storeToRefs(useWordListStore())
 
     const isEditOpened = ref(false)
-    const editPair = ref<Pair | any>({})
+    const editPair = ref<Pair | undefined>(undefined)
 
     async function updatePair() {
-      const val = editPair.value as Pair
-      await updatePairApi({
-        id: val.id,
-        origin: {
-          lang: 'ru',
-          value: val.pair.ru,
-        },
-        translation: {
-          lang: 'en',
-          value: val.pair.en
-        }
-      })
+      if(!editPair.value) return
+      await updatePairApi(editPair.value)
       closeEdit()
     }
 
@@ -42,16 +37,18 @@ export default defineComponent({
 
     function openEdit(pairId: string | number) {
       const pair: Pair | undefined = list.value.find(el => el.id === pairId)
-      if(pair) editPair.value = pair
+      if(pair) editPair.value = cloneDeep(pair)
       isEditOpened.value = true
     }
 
     function closeEdit() {
-      editPair.value = {}
+      editPair.value = undefined
       isEditOpened.value = false
     }
 
     return {
+      allLangs,
+
       wordList: list,
       remove,
 
@@ -71,11 +68,11 @@ export default defineComponent({
   <div class="words-list-wrap">
     <TransitionGroup name="word-list" class="word-list" tag="ul">
       <li class="words-list__item" v-for="item in wordList" :key="item.id">
-        <p class="words-list__text">{{ item.pair.en }}</p>
+        <p class="words-list__text">{{ item.origin.value }}</p>
+        <small class="words-list__lang">{{ item.origin.lang }}</small>
         <div class="separator"></div>
-        <p class="words-list__text">{{ item.pair.ru }}</p>
-
-
+        <p class="words-list__text">{{ item.translation.value }}</p>
+        <small class="words-list__lang">{{ item.translation.lang }}</small>
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
             <icon-pencil class="hidden-controls__icon" />
@@ -86,18 +83,24 @@ export default defineComponent({
     </TransitionGroup>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
-        <div class="edit-modal d-flex flex-column">
+        <div class="edit-modal d-flex flex-column" v-if="editPair">
+          <label for="origin">
+            {{ $t('origin') }}
+          </label>
           <div class="edit-modal__row">
-            <label for="origin">
-              {{ $t('origin') }}
-            </label>
-            <textarea class="textarea-base" id="origin" v-model="editPair.pair.ru"></textarea>
+            <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
+            <select class="select-base" v-model="editPair.origin.lang">
+              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
+            </select>
           </div>
+          <label for="translation">
+            {{ $t('translation') }}
+          </label>
           <div class="edit-modal__row">
-            <label for="translation">
-              {{ $t('translation') }}
-            </label>
-            <textarea class="textarea-base" id="translation" v-model="editPair.pair.en"></textarea>
+            <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
+            <select class="select-base" v-model="editPair.translation.lang">
+              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
+            </select>
           </div>
           <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
@@ -106,7 +109,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .words-list {
   display: flex;
   flex-direction: column-reverse;
@@ -143,6 +146,14 @@ export default defineComponent({
       border-top-left-radius: var(--default-b-radius);
       border-bottom-left-radius: var(--default-b-radius);
     }
+  }
+
+  &__lang {
+    display: flex;
+    align-items: center;
+    width: 2rem;
+    color: var(--main-contrast-lighter);
+    margin-right: calc(var(--space) * 2);
   }
 }
 
@@ -194,15 +205,16 @@ export default defineComponent({
   width: 90vw;
   max-width: 50rem;
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
 
   &__row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 6.5rem;
+    gap: calc(var(--space) * 3);
     margin-bottom: 2rem;
+    align-items: start;
   }
 }
 

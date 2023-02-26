@@ -1,4 +1,6 @@
 :root {
+  --space: 4px;
+  --c-border: #969696;
   --c-background: #DCE6F2;
   --c-background-a85: rgba(220, 230, 242, 0.8);
   --c-accent: #9147ff;
@@ -10,6 +12,7 @@
   -2px -2px 8px rgba(255,255,255, .85);
   --main-contrast: #424242;
   --main-contrast-light: #7a7a7a;
+  --main-contrast-lighter: #c2c2c2;
   --main-contrast-hard: #212121;
   --default-b-radius: 3px;
   --main-shodow-inside: inset 2px 2px 11px rgba(0,0,0,.15),

@@ -2,15 +2,17 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
+import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
-import { getAllFromCash, putToCash, removeElementByIdAndPrefix, syncCash } from "@/services/cashControl";
+import { getAllFromCash, putToCash, removeElementByIdAndPrefix, syncCash } from '@/services/cashControl'
+import cloneDeep from 'lodash.clonedeep'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
 
-  async function addPair(pair: DetailedPair) {
+  async function addPair(pair: Omit<DetailedPair, 'id'>) {
     const tmpId = Date.now()
-    const element = transformPair(pair, tmpId, true)
+    const element = {...pair, id: tmpId, isSyncing: true}
     list.value.push(element)
     try {
       const {data: { data: { uid } }} = await httpClient.post('/add-pair', pair, postOptions)
@@ -25,9 +27,9 @@ export const useWordListStore = defineStore('word-list', () => {
   }
 
   async function updatePair(pair: DetailedPair) {
-    console.log(pair)
     try {
       await httpClient.post('/update-pair', pair, postOptions)
+      list.value.splice(list.value.findIndex((el) => el.id === pair.id), 1, cloneDeep(pair))
     } catch (e) {
       console.error(e)
     }
@@ -37,7 +39,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
-      /* todo add to-remove logic */
+      /* todo make without prefix logic */
       removeElementByIdAndPrefix(pairId, 'pair')
     } catch (e) {
       // remove only if the element exist locally
@@ -50,14 +52,16 @@ export const useWordListStore = defineStore('word-list', () => {
     try {
       const {data: { data }} = await httpClient.get('/word-list', {
         withCredentials: true
-      }) as { data: { data: Pair[] } }
+      }) as { data: { data: unknown[] } }
+
+     if(!data.every(isDetailedPair)) throw new Error('wrong data from the server!')
 
       list.value = data
       syncCash(data)
-      syncUnsuncedData(addPair)
+      syncUnsincedData(addPair)
     } catch (e) {
       console.error(e)
-      list.value = getAllFromCash('pair').concat(transformAllPairs(getAllFromCash('unsync_pair')))
+      list.value = getAllFromCash('pair').concat(getAllFromCash('unsync_pair'))
     }
   }
 
@@ -70,7 +74,7 @@ export const useWordListStore = defineStore('word-list', () => {
   }
 })
 
-function syncUnsuncedData(cb: (el: DetailedPair) => Promise<void>) {
+function syncUnsincedData(cb: (el: DetailedPair) => Promise<void>) {
   const unsynced = getAllFromCash('unsync_pair')
 
   unsynced.forEach(el => {
@@ -78,22 +82,4 @@ function syncUnsuncedData(cb: (el: DetailedPair) => Promise<void>) {
       removeElementByIdAndPrefix(el.id, 'unsync_pair')
     })
   })
-}
-
-function transformAllPairs(pairs: DetailedPair[]): Pair[] {
-  return pairs.map(el => {
-    return transformPair(el, el.id || Date.now())
-  })
-}
-
-function transformPair(pair: DetailedPair, id: number | string, isSyncing?: boolean): Pair {
-
-  return  {
-    pair: {
-      [pair.origin.lang]: pair.origin.value,
-        [pair.translation.lang]: pair.translation.value,
-    },
-    isSyncing,
-    id
-  }
 }

@@ -1,15 +1,7 @@
-import type { Locale } from '@/types/Locale'
+import type {DetailedPair} from '@/DTO/DetailedPair'
 
 type Sync = {
   isSyncing?: boolean,
 }
 
-type Id = {
-  id: string | number
-}
-
-export type Pair = {
-  pair: {
-    [key: Locale]: string
-  },
-} & Sync & Id
+export type Pair = DetailedPair & Sync
