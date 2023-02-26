@@ -9,7 +9,6 @@ import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
 import type {Pair} from '@/types/Pair'
 
-import isOnline from '@/services/isOnline'
 import {useLangStore} from '@/stores/languages'
 
 export default defineComponent({
@@ -18,7 +17,6 @@ export default defineComponent({
   setup() {
     const { allLangs } = useLangStore()
 
-    setTimeout(isOnline, 3000)
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 

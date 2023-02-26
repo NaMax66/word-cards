@@ -13,6 +13,6 @@
 todo
 -----
 - add check internet (Promise.any)
-- data cash
 - TS on the server
 - app version check on the always opened tab
+- create native app with a widget
