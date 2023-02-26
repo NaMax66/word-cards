@@ -6,9 +6,10 @@
  import ButtonBase from '@/components/ButtonBase.vue'
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
+ import AddPair from '@/components/AddPair.vue'
 
  export default defineComponent({
-   components: { ButtonBase },
+   components: {AddPair, ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()
@@ -53,6 +54,13 @@
        /* todo add notifications */
      }
 
+     function setCurrent(pair: Omit<Pair, 'id'>) {
+       index.value = list.value.findIndex(el =>
+           el.translation.value === pair.translation.value &&
+           el.origin.value === pair.origin.value
+       )
+     }
+
      return {
        currentCard,
        flip,
@@ -60,6 +68,8 @@
        copyToClipboard,
        next,
        currentView,
+
+       setCurrent,
 
        isMobile
      }
@@ -94,8 +104,9 @@
        </Transition>
 
        <div class="card-controls">
-         <button-base class="flip-btn" theme="default" @click="flip">{{ $t('flip') }}</button-base>
-         <button-base class="next-btn" theme="accent" @click="next">{{ $t('next') }}</button-base>
+         <button-base theme="accent" @click="flip">{{ $t('flip') }}</button-base>
+         <button-base theme="default" @click="next">{{ $t('next') }}</button-base>
+         <add-pair @added="setCurrent" />
        </div>
      </div>
   </main>
@@ -153,11 +164,13 @@
 
 .card-controls {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   width: auto;
   max-width: 350px;
   gap: 12px;
   margin-top: 24px;
+  height: 4rem;
 
   @include devices-mobile {
     max-width: none;
@@ -166,13 +179,6 @@
     bottom: 8px;
     left: 8px;
   }
-}
-
-.next-btn,
-.flip-btn {
-  flex-grow: 1;
-  width: 40px;
-  height: 40px;
 }
 
 .card-move,

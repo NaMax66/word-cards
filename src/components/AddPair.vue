@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-  import {ref} from 'vue'
+  import { ref } from 'vue'
   import { useLangStore } from '@/stores/languages'
   import { useWordListStore } from '@/stores/word-list'
   import ButtonBase from '@/components/ButtonBase.vue'
   import AppModal from './AppModal.vue'
+  import type {Pair} from '@/types/Pair'
 
   const { originLang, translationLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
@@ -11,10 +12,12 @@
 
   const isAddFormShown = ref(false)
 
+  const emit = defineEmits(['added'])
+
   const addPair = (e: Event) => {
     const form = e.target as HTMLFormElement
     const formData = new FormData(form)
-    addPairInStore({
+    const pair: Omit<Pair, 'id'> = {
       origin: {
         lang: formData.get('originLang') as string,
         value: formData.get('originValue') as string
@@ -23,7 +26,10 @@
         lang: formData.get('translationLang') as string,
         value: formData.get('translationValue') as string
       }
-    })
+    }
+    addPairInStore(pair)
+
+    emit('added', pair)
 
     form.reset()
     closeAddForm()
@@ -78,7 +84,7 @@
 
 .add-pair-btn {
   height: 100%;
-  flex-grow: 1;
+  width: 100%;
 }
 
 .submit-btn {
