@@ -85,7 +85,7 @@ export default defineComponent({
     </TransitionGroup>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
-        <div class="edit-modal d-flex flex-column">
+        <div class="edit-modal d-flex flex-column" v-if="editPair">
           <label for="origin">
             {{ $t('origin') }}
           </label>
