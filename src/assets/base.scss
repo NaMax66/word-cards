@@ -39,6 +39,16 @@ modals-container {
   box-shadow: var(--main-shodow-inside);
   border-radius: var(--default-b-radius);
   font-size: var(--fs-main);
+
+  &:active {
+    color: var(--main-contrast-hard);
+    box-shadow: var(--main-shodow-bottom)
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-contrast-hard);
+    outline-offset: 1px;
+  }
 }
 
 .select-base {
@@ -49,4 +59,15 @@ modals-container {
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
   font-size: var(--fs-main);
+
+  &:active {
+    color: var(--main-contrast-hard);
+    box-shadow: var(--main-shodow-bottom)
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-contrast-hard);
+    outline-offset: 1px;
+  }
 }
+
