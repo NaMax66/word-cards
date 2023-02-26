@@ -5,22 +5,22 @@ import { locale } from '@/types/Locale'
 
 export const useLangStore = defineStore('languages', () => {
   const allLangs = ref(locale)
-  const userLang = ref<Locale>(locale.ru)
-  const setUserLang = (lang: Locale) => {
-    userLang.value = lang
+  const originLang = ref<Locale>(locale.ru)
+  const setOriginLang = (lang: Locale) => {
+    originLang.value = lang
   }
 
-  const targetLang = ref<Locale>(locale.en)
-  const setTargetLang = (lang: Locale) => {
-    targetLang.value = lang
+  const translationLang = ref<Locale>(locale.en)
+  const setTranslationLang = (lang: Locale) => {
+    translationLang.value = lang
   }
 
   return {
-    userLang,
-    setUserLang,
+    originLang,
+    setOriginLang,
 
-    targetLang,
-    setTargetLang,
+    translationLang,
+    setTranslationLang,
 
     allLangs
   }
