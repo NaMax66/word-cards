@@ -1,21 +1,20 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
 import {ref} from 'vue'
-import httpClient, { postOptions } from '@/services/httpClient'
+import { useUserDataStore } from '@/stores/userData'
+import { storeToRefs } from 'pinia'
+import checkIsSignedIn from '@/services/checkIsSignedIn'
+const isSignedIn = ref(checkIsSignedIn())
+
+
+const { fetchSettings, saveSettings } = useUserDataStore()
+const { userSettings } = storeToRefs(useUserDataStore())
+
+if (isSignedIn.value) {
+  fetchSettings()
+}
 
 const isSettingsOpened = ref(false)
-
-async function getSettings() {
-  const { data: { data } } = await httpClient.get('/get-user-settings', {
-    withCredentials: true
-  })
-  console.log(data)
-}
-
-function saveSettings() {
-  const settings = JSON.stringify({ interfaceLang: 'en', columnOrder: ['origin', 'translation'] })
-  httpClient.post('/update-user-settings', { settings }, postOptions)
-}
 
 function openSettings() {
   isSettingsOpened.value = true
@@ -33,7 +32,12 @@ function closeSettigns() {
     <Teleport to="modals-container">
       <AppModal :show="isSettingsOpened" @close="closeSettigns">
         <div class="user-settings">
-          <button @click="getSettings">getSettings</button>
+          <ul>
+            <li v-for="(item, i) in userSettings" :key="i">
+              {{ item }}
+            </li>
+          </ul>
+          <button @click="fetchSettings">getSettings</button>
           <button @click="saveSettings">saveSettings</button>
         </div>
       </AppModal>

@@ -14,20 +14,18 @@
 
 <script lang="ts" setup>
 import httpClient from '@/services/httpClient'
-import Cookies from 'js-cookie'
+import checkIsSignedIn from '@/services/checkIsSignedIn'
 import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
 import { observeTabOpen } from '@/services/tabOpenObserver'
 import { useUserDataStore } from '@/stores/userData'
 
-const { userInfo,  clearUserInfo, fetchUserInfo } = useUserDataStore()
+const { userInfo, clearUserInfo, fetchUserInfo } = useUserDataStore()
 
 const googleLoginBtn = ref(null)
 
 observeTabOpen(() => {
-  httpClient.get('/user-data', {
-    withCredentials: true
-  })
+  fetchUserInfo()
 })
 
 /* @ts-ignore */
@@ -37,10 +35,6 @@ GoogleAuth.init(handleCredentialResponse).then(() => {
 })
 
 const isSignedIn = ref(checkIsSignedIn())
-
-function checkIsSignedIn() {
-  return !!Cookies.get('session-token')
-}
 
 if (isSignedIn.value) {
   fetchUserInfo()

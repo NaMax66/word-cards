@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import {ref} from 'vue'
-import httpClient from '@/services/httpClient'
+import httpClient, {postOptions} from '@/services/httpClient'
 
 export const useUserDataStore = defineStore('user-data', () => {
-    const isAuthorized = ref(false)
     const userInfo = ref({
         name: '',
         picture: '',
@@ -28,13 +27,32 @@ export const useUserDataStore = defineStore('user-data', () => {
     }
 
     const userSettings = ref({})
+    function fetchSettings() {
+       return httpClient.get('/get-user-settings', { withCredentials: true})
+           .then(({ data: { data } }) => {
+                userSettings.value = JSON.parse(data.settings)
+            }).catch(console.error)
+    }
+
+    function saveSettings() {
+        const settings = { interfaceLang: 'en', columnOrder: ['origin', 'translation'] }
+        return httpClient.post('/update-user-settings', { settings: JSON.stringify(settings) }, postOptions)
+            .then(({ data }) => {
+                if(data.status === 'success') {
+                    userSettings.value = settings
+                } else {
+                    console.error('server error')
+                }
+            }).catch(console.error)
+    }
 
     return {
         userInfo,
-        setUserInfo,
         clearUserInfo,
         fetchUserInfo,
 
-        userSettings
+        userSettings,
+        fetchSettings,
+        saveSettings
     }
 })
