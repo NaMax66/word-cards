@@ -18,7 +18,9 @@ import Cookies from 'js-cookie'
 import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
 import { observeTabOpen } from '@/services/tabOpenObserver'
+import { useUserDataStore } from '@/stores/userData'
 
+const { userInfo,  clearUserInfo, fetchUserInfo } = useUserDataStore()
 
 const googleLoginBtn = ref(null)
 
@@ -40,37 +42,14 @@ function checkIsSignedIn() {
   return !!Cookies.get('session-token')
 }
 
-const userInfo = ref({
-  name: '',
-  picture: '',
-
-  setUserInfo({ name, picture }: { name: string, picture: string }) {
-    this.name = name
-    this.picture = picture
-  },
-
-  clearUserInfo() {
-    this.name = ''
-    this.picture = ''
-  },
-
-  async fetchData() {
-    const { data: { data } } = await httpClient.get('/user-data', {
-      withCredentials: true
-    })
-
-    userInfo.value.setUserInfo(data)
-  }
-})
-
 if (isSignedIn.value) {
-  userInfo.value.fetchData()
+  fetchUserInfo()
 }
 
 async function logout() {
   await httpClient.get('/logout', { withCredentials: true })
   isSignedIn.value = checkIsSignedIn()
-  userInfo.value.clearUserInfo()
+  clearUserInfo()
   window.location.reload()
 }
 
@@ -82,17 +61,17 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
     withCredentials: true
   })
 
-  userInfo.value.fetchData()
+  fetchUserInfo()
 
   isSignedIn.value = checkIsSignedIn()
   window.location.reload()
 }
 
 const isImgLoaded = ref(false)
+
 function onImgLoad() {
   isImgLoaded.value = true
 }
-
 </script>
 
 <style lang="scss" scoped>
