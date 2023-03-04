@@ -46,22 +46,22 @@ export function getAllPairsByUserId(user_uid) {
   })
 }
 
-export function addUserSettings(user_uid, settings_jwt) {
-  const SQL = 'INSERT INTO user_settings(user_uid, settings_jwt) VALUES (?, ?)'
-  db.run(SQL, [user_uid, settings_jwt], errFn)
+export function addUserSettings(user_uid, settings) {
+  const SQL = 'INSERT INTO user_settings(user_uid, settings) VALUES (?, ?)'
+  db.run(SQL, [user_uid, settings], errFn)
 }
 
-export function updateUserSettings(user_uid, settings_jwt) {
-  const SQL = 'UPDATE user_settings SET settings_jwt = ? WHERE user_uid = ?'
-  db.run(SQL, [settings_jwt, user_uid], errFn)
+export function updateUserSettings(user_uid, settings) {
+  const SQL = 'UPDATE user_settings SET settings = ? WHERE user_uid = ?'
+  db.run(SQL, [settings, user_uid], errFn)
 }
 
 export function getUserSettings(user_uid) {
-  const SQL = 'SELECT settings_jwt from user_settings WHERE user_uid = ?'
+  const SQL = 'SELECT * from user_settings WHERE user_uid = ?'
   return new Promise((resolve, reject) => {
-    db.run(SQL, [user_uid], (err, settings) => {
+    db.get(SQL, [user_uid], (err, row) => {
       if(err) reject(new Error(err.message))
-      resolve(settings)
+      resolve(row ? row.settings : null)
     })
   })
 }

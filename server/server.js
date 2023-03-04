@@ -98,13 +98,13 @@ app.get('/api/logout', (req, res) => {
   res.send({ status: 'success' })
 })
 
-app.post('/api/update-user-settings', (req, res) => {
-  const { settings_jwt } = req.body
-  getUserSettings(req.userId).then(settings => {
-    if(settings) {
-      updateUserSettings(req.userId, settings_jwt)
+app.post('/api/update-user-settings', checkAuth, (req, res) => {
+  const { settings } = req.body
+  getUserSettings(req.userId).then(existingSettings => {
+    if(existingSettings) {
+      updateUserSettings(req.userId, settings)
     } else {
-      addUserSettings(req.userId, settings_jwt)
+      addUserSettings(req.userId, settings)
     }
     res.send({ status: 'success' })
   }).catch(err => {
@@ -113,11 +113,9 @@ app.post('/api/update-user-settings', (req, res) => {
   })
 })
 
-app.get('api/get-user-settings', (req, res) => {
+app.get('/api/get-user-settings', checkAuth, (req, res) => {
   getUserSettings(req.userId).then(settings => {
-    res.append('Access-Control-Allow-Credentials', 'true')
-    res.clearCookie('session-token')
-    res.send({ status: 'success', data: settings })
+    res.send({ status: 'success', data: { settings } })
   }).catch(err => {
     console.error(err)
     res.send({ status: 'error' })
