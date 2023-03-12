@@ -7,9 +7,10 @@ import cloneDeep from 'lodash.clonedeep'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
-import type {Pair} from '@/types/Pair'
+import type { Pair } from '@/types/Pair'
 
-import {useLangStore} from '@/stores/languages'
+import { useLangStore } from '@/stores/languages'
+import { useUserDataStore } from '@/stores/userData'
 
 export default defineComponent({
   components: { AppModal, IconPencil, ButtonBase },
@@ -21,6 +22,7 @@ export default defineComponent({
     fetchWordList()
 
     const { list } = storeToRefs(useWordListStore())
+    const { userInfo } = storeToRefs(useUserDataStore())
 
     const isEditOpened = ref(false)
     const editPair = ref<Pair | undefined>(undefined)
@@ -48,17 +50,14 @@ export default defineComponent({
 
     return {
       allLangs,
-
       wordList: list,
       remove,
-
       isEditOpened,
       openEdit,
       closeEdit,
-
       editPair,
-
-      updatePair
+      updatePair,
+      userInfo
     }
   }
 })
@@ -68,11 +67,11 @@ export default defineComponent({
   <div class="words-list-wrap">
     <TransitionGroup name="word-list" class="word-list" tag="ul">
       <li class="words-list__item" v-for="item in wordList" :key="item.id">
-        <p class="words-list__text">{{ item.origin.value }}</p>
-        <small class="words-list__lang">{{ item.origin.lang }}</small>
+        <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
+        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
         <div class="separator"></div>
-        <p class="words-list__text">{{ item.translation.value }}</p>
-        <small class="words-list__lang">{{ item.translation.lang }}</small>
+        <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
+        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
             <icon-pencil class="hidden-controls__icon" />

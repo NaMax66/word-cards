@@ -4,7 +4,7 @@
   import { useWordListStore } from '@/stores/word-list'
   import ButtonBase from '@/components/ButtonBase.vue'
   import AppModal from './AppModal.vue'
-  import type {Pair} from '@/types/Pair'
+  import type { Pair } from '@/types/Pair'
 
   const { originLang, translationLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()

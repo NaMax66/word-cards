@@ -2,14 +2,14 @@
  import { computed, ref, defineComponent } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
  import { storeToRefs } from 'pinia'
- import cardStub from '@/stub/flipCard'
+ import cardStub from '@/defaultData/flipCard'
  import ButtonBase from '@/components/ButtonBase.vue'
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
  import AddPair from '@/components/AddPair.vue'
 
  export default defineComponent({
-   components: {AddPair, ButtonBase },
+   components: { AddPair, ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()

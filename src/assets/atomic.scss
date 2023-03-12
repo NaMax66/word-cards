@@ -74,6 +74,11 @@
 .p-3 {
   padding: calc(var(--space) * 3) !important;
 }
+
+.p-1 {
+  padding: var(--space) !important;
+}
+
 .pt-3 {
   padding-top: calc(var(--space) * 3) !important;
 }

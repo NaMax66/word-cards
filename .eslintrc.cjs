@@ -13,6 +13,7 @@ module.exports = {
   },
   rules: {
     quotes: ['warn', 'single'],
-    semi: ['warn', 'never']
+    semi: ['warn', 'never'],
+    'object-curly-spacing': ['warn', 'always']
   }
 }

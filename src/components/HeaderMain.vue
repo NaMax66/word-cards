@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RouterLink } from 'vue-router'
 import GoogleAuth from '@/components/GoogleAuth.vue'
+import UserSettigns from '@/components/UserSettigns.vue'
 </script>
 
 <template>
@@ -12,7 +13,10 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
           <RouterLink to="/words-list">{{ $t('words list') }}</RouterLink>
         </div>
       </nav>
-      <GoogleAuth class="ml-auto" />
+      <div class="ml-auto d-block flex-column">
+        <GoogleAuth class="mb-2" />
+        <UserSettigns />
+      </div>
     </div>
   </header>
 </template>

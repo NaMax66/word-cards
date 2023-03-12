@@ -2,7 +2,14 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { checkAuth, verifyUser } from './verify.mjs'
-import { getAllPairsByUserId, addPair, removePair, updatePair } from './db.mjs'
+import {
+  getAllPairsByUserId,
+  addPair,
+  removePair,
+  updatePair,
+  getUserSettings,
+  updateUserSettings,
+  addUserSettings } from './db.mjs'
 import { getWordList } from './DTO/getWordList.js'
 import { v4 as getUID } from 'uuid'
 import history from 'connect-history-api-fallback'
@@ -37,7 +44,7 @@ app.post('/api/login', async (req, res) => {
     res.send({ status: 'success', userData })
   } catch (e) {
     console.error(e)
-    res.send('error')
+    res.send({ status: 'error' })
   }
 })
 
@@ -53,7 +60,7 @@ app.post('/api/add-pair', checkAuth, async (req, res) => {
     res.send({ status: 'success', data: { uid } })
   } catch (e) {
     console.error(e)
-    res.send('error')
+    res.send({ status: 'error' })
   }
 })
 
@@ -65,7 +72,7 @@ app.post('/api/remove-pair', checkAuth, async (req, res) => {
     res.send({ status: 'success' })
   } catch (e) {
     console.error(e)
-    res.send('error')
+    res.send({ status: 'error' })
   }
 })
 
@@ -77,18 +84,38 @@ app.post('/api/update-pair', checkAuth, async (req, res) => {
     res.send({ status: 'success' })
   } catch (e) {
     console.error(e)
-    res.send('error')
+    res.send({ status: 'error' })
   }
 })
 
-app.get('/api/user-data', checkAuth, async (req, res) => {
-  res.send({ status: 'success', data: req.user })
+app.get('/api/user-data', checkAuth, (req, res) => {
+  getUserSettings(req.userId).then(settings => {
+    res.send({ status: 'success', data: { ...req.user, settings } })
+  }).catch(err => {
+    console.error(err)
+    res.send({ status: 'error' })
+  })
 })
 
 app.get('/api/logout', (req, res) => {
   res.append('Access-Control-Allow-Credentials', 'true')
   res.clearCookie('session-token')
-  res.send('success')
+  res.send({ status: 'success' })
+})
+
+app.post('/api/update-user-settings', checkAuth, (req, res) => {
+  const { settings } = req.body
+  getUserSettings(req.userId).then(existingSettings => {
+    if(existingSettings) {
+      updateUserSettings(req.userId, settings)
+    } else {
+      addUserSettings(req.userId, settings)
+    }
+    res.send({ status: 'success' })
+  }).catch(err => {
+    console.error(err)
+    res.send({ status: 'error' })
+  })
 })
 
 const port = process.env.APP_PORT
