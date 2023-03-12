@@ -1,5 +1,5 @@
 export interface Settings {
     interfaceLang: string,
-    columnOrder: string[],
-    fillFormOrder: string[]
+    columnOrder: ('origin' | 'translation')[],
+    fillFormOrder: ('origin' | 'translation')[]
 }

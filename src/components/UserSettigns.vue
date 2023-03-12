@@ -15,7 +15,7 @@ function saveSettings(e: Event) {
   e.preventDefault()
   const form = e.target as HTMLFormElement
   const formData = new FormData(form)
-  const selection = formData.get('column_order') as string
+  const selection = formData.get('column_order') as 'origin' | 'translation'
   saveSettingsStore({ ...settings, columnOrder: [selection, ...settings.columnOrder.filter(el => el !== selection)] })
   closeSettings()
 }
