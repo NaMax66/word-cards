@@ -1,21 +1,24 @@
 import { defineStore } from 'pinia'
-import {ref} from 'vue'
-import httpClient, {postOptions} from '@/services/httpClient'
+import { ref } from 'vue'
+import httpClient, { postOptions } from '@/services/httpClient'
 
 export const useUserDataStore = defineStore('user-data', () => {
     const userInfo = ref({
         name: '',
         picture: '',
+        settings: {}
     })
 
-    function setUserInfo({ name, picture }: { name: string, picture: string }) {
+    function setUserInfo({ name, picture, settings }: { name: string, picture: string, settings: string }) {
         userInfo.value.name = name
         userInfo.value.picture = picture
+        userInfo.value.settings = JSON.parse(settings)
     }
 
     function clearUserInfo() {
         userInfo.value.name = ''
         userInfo.value.picture = ''
+        userInfo.value.settings = {}
     }
 
     async function fetchUserInfo() {
@@ -27,12 +30,7 @@ export const useUserDataStore = defineStore('user-data', () => {
     }
 
     const userSettings = ref({})
-    function fetchSettings() {
-       return httpClient.get('/get-user-settings', { withCredentials: true})
-           .then(({ data: { data } }) => {
-                userSettings.value = JSON.parse(data.settings)
-            }).catch(console.error)
-    }
+
 
     function saveSettings() {
         const settings = { interfaceLang: 'en', columnOrder: ['origin', 'translation'] }
@@ -52,7 +50,6 @@ export const useUserDataStore = defineStore('user-data', () => {
         fetchUserInfo,
 
         userSettings,
-        fetchSettings,
         saveSettings
     }
 })

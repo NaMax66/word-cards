@@ -1,18 +1,12 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
-import {ref} from 'vue'
+import {ref } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
-import checkIsSignedIn from '@/services/checkIsSignedIn'
-const isSignedIn = ref(checkIsSignedIn())
 
 
-const { fetchSettings, saveSettings } = useUserDataStore()
-const { userSettings } = storeToRefs(useUserDataStore())
-
-if (isSignedIn.value) {
-  fetchSettings()
-}
+const { saveSettings } = useUserDataStore()
+const { userInfo } = storeToRefs(useUserDataStore())
 
 const isSettingsOpened = ref(false)
 
@@ -20,7 +14,7 @@ function openSettings() {
   isSettingsOpened.value = true
 }
 
-function closeSettigns() {
+function closeSettings() {
   isSettingsOpened.value = false
 }
 
@@ -30,14 +24,13 @@ function closeSettigns() {
   <div>
     <button @click="openSettings">STNG</button>
     <Teleport to="modals-container">
-      <AppModal :show="isSettingsOpened" @close="closeSettigns">
+      <AppModal :show="isSettingsOpened" @close="closeSettings">
         <div class="user-settings">
           <ul>
-            <li v-for="(item, i) in userSettings" :key="i">
+            <li v-for="(item, i) in userInfo.settings" :key="i">
               {{ item }}
             </li>
           </ul>
-          <button @click="fetchSettings">getSettings</button>
           <button @click="saveSettings">saveSettings</button>
         </div>
       </AppModal>

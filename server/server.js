@@ -88,8 +88,13 @@ app.post('/api/update-pair', checkAuth, async (req, res) => {
   }
 })
 
-app.get('/api/user-data', checkAuth, async (req, res) => {
-  res.send({ status: 'success', data: req.user })
+app.get('/api/user-data', checkAuth, (req, res) => {
+  getUserSettings(req.userId).then(settings => {
+    res.send({ status: 'success', data: { ...req.user, settings } })
+  }).catch(err => {
+    console.error(err)
+    res.send({ status: 'error' })
+  })
 })
 
 app.get('/api/logout', (req, res) => {
@@ -107,15 +112,6 @@ app.post('/api/update-user-settings', checkAuth, (req, res) => {
       addUserSettings(req.userId, settings)
     }
     res.send({ status: 'success' })
-  }).catch(err => {
-    console.error(err)
-    res.send({ status: 'error' })
-  })
-})
-
-app.get('/api/get-user-settings', checkAuth, (req, res) => {
-  getUserSettings(req.userId).then(settings => {
-    res.send({ status: 'success', data: { settings } })
   }).catch(err => {
     console.error(err)
     res.send({ status: 'error' })
