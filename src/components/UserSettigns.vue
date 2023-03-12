@@ -1,14 +1,24 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
-import {ref } from 'vue'
+import { ref } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
+import settings from '@/defaultData/settings'
+import ButtonBase from '@/components/ButtonBase.vue'
 
-
-const { saveSettings } = useUserDataStore()
+const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
 
 const isSettingsOpened = ref(false)
+
+function saveSettings(e: Event) {
+  e.preventDefault()
+  const form = e.target as HTMLFormElement
+  const formData = new FormData(form)
+  const selection = formData.get('column_order') as string
+  saveSettingsStore({ ...settings, columnOrder: [selection, ...settings.columnOrder.filter(el => el !== selection)] })
+  closeSettings()
+}
 
 function openSettings() {
   isSettingsOpened.value = true
@@ -22,17 +32,25 @@ function closeSettings() {
 
 <template>
   <div>
-    <button @click="openSettings">STNG</button>
+    <button-base class="p-1" @click="openSettings">Settings</button-base>
     <Teleport to="modals-container">
       <AppModal :show="isSettingsOpened" @close="closeSettings">
-        <div class="user-settings">
-          <ul>
-            <li v-for="(item, i) in userInfo.settings" :key="i">
-              {{ item }}
+        <form @submit="saveSettings" class="user-settings">
+          <ul class="settings-list">
+            <li class="mb-2">
+              <h3 class="mb-2">List order</h3>
+              <label>
+                <span>Origin left</span>
+                <input class="ml-2" name="column_order" type="radio" value="origin" :checked="userInfo.settings.columnOrder[0] === 'origin'">
+              </label>
+              <label class="ml-3">
+                <span>Translation left</span>
+                <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
+              </label>
             </li>
           </ul>
-          <button @click="saveSettings">saveSettings</button>
-        </div>
+          <button-base class="p-3" type="submit" theme="accent">saveSettings</button-base>
+        </form>
       </AppModal>
     </Teleport>
   </div>
@@ -47,5 +65,10 @@ function closeSettings() {
   overflow-y: auto;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
+}
+
+.settings-list {
+  list-style: none;
+  margin: 0;
 }
 </style>

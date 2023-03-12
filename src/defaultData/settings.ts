@@ -2,7 +2,7 @@ import type { Settings } from '@/types/Settings'
 
 const settings: Settings = {
     interfaceLang: 'en',
-    columnOrder: ['translation', 'origin'],
+    columnOrder: ['origin', 'translation'],
     fillFormOrder: ['translation', 'origin']
 }
 
