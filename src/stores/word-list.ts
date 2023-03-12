@@ -12,10 +12,10 @@ export const useWordListStore = defineStore('word-list', () => {
 
   async function addPair(pair: Omit<DetailedPair, 'id'>) {
     const tmpId = Date.now()
-    const element = {...pair, id: tmpId, isSyncing: true}
+    const element = { ...pair, id: tmpId, isSyncing: true }
     list.value.push(element)
     try {
-      const {data: { data: { uid } }} = await httpClient.post('/add-pair', pair, postOptions)
+      const { data: { data: { uid } } } = await httpClient.post('/add-pair', pair, postOptions)
 
       element.id = uid
       element.isSyncing = false
@@ -50,7 +50,7 @@ export const useWordListStore = defineStore('word-list', () => {
 
   async function fetchWordList() {
     try {
-      const {data: { data }} = await httpClient.get('/word-list', {
+      const { data: { data } } = await httpClient.get('/word-list', {
         withCredentials: true
       }) as { data: { data: unknown[] } }
 

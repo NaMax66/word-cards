@@ -1,4 +1,4 @@
-import type {DetailedPair} from '@/DTO/DetailedPair'
+import type { DetailedPair } from '@/DTO/DetailedPair'
 
 type Sync = {
   isSyncing?: boolean,

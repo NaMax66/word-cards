@@ -9,7 +9,7 @@
  import AddPair from '@/components/AddPair.vue'
 
  export default defineComponent({
-   components: {AddPair, ButtonBase },
+   components: { AddPair, ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()
