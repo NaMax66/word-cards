@@ -5,6 +5,7 @@ import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
 import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
+import IconSettings from '@/components/icons/IconSettings.vue'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
@@ -32,7 +33,9 @@ function closeSettings() {
 
 <template>
   <div>
-    <button-base class="p-1" @click="openSettings">Settings</button-base>
+    <button-base class="trigger-btn" @click="openSettings">
+      <icon-settings />
+    </button-base>
     <Teleport to="modals-container">
       <AppModal :show="isSettingsOpened" @close="closeSettings">
         <form @submit="saveSettings" class="user-settings">
@@ -49,7 +52,7 @@ function closeSettings() {
               </label>
             </li>
           </ul>
-          <button-base class="p-3" type="submit" theme="accent">saveSettings</button-base>
+          <button-base class="p-3 mt-3" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
       </AppModal>
     </Teleport>
@@ -70,5 +73,11 @@ function closeSettings() {
 .settings-list {
   list-style: none;
   margin: 0;
+}
+
+.trigger-btn {
+  width: 40px;
+  height: 40px;
+  padding: 4px;
 }
 </style>

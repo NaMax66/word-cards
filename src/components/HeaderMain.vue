@@ -13,9 +13,9 @@ import UserSettigns from '@/components/UserSettigns.vue'
           <RouterLink to="/words-list">{{ $t('words list') }}</RouterLink>
         </div>
       </nav>
-      <div class="ml-auto d-block flex-column">
-        <GoogleAuth class="mb-2" />
+      <div class="ml-auto d-flex">
         <UserSettigns />
+        <GoogleAuth class="ml-2" />
       </div>
     </div>
   </header>
