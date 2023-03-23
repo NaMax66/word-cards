@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia'
 import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
+import LangSwitcher from "@/components/LangSwitcher.vue";
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
@@ -40,19 +41,23 @@ function closeSettings() {
       <AppModal :show="isSettingsOpened" @close="closeSettings">
         <form @submit="saveSettings" class="user-settings">
           <ul class="settings-list">
-            <li class="mb-2">
-              <h3 class="mb-2">List order</h3>
+            <li class="list-item">
+                <h3 class="mb-2">{{ $t('list order') }}</h3>
               <label>
-                <span>Origin left</span>
+                <span>{{ $t('your language left') }}</span>
                 <input class="ml-2" name="column_order" type="radio" value="origin" :checked="userInfo.settings.columnOrder[0] === 'origin'">
               </label>
               <label class="ml-3">
-                <span>Translation left</span>
+                <span>{{ $t('other language left') }}</span>
                 <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
               </label>
             </li>
+            <li class="list-item">
+              <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
+              <lang-switcher />
+            </li>
           </ul>
-          <button-base class="p-3 mt-3" type="submit" theme="accent">{{ $t('save') }}</button-base>
+          <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
       </AppModal>
     </Teleport>
@@ -61,6 +66,8 @@ function closeSettings() {
 
 <style lang="scss" scoped>
 .user-settings {
+  display: flex;
+  flex-direction: column;
   padding: 3rem 2rem 1.5rem;
   width: 90vw;
   max-width: 50rem;
@@ -79,5 +86,14 @@ function closeSettings() {
   width: 40px;
   height: 40px;
   padding: 4px;
+}
+
+.save-btn {
+  padding: 12px 16px;
+  align-self: flex-end;
+}
+
+.list-item {
+  margin-bottom: 20px;
 }
 </style>
