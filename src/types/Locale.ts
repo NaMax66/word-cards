@@ -2,6 +2,7 @@ export const locale = {
   ru: 'ru',
   en: 'en',
   sr: 'sr',
+  it: 'it',
   kz: 'kz',
   fr: 'fr'
 } as const

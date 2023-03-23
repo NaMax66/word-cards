@@ -50,21 +50,21 @@
     <Teleport to="modals-container">
       <AppModal :show="isAddFormShown" @close="closeAddForm">
         <form class="edit-modal" @submit.prevent="addPair" autocomplete="off">
-          <label for="translation" class="mb-2">
-            {{ $t('translation') }}
-          </label>
-          <div class="edit-modal__row">
-            <textarea class="textarea-base" id="translation" name="translationValue"></textarea>
-            <select class="select-base" name="translationLang" :value="translationLang">
-              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
-            </select>
-          </div>
           <label for="origin" class="mb-2">
-            {{ $t('origin') }}
+            {{ $t('your language') }}
           </label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="origin" name="originValue"></textarea>
             <select class="select-base" name="originLang" :value="originLang">
+              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
+            </select>
+          </div>
+          <label for="translation" class="mb-2">
+            {{ $t('other language') }}
+          </label>
+          <div class="edit-modal__row">
+            <textarea class="textarea-base" id="translation" name="translationValue"></textarea>
+            <select class="select-base" name="translationLang" :value="translationLang">
               <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
             </select>
           </div>
