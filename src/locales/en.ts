@@ -14,5 +14,5 @@ export default {
   'your language left': 'your language left',
   'other language left': 'other language left',
   'your language': 'your language',
-  'other language': 'other language',
+  'other language': 'other language'
 }

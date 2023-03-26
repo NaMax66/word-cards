@@ -41,7 +41,7 @@
        const id = index.value
        let newIndex = getRandomIndex(list.value.length)
        if(id === newIndex) {
-         if(newIndex + 1 === list.value.length) {
+         if(newIndex === list.value.length - 1) {
            newIndex = 0
          } else {
            newIndex++
