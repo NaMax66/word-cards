@@ -61,5 +61,10 @@ const vibration = (e: Event) => {
       color: var(--c-accent-contrast);
     }
   }
+
+  &:disabled {
+    box-shadow: var(--shodow-disabled);
+    opacity: 0.5;
+  }
 }
 </style>
