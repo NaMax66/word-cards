@@ -65,7 +65,10 @@ export default defineComponent({
 
 <template>
   <div class="words-list-wrap">
-    <TransitionGroup name="word-list" class="word-list" tag="ul">
+    <div v-if="!wordList.length">
+      <h2 class="text-center">{{ $t('wordListStub') }}</h2>
+    </div>
+    <TransitionGroup v-else name="word-list" class="word-list" tag="ul">
       <li class="words-list__item" v-for="item in wordList" :key="item.id">
         <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
         <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
