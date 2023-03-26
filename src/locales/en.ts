@@ -3,6 +3,7 @@ export default {
   add: 'add',
   save: 'save',
   flip: 'flip',
+  wordListStub: 'Press the "add pair" button to fill the emptiness :-)',
   'interface language': 'interface language',
   'list order': 'list order',
   'learn words': 'learn words',

@@ -1,5 +1,6 @@
 <script lang="ts">
  import { computed, ref, defineComponent } from 'vue'
+ import type { ComputedRef } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
  import { storeToRefs } from 'pinia'
  import cardStub from '@/defaultData/flipCard'
@@ -39,8 +40,12 @@
      const next = () => {
        const id = index.value
        let newIndex = getRandomIndex(list.value.length)
-       while(id === newIndex) {
-         newIndex = getRandomIndex(list.value.length)
+       if(id === newIndex) {
+         if(newIndex === list.value.length - 1) {
+           newIndex = 0
+         } else {
+           newIndex++
+         }
        }
        index.value = newIndex
      }
@@ -61,6 +66,8 @@
        )
      }
 
+     const isNextBtnActive: ComputedRef<boolean> = computed((): boolean => list.value.length > 1)
+
      return {
        currentCard,
        flip,
@@ -70,6 +77,8 @@
        currentView,
 
        setCurrent,
+
+       isNextBtnActive,
 
        isMobile
      }
@@ -105,7 +114,7 @@
 
        <div class="card-controls">
          <button-base theme="accent" @click="flip">{{ $t('flip') }}</button-base>
-         <button-base theme="default" @click="next">{{ $t('next') }}</button-base>
+         <button-base :disabled="!isNextBtnActive" theme="default" @click="next">{{ $t('next') }}</button-base>
          <add-pair @added="setCurrent" />
        </div>
      </div>

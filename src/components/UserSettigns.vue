@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
-import LangSwitcher from "@/components/LangSwitcher.vue";
+import LangSwitcher from '@/components/LangSwitcher.vue'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
@@ -52,10 +52,11 @@ function closeSettings() {
                 <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
               </label>
             </li>
-            <li class="list-item">
+            <!-- todo set lang from settings -->
+            <!-- <li class="list-item">
               <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
               <lang-switcher />
-            </li>
+            </li>-->
           </ul>
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
