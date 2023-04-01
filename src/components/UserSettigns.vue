@@ -13,13 +13,27 @@ const { userInfo } = storeToRefs(useUserDataStore())
 
 const isSettingsOpened = ref(false)
 
+const newLang = ref<string>(userInfo.value.settings.interfaceLang)
+
 function saveSettings(e: Event) {
   e.preventDefault()
   const form = e.target as HTMLFormElement
   const formData = new FormData(form)
-  const selection = formData.get('column_order') as 'origin' | 'translation'
-  saveSettingsStore({ ...settings, columnOrder: [selection, ...settings.columnOrder.filter(el => el !== selection)] })
+  const columnOrder = formData.get('column_order') as 'origin' | 'translation'
+  saveSettingsStore({ ...settings,
+    columnOrder: [columnOrder, ...settings.columnOrder.filter(el => el !== columnOrder)],
+    interfaceLang: newLang.value
+  })
+  
+  if(newLang.value !== userInfo.value.settings.interfaceLang) {
+    updateInterfaceLang()
+  }
+  
   closeSettings()
+}
+
+function updateInterfaceLang() {
+  console.log('test')
 }
 
 function openSettings() {
@@ -30,6 +44,9 @@ function closeSettings() {
   isSettingsOpened.value = false
 }
 
+function setLang(lang: string) {
+  newLang.value = lang
+}
 </script>
 
 <template>
@@ -52,11 +69,10 @@ function closeSettings() {
                 <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
               </label>
             </li>
-            <!-- todo set lang from settings -->
-            <!-- <li class="list-item">
+            <li class="list-item">
               <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
-              <lang-switcher />
-            </li>-->
+              <lang-switcher :value="userInfo.settings.interfaceLang" @change="setLang" />
+            </li>
           </ul>
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>

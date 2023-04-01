@@ -16,3 +16,4 @@ todo
 - TS on the server
 - app version check on the always opened tab
 - create native app with a widget
+- add the nav pane on the mobile's bottom
