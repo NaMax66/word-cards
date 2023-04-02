@@ -1,18 +1,56 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
+
 import ButtonBase from '@/components/base/BaseButton.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
-import { useI18n } from 'vue-i18n'
+import BaseSelect from '@/components/base/BaseSelect.vue'
+
 import type { Order } from '@/types/Settings'
+import type { Option } from '@/components/base/Option'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 
 const isSettingsOpened = ref(false)
+
+
+
+watch(userInfo.value, (a) => {
+  updateInterfaceLang(a.settings.interfaceLang)
+})
+function updateInterfaceLang(lang: string) {
+  locale.value = lang
+}
+
+function openSettings() {
+  isSettingsOpened.value = true
+}
+function closeSettings() {
+  isSettingsOpened.value = false
+}
+
+const columnOrderOptions = computed<Option<Order>[]>(() => {
+  return [
+    {
+      id: 1,
+      title: t('your language left'),
+      value: 'origin'
+    },
+    {
+      id: 2,
+      title: t('other language left'),
+      value: 'translation'
+    }
+  ]
+})
+const currentColumnOrder = computed(() => {
+  return columnOrderOptions.value.find(el => el.value === userInfo.value.settings.columnOrder[0])
+})
 
 function saveSettings(e: Event) {
   e.preventDefault()
@@ -30,20 +68,6 @@ function saveSettings(e: Event) {
 
   closeSettings()
 }
-
-watch(userInfo.value, (a) => {
-  updateInterfaceLang(a.settings.interfaceLang)
-})
-function updateInterfaceLang(lang: string) {
-  locale.value = lang
-}
-
-function openSettings() {
-  isSettingsOpened.value = true
-}
-function closeSettings() {
-  isSettingsOpened.value = false
-}
 </script>
 
 <template>
@@ -56,15 +80,8 @@ function closeSettings() {
         <form @submit="saveSettings" class="user-settings">
           <ul class="settings-list">
             <li class="list-item">
-                <h3 class="mb-2">{{ $t('list order') }}</h3>
-              <label>
-                <span>{{ $t('your language left') }}</span>
-                <input class="ml-2" name="column_order" type="radio" value="origin" :checked="userInfo.settings.columnOrder[0] === 'origin'">
-              </label>
-              <label class="ml-3">
-                <span>{{ $t('other language left') }}</span>
-                <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
-              </label>
+              <h3 class="mb-2">{{ $t('list order') }}</h3>
+              <base-select name="column_order" :options="columnOrderOptions" :current="currentColumnOrder" />
             </li>
             <li class="list-item">
               <h3 class="mb-2">{{ $t('add pair order') }}</h3>

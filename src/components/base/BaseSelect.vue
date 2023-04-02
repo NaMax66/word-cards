@@ -1,20 +1,17 @@
 <template>
   <select class="base-select">
-    <option v-for="option in options" :value="option.value" :key="option.id">
+    <option v-for="option in options" :value="option.value" :key="option.id" :selected="option.id === current.id">
       {{ option.title }}
     </option>
   </select>
 </template>
 
 <script lang="ts" setup>
-interface Option {
-  id: string | number,
-  title: string | number,
-  value: string | number
-}
+import type { Option } from '@/components/base/Option'
 
 defineProps<{
-  options: Option[]
+  options: Option<any>[],
+  current: Option<any>
 }>()
 </script>
 
