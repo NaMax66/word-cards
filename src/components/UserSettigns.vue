@@ -11,10 +11,12 @@ import BaseSelect from '@/components/base/BaseSelect.vue'
 
 import type { Order } from '@/types/Settings'
 import type { Option } from '@/components/base/Option'
+import type { Locale } from '@/types/Locale'
+import defaultSettings from '@/defaultData/settings'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
-const { locale, t } = useI18n()
+const { locale, t, availableLocales } = useI18n()
 
 const isSettingsOpened = ref(false)
 
@@ -48,8 +50,47 @@ const columnOrderOptions = computed<Option<Order>[]>(() => {
     }
   ]
 })
-const currentColumnOrder = computed(() => {
-  return columnOrderOptions.value.find(el => el.value === userInfo.value.settings.columnOrder[0])
+const currentColumnOrder = computed<Option<Order>>(() => {
+  return columnOrderOptions.value.find(el => el.value === userInfo.value.settings.columnOrder[0]) as Option<Order>
+})
+
+const fillFormOrderOptions = computed<Option<Order>[]>(() => {
+  return [
+    {
+      id: 1,
+      title: t('your language on top'),
+      value: 'origin'
+    },
+    {
+      id: 2,
+      title: t('other language on top'),
+      value: 'translation'
+    }
+  ]
+})
+const currentFillFormOrder = computed<Option<Order>>(() => {
+  return fillFormOrderOptions.value.find(el => el.value === userInfo.value.settings.fillFormOrder[0]) as Option<Order>
+})
+
+const localeOptions = computed<Option<Locale>[]>(() => {
+  /* @ts-ignore */
+  return availableLocales.reduce((acc, el, index) => {
+    const opt: Option<Locale> = {
+      id: index + 1,
+      title: t(el),
+      value: el
+    }
+
+    acc.push(opt)
+
+    return acc
+  }, [])
+})
+const currentLocale = computed<Option<Locale>>(() => {
+  const current = userInfo.value.settings.interfaceLang || defaultSettings.interfaceLang
+  console.log(current)
+
+  return localeOptions.value.find(el => el.value === current) as Option<Locale>
 })
 
 function saveSettings(e: Event) {
@@ -80,28 +121,16 @@ function saveSettings(e: Event) {
         <form @submit="saveSettings" class="user-settings">
           <ul class="settings-list">
             <li class="list-item">
-              <h3 class="mb-2">{{ $t('list order') }}</h3>
-              <base-select name="column_order" :options="columnOrderOptions" :current="currentColumnOrder" />
+              <label for="column_order" class="setting-header">{{ $t('list order') }}</label>
+              <base-select id="column_order" name="column_order" :current="currentColumnOrder" :options="columnOrderOptions" />
             </li>
             <li class="list-item">
-              <h3 class="mb-2">{{ $t('add pair order') }}</h3>
-              <label>
-                <span>{{ $t('your language on top') }}</span>
-                <input class="ml-2" name="fill_form_order" type="radio" value="origin" :checked="userInfo.settings.fillFormOrder[0] === 'origin'">
-              </label>
-              <label class="ml-3">
-                <span>{{ $t('other language on top') }}</span>
-                <input class="ml-2" name="fill_form_order" type="radio" value="translation" :checked="userInfo.settings.fillFormOrder[0] === 'translation'">
-              </label>
+              <label for="fill_form_order" class="setting-header">{{ $t('add pair order') }}</label>
+              <base-select id="fill_form_order" name="fill_form_order" :current="currentFillFormOrder" :options="fillFormOrderOptions" />
             </li>
             <li class="list-item">
-              <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
-              <div class="d-flex align-center gap-2">
-                <label class="d-flex align-center" v-for="locale in $i18n.availableLocales" :key="locale">
-                  <span>{{ $t(locale) }}</span>
-                  <input class="ml-2" name="language" type="radio" :value="locale" :checked="userInfo.settings.interfaceLang === locale">
-                </label>
-              </div>
+              <label for="language" class="setting-header">{{ $t('interface language') }}</label>
+              <base-select id="language" name="language" :current="currentLocale" :options="localeOptions" />
             </li>
           </ul>
 
@@ -147,5 +176,11 @@ function saveSettings(e: Event) {
 
 .list-item {
   margin-bottom: 20px;
+}
+
+.setting-header {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 </style>
