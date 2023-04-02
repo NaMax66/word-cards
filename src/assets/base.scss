@@ -50,24 +50,3 @@ modals-container {
     outline-offset: 1px;
   }
 }
-
-.select-base {
-  border: none;
-  outline: none;
-  background: var(--c-background);
-  padding: 8px 12px;
-  box-shadow: var(--main-shodow-top);
-  border-radius: var(--default-b-radius);
-  font-size: var(--fs-main);
-
-  &:active {
-    color: var(--main-contrast-hard);
-    box-shadow: var(--main-shodow-bottom)
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--main-contrast-hard);
-    outline-offset: 1px;
-  }
-}
-

@@ -4,7 +4,7 @@
  import { useWordListStore } from '@/stores/word-list'
  import { storeToRefs } from 'pinia'
  import cardStub from '@/defaultData/flipCard'
- import ButtonBase from '@/components/ButtonBase.vue'
+ import ButtonBase from '@/components/base/BaseButton.vue'
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
  import AddPair from '@/components/AddPair.vue'

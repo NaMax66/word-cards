@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { useLangStore } from '@/stores/languages'
   import { useWordListStore } from '@/stores/word-list'
-  import ButtonBase from '@/components/ButtonBase.vue'
+  import ButtonBase from '@/components/base/BaseButton.vue'
   import AppModal from './AppModal.vue'
   import type { Pair } from '@/types/Pair'
   import type { Order } from '@/types/Settings'
@@ -67,7 +67,7 @@
             </label>
             <div class="edit-modal__row">
               <textarea class="textarea-base" id="origin" name="originValue"></textarea>
-              <select class="select-base" name="originLang" :value="originLang">
+              <select class="base-select" name="originLang" :value="originLang">
                 <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
               </select>
             </div>
@@ -78,7 +78,7 @@
             </label>
             <div class="edit-modal__row">
               <textarea class="textarea-base" id="translation" name="translationValue"></textarea>
-              <select class="select-base" name="translationLang" :value="translationLang">
+              <select class="base-select" name="translationLang" :value="translationLang">
                 <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
               </select>
             </div>

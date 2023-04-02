@@ -4,7 +4,7 @@ import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 import cloneDeep from 'lodash.clonedeep'
 
-import ButtonBase from '@/components/ButtonBase.vue'
+import ButtonBase from '@/components/base/BaseButton.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
 import AppModal from './AppModal.vue'
 import type { Pair } from '@/types/Pair'
@@ -91,7 +91,7 @@ export default defineComponent(  {
           </label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
-            <select class="select-base" v-model="editPair.origin.lang">
+            <select class="base-select" v-model="editPair.origin.lang">
               <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
             </select>
           </div>
@@ -100,7 +100,7 @@ export default defineComponent(  {
           </label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
-            <select class="select-base" v-model="editPair.translation.lang">
+            <select class="base-select" v-model="editPair.translation.lang">
               <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
             </select>
           </div>
