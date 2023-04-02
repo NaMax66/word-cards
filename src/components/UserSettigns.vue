@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
-import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
-import LangSwitcher from '@/components/LangSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+import type { Order } from '@/types/Settings'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
+const { locale } = useI18n()
 
 const isSettingsOpened = ref(false)
 
@@ -17,19 +18,32 @@ function saveSettings(e: Event) {
   e.preventDefault()
   const form = e.target as HTMLFormElement
   const formData = new FormData(form)
-  const selection = formData.get('column_order') as 'origin' | 'translation'
-  saveSettingsStore({ ...settings, columnOrder: [selection, ...settings.columnOrder.filter(el => el !== selection)] })
+  const columnOrder = formData.get('column_order') as Order
+  const fillFormOrder = formData.get('fill_form_order') as Order
+  const language = formData.get('language') as string
+
+  saveSettingsStore({
+    columnOrder: [columnOrder, ...userInfo.value.settings.columnOrder.filter(el => el !== columnOrder)],
+    fillFormOrder: [fillFormOrder, ...userInfo.value.settings.fillFormOrder.filter(el => el !== fillFormOrder)],
+    interfaceLang: language
+  })
+
   closeSettings()
+}
+
+watch(userInfo.value, (a) => {
+  updateInterfaceLang(a.settings.interfaceLang)
+})
+function updateInterfaceLang(lang: string) {
+  locale.value = lang
 }
 
 function openSettings() {
   isSettingsOpened.value = true
 }
-
 function closeSettings() {
   isSettingsOpened.value = false
 }
-
 </script>
 
 <template>
@@ -52,12 +66,28 @@ function closeSettings() {
                 <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
               </label>
             </li>
-            <!-- todo set lang from settings -->
-            <!-- <li class="list-item">
+            <li class="list-item">
+              <h3 class="mb-2">{{ $t('add pair order') }}</h3>
+              <label>
+                <span>{{ $t('your language on top') }}</span>
+                <input class="ml-2" name="fill_form_order" type="radio" value="origin" :checked="userInfo.settings.fillFormOrder[0] === 'origin'">
+              </label>
+              <label class="ml-3">
+                <span>{{ $t('other language on top') }}</span>
+                <input class="ml-2" name="fill_form_order" type="radio" value="translation" :checked="userInfo.settings.fillFormOrder[0] === 'translation'">
+              </label>
+            </li>
+            <li class="list-item">
               <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
-              <lang-switcher />
-            </li>-->
+              <div class="d-flex align-center gap-2">
+                <label class="d-flex align-center" v-for="locale in $i18n.availableLocales" :key="locale">
+                  <span>{{ $t(locale) }}</span>
+                  <input class="ml-2" name="language" type="radio" :value="locale" :checked="userInfo.settings.interfaceLang === locale">
+                </label>
+              </div>
+            </li>
           </ul>
+
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
       </AppModal>
@@ -76,6 +106,10 @@ function closeSettings() {
   overflow-y: auto;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
+}
+
+.user-settings input {
+  transform: translateY(2px);
 }
 
 .settings-list {
