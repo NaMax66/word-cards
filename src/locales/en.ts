@@ -14,5 +14,8 @@ export default {
   'your language left': 'your language left',
   'other language left': 'other language left',
   'your language': 'your language',
-  'other language': 'other language'
+  'other language': 'other language',
+  'add pair order': 'add pair order',
+  'your language on top': 'your language on top',
+  'other language on top': 'other language on top'
 }

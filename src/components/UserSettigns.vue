@@ -3,28 +3,30 @@ import AppModal from '@/components/AppModal.vue'
 import { ref, watch } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
-import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
 import LangSwitcher from '@/components/LangSwitcher.vue'
 import { useI18n } from 'vue-i18n'
+import type { Order } from '@/types/Settings'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
 
 const isSettingsOpened = ref(false)
 
-const newLang = ref<string>(userInfo.value.settings.interfaceLang)
+const newLang = ref<string | null>(null)
 const { locale } = useI18n()
 
 function saveSettings(e: Event) {
   e.preventDefault()
   const form = e.target as HTMLFormElement
   const formData = new FormData(form)
-  const columnOrder = formData.get('column_order') as 'origin' | 'translation'
-  saveSettingsStore({ ...settings,
-    columnOrder: [columnOrder, ...settings.columnOrder.filter(el => el !== columnOrder)],
-    interfaceLang: newLang.value
+  const columnOrder = formData.get('column_order') as Order
+  const fillFormOrder = formData.get('fill_form_order') as Order
+  saveSettingsStore({
+    columnOrder: [columnOrder, ...userInfo.value.settings.columnOrder.filter(el => el !== columnOrder)],
+    fillFormOrder: [fillFormOrder, ...userInfo.value.settings.fillFormOrder.filter(el => el !== fillFormOrder)],
+    interfaceLang: newLang.value ? newLang.value : userInfo.value.settings.interfaceLang
   })
 
   closeSettings()
@@ -66,6 +68,17 @@ function closeSettings() {
               <label class="ml-3">
                 <span>{{ $t('other language left') }}</span>
                 <input class="ml-2" name="column_order" type="radio" value="translation" :checked="userInfo.settings.columnOrder[0] === 'translation'">
+              </label>
+            </li>
+            <li class="list-item">
+              <h3 class="mb-2">{{ $t('add pair order') }}</h3>
+              <label>
+                <span>{{ $t('your language on top') }}</span>
+                <input class="ml-2" name="fill_form_order" type="radio" value="origin" :checked="userInfo.settings.fillFormOrder[0] === 'origin'">
+              </label>
+              <label class="ml-3">
+                <span>{{ $t('other language on top') }}</span>
+                <input class="ml-2" name="fill_form_order" type="radio" value="translation" :checked="userInfo.settings.fillFormOrder[0] === 'translation'">
               </label>
             </li>
             <li class="list-item">
