@@ -5,17 +5,14 @@ import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
-import LangSwitcher from '@/components/LangSwitcher.vue'
 import { useI18n } from 'vue-i18n'
 import type { Order } from '@/types/Settings'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
+const { locale } = useI18n()
 
 const isSettingsOpened = ref(false)
-
-const newLang = ref<string | null>(null)
-const { locale } = useI18n()
 
 function saveSettings(e: Event) {
   e.preventDefault()
@@ -39,9 +36,6 @@ watch(userInfo.value, (a) => {
 })
 function updateInterfaceLang(lang: string) {
   locale.value = lang
-}
-function setLang(lang: string) {
-  newLang.value = lang
 }
 
 function openSettings() {
@@ -93,6 +87,7 @@ function closeSettings() {
               </div>
             </li>
           </ul>
+
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
       </AppModal>

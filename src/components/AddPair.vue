@@ -6,8 +6,8 @@
   import AppModal from './AppModal.vue'
   import type { Pair } from '@/types/Pair'
   import type { Order } from '@/types/Settings'
-  import {storeToRefs} from "pinia";
-  import {useUserDataStore} from "@/stores/userData";
+  import { storeToRefs } from 'pinia'
+  import { useUserDataStore } from '@/stores/userData'
 
   const { originLang, translationLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
