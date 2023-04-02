@@ -10,8 +10,9 @@ import ru from '@/locales/ru'
 
 const app = createApp(App)
 const i18n = createI18n({
+  legacy: false,
   locale: 'en',
-  fallbackLocale: 'en',
+  globalInjection: true,
   messages: { en, ru }
 })
 

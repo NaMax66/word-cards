@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 defineProps<{ value: string }>()
-
 defineEmits<{
   (e: 'change', lang: string): void
 }>()

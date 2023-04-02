@@ -12,10 +12,10 @@ import type { Pair } from '@/types/Pair'
 import { useLangStore } from '@/stores/languages'
 import { useUserDataStore } from '@/stores/userData'
 
-export default defineComponent({
+export default defineComponent(  {
   components: { AppModal, IconPencil, ButtonBase },
 
-  setup() {
+  setup( ) {
     const { allLangs } = useLangStore()
 
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()

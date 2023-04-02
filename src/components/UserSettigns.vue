@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import AppModal from '@/components/AppModal.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { storeToRefs } from 'pinia'
 import settings from '@/defaultData/settings'
 import ButtonBase from '@/components/ButtonBase.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
 import LangSwitcher from '@/components/LangSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
@@ -14,6 +15,7 @@ const { userInfo } = storeToRefs(useUserDataStore())
 const isSettingsOpened = ref(false)
 
 const newLang = ref<string>(userInfo.value.settings.interfaceLang)
+const { locale } = useI18n()
 
 function saveSettings(e: Event) {
   e.preventDefault()
@@ -24,28 +26,25 @@ function saveSettings(e: Event) {
     columnOrder: [columnOrder, ...settings.columnOrder.filter(el => el !== columnOrder)],
     interfaceLang: newLang.value
   })
-  
-  if(newLang.value !== userInfo.value.settings.interfaceLang) {
-    updateInterfaceLang()
-  }
-  
+
   closeSettings()
 }
 
-function updateInterfaceLang() {
-  console.log('test')
+watch(userInfo.value, (a) => {
+  updateInterfaceLang(a.settings.interfaceLang)
+})
+function updateInterfaceLang(lang: string) {
+  locale.value = lang
+}
+function setLang(lang: string) {
+  newLang.value = lang
 }
 
 function openSettings() {
   isSettingsOpened.value = true
 }
-
 function closeSettings() {
   isSettingsOpened.value = false
-}
-
-function setLang(lang: string) {
-  newLang.value = lang
 }
 </script>
 
