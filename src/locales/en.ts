@@ -1,4 +1,7 @@
 export default {
+  en: 'english',
+  ru: 'russian',
+
   'add pair': 'add pair',
   add: 'add',
   save: 'save',

@@ -23,10 +23,12 @@ function saveSettings(e: Event) {
   const formData = new FormData(form)
   const columnOrder = formData.get('column_order') as Order
   const fillFormOrder = formData.get('fill_form_order') as Order
+  const language = formData.get('language') as string
+
   saveSettingsStore({
     columnOrder: [columnOrder, ...userInfo.value.settings.columnOrder.filter(el => el !== columnOrder)],
     fillFormOrder: [fillFormOrder, ...userInfo.value.settings.fillFormOrder.filter(el => el !== fillFormOrder)],
-    interfaceLang: newLang.value ? newLang.value : userInfo.value.settings.interfaceLang
+    interfaceLang: language
   })
 
   closeSettings()
@@ -83,7 +85,12 @@ function closeSettings() {
             </li>
             <li class="list-item">
               <h3 class="mb-2 d-block">{{ $t('interface language') }}</h3>
-              <lang-switcher :value="userInfo.settings.interfaceLang" @change="setLang" />
+              <div class="d-flex align-center gap-2">
+                <label class="d-flex align-center" v-for="locale in $i18n.availableLocales" :key="locale">
+                  <span>{{ $t(locale) }}</span>
+                  <input class="ml-2" name="language" type="radio" :value="locale" :checked="userInfo.settings.interfaceLang === locale">
+                </label>
+              </div>
             </li>
           </ul>
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
@@ -104,6 +111,10 @@ function closeSettings() {
   overflow-y: auto;
   background: var(--c-background);
   border-radius: var(--default-b-radius);
+}
+
+.user-settings input {
+  transform: translateY(2px);
 }
 
 .settings-list {
