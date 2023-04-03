@@ -73,8 +73,8 @@ const currentFillFormOrder = computed<Option<Order>>(() => {
 })
 
 const localeOptions = computed<Option<Locale>[]>(() => {
-  /* @ts-ignore */
-  return availableLocales.reduce((acc, el, index) => {
+
+  return availableLocales.reduce((acc: Option<Locale>[], el: string, index: number) => {
     const opt: Option<Locale> = {
       id: index + 1,
       title: t(el),
@@ -88,8 +88,6 @@ const localeOptions = computed<Option<Locale>[]>(() => {
 })
 const currentLocale = computed<Option<Locale>>(() => {
   const current = userInfo.value.settings.interfaceLang || defaultSettings.interfaceLang
-  console.log(current)
-
   return localeOptions.value.find(el => el.value === current) as Option<Locale>
 })
 
@@ -147,7 +145,7 @@ function saveSettings(e: Event) {
   flex-direction: column;
   padding: 3rem 2rem 1.5rem;
   width: 90vw;
-  max-width: 50rem;
+  max-width: 30rem;
   max-height: 80vh;
   overflow-y: auto;
   background: var(--c-background);

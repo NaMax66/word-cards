@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useWordListStore } from '@/stores/word-list'
 import { storeToRefs } from 'pinia'
 import cloneDeep from 'lodash.clonedeep'
@@ -11,12 +11,15 @@ import type { Pair } from '@/types/Pair'
 
 import { useLangStore } from '@/stores/languages'
 import { useUserDataStore } from '@/stores/userData'
+import BaseSelect from '@/components/base/BaseSelect.vue'
+import type { Option } from '@/components/base/Option'
+import type { Locale } from '@/types/Locale'
 
 export default defineComponent(  {
-  components: { AppModal, IconPencil, ButtonBase },
+  components: { BaseSelect, AppModal, IconPencil, ButtonBase },
 
   setup( ) {
-    const { allLangs } = useLangStore()
+    const { allLangs, originLang, translationLang } = useLangStore()
 
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
@@ -48,6 +51,46 @@ export default defineComponent(  {
       isEditOpened.value = false
     }
 
+    const langOptions = computed<Option<string>[]>(() => {
+      const langs = Object.values(allLangs)
+      return langs.reduce((acc: Option<string>[], el: string, index: number) => {
+        const opt: Option<string> = {
+          value: el,
+          title: el,
+          id: index + 1
+        }
+        acc.push(opt)
+        return acc
+      }, [])
+    })
+    const originLangOption = computed<Option<string>>(() => {
+      const lang = editPair.value?.origin.lang
+      return langOptions.value.find(el => el.value === lang) || {
+        value: originLang,
+        title: originLang,
+        id: 1
+      }
+    })
+    function setOriginLang({ target }: { target: HTMLSelectElement }) {
+      if (editPair.value) {
+        editPair.value.origin.lang = target.value
+      }
+    }
+
+    const translationLangOption = computed<Option<string>>(() => {
+      const lang = editPair.value?.translation.lang
+      return langOptions.value.find(el => el.value === lang) || {
+        value: translationLang,
+        title: translationLang,
+        id: 1
+      }
+    })
+    function setTranslationLang({ target }: { target: HTMLSelectElement }) {
+      if (editPair.value) {
+        editPair.value.translation.lang = target.value
+      }
+    }
+
     return {
       allLangs,
       wordList: list,
@@ -57,7 +100,13 @@ export default defineComponent(  {
       closeEdit,
       editPair,
       updatePair,
-      userInfo
+      userInfo,
+
+      langOptions,
+      originLangOption,
+      translationLangOption,
+      setOriginLang,
+      setTranslationLang
     }
   }
 })
@@ -91,18 +140,14 @@ export default defineComponent(  {
           </label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
-            <select class="base-select" v-model="editPair.origin.lang">
-              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
-            </select>
+            <base-select :current="originLangOption" :options="langOptions" @input="setOriginLang" />
           </div>
           <label for="translation">
             {{ $t('translation') }}
           </label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
-            <select class="base-select" v-model="editPair.translation.lang">
-              <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
-            </select>
+            <base-select :current="translationLangOption" :options="langOptions" @input="setTranslationLang" />
           </div>
           <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
