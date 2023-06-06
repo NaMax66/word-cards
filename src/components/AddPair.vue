@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+  import { computed, ref } from 'vue'
+  import { storeToRefs } from 'pinia'
+
   import { useLangStore } from '@/stores/languages'
   import { useWordListStore } from '@/stores/word-list'
-  import ButtonBase from '@/components/base/BaseButton.vue'
+  import { useUserDataStore } from '@/stores/userData'
+
   import AppModal from './AppModal.vue'
   import BaseSelect from '@/components/base/BaseSelect.vue'
+  import ButtonBase from '@/components/base/BaseButton.vue'
 
   import type { Pair } from '@/types/Pair'
   import type { Order } from '@/types/Settings'
-  import { storeToRefs } from 'pinia'
-  import { useUserDataStore } from '@/stores/userData'
   import type { Option } from '@/components/base/Option'
 
   const { originLang, translationLang } = useLangStore()

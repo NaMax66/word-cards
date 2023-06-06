@@ -13,7 +13,6 @@ import { useLangStore } from '@/stores/languages'
 import { useUserDataStore } from '@/stores/userData'
 import BaseSelect from '@/components/base/BaseSelect.vue'
 import type { Option } from '@/components/base/Option'
-import type { Locale } from '@/types/Locale'
 
 export default defineComponent(  {
   components: { BaseSelect, AppModal, IconPencil, ButtonBase },
