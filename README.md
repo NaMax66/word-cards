@@ -14,6 +14,7 @@ todo
 -----
 - add check internet (Promise.any)
 - TS on the server
-- app version check on the always opened tab
-- create native app with a widget
+- create native app with a widget(need react native)
 - add the nav pane on the mobile's bottom
+- add drag and drop for modals
+- add form validation(no empty)

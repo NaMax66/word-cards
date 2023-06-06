@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-  import { ref } from 'vue'
+import { computed, ref } from 'vue'
   import { useLangStore } from '@/stores/languages'
   import { useWordListStore } from '@/stores/word-list'
   import ButtonBase from '@/components/base/BaseButton.vue'
   import AppModal from './AppModal.vue'
+  import BaseSelect from '@/components/base/BaseSelect.vue'
+
   import type { Pair } from '@/types/Pair'
   import type { Order } from '@/types/Settings'
   import { storeToRefs } from 'pinia'
   import { useUserDataStore } from '@/stores/userData'
+  import type { Option } from '@/components/base/Option'
 
   const { originLang, translationLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
@@ -17,6 +20,35 @@
   const isAddFormShown = ref(false)
 
   const emit = defineEmits(['added'])
+
+  const langOptions = computed<Option<string>[]>(() => {
+    const langs = Object.values(allLangs)
+    return langs.reduce((acc: Option<string>[], el: string, index: number) => {
+      const opt: Option<string> = {
+        value: el,
+        title: el,
+        id: index + 1
+      }
+      acc.push(opt)
+      return acc
+    }, [])
+  })
+
+  const originLangOption = computed<Option<string>>(() => {
+    return langOptions.value.find(el => el.value === originLang) || {
+      value: originLang,
+      title: originLang,
+      id: 1
+    }
+  })
+
+  const translationLangOption = computed<Option<string>>(() => {
+    return langOptions.value.find(el => el.value === translationLang) || {
+      value: translationLang,
+      title: translationLang,
+      id: 1
+    }
+  })
 
   const addPair = (e: Event) => {
     const form = e.target as HTMLFormElement
@@ -67,9 +99,7 @@
             </label>
             <div class="edit-modal__row">
               <textarea class="textarea-base" id="origin" name="originValue"></textarea>
-              <select class="base-select" name="originLang" :value="originLang">
-                <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
-              </select>
+              <base-select name="originLang" :options="langOptions" :current="originLangOption" />
             </div>
           </div>
           <div class="form-item" :class="getOrderClass('translation')">
@@ -78,9 +108,7 @@
             </label>
             <div class="edit-modal__row">
               <textarea class="textarea-base" id="translation" name="translationValue"></textarea>
-              <select class="base-select" name="translationLang" :value="translationLang">
-                <option v-for="lang in allLangs" :key="lang">{{ lang }}</option>
-              </select>
+              <base-select name="translationLang" :options="langOptions" :current="translationLangOption" />
             </div>
           </div>
           <button-base class="submit-btn" type="submit" theme="accent">{{ $t('add') }}</button-base>
