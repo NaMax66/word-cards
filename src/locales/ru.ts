@@ -18,7 +18,7 @@ export default {
   'other language left': 'другой язык слева',
   'your language': 'ваш язык',
   'other language': 'другой язык',
-  'add pair order': 'порядок в форме добавления',
+  'add pair order': 'порядок в форме добавления пары',
   'your language on top': 'ваш язык сверху',
   'other language on top': 'другой язык сверху'
 }

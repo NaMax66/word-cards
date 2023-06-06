@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import ButtonBase from './ButtonBase.vue'
+import ButtonBase from './base/BaseButton.vue'
 
 interface Props {
   show: boolean
