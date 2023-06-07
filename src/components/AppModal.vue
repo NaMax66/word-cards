@@ -1,5 +1,5 @@
 <template>
-  <Transition name="modal">
+  <Transition name="modal" @after-enter="$emit('endAnimation')">
     <div class="app-modal" v-if="show" @click="$emit('close')">
       <div class="app-modal__content" @click.stop>
         <slot></slot>
@@ -19,6 +19,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   show: false
 })
+
 </script>
 
 <style lang="scss" scoped>

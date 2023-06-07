@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, ref } from 'vue'
+  import { computed, ref, nextTick } from 'vue'
   import { storeToRefs } from 'pinia'
 
   import { useLangStore } from '@/stores/languages'
@@ -73,6 +73,14 @@
     closeAddForm()
   }
 
+  const translationInput = ref<HTMLTextAreaElement | null>(null)
+  const originInput = ref<HTMLTextAreaElement | null>(null)
+
+  // could not work with iphones https://stackoverflow.com/questions/54424729/ios-show-keyboard-on-input-focus
+  function focusOnFirstInput() {
+    translationInput.value?.focus()
+  }
+
   function openAddForm() {
     isAddFormShown.value = true
   }
@@ -93,14 +101,14 @@
   <div class="add-pair">
     <button-base @click="openAddForm" class="add-pair-btn" theme="accent">{{ $t('add pair') }}</button-base>
     <Teleport to="modals-container">
-      <AppModal :show="isAddFormShown" @close="closeAddForm">
+      <AppModal :show="isAddFormShown" @close="closeAddForm" @endAnimation="focusOnFirstInput">
         <form class="edit-modal" @submit.prevent="addPair" autocomplete="off">
           <div class="form-item" :class="getOrderClass('origin')">
             <label for="origin" class="d-block mb-2">
               {{ $t('your language') }}
             </label>
             <div class="edit-modal__row">
-              <textarea class="textarea-base" id="origin" name="originValue"></textarea>
+              <textarea ref="originInput" class="textarea-base" id="origin" name="originValue"></textarea>
               <base-select name="originLang" :options="langOptions" :current="originLangOption" />
             </div>
           </div>
@@ -109,7 +117,7 @@
               {{ $t('other language') }}
             </label>
             <div class="edit-modal__row">
-              <textarea class="textarea-base" id="translation" name="translationValue"></textarea>
+              <textarea ref="translationInput" class="textarea-base" id="translation" name="translationValue"></textarea>
               <base-select name="translationLang" :options="langOptions" :current="translationLangOption" />
             </div>
           </div>
