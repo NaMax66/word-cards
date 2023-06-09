@@ -91,7 +91,8 @@
     const result = []
 
     for(let item of order) {
-      result.push(formItems.find(el => el.id === item))
+      const el = formItems.find(el => el.id === item)
+      if(el) result.push(el)
     }
 
     return result
@@ -120,7 +121,8 @@
 
   // could not work with iphones https://stackoverflow.com/questions/54424729/ios-show-keyboard-on-input-focus
   function focusOnFirstInput() {
-    orderedItems.value[0]?.ref?.focus()
+    const textarea = orderedItems.value[0]?.ref
+    textarea?.focus()
   }
 
   function openAddForm() {
@@ -144,7 +146,8 @@
             </label>
             <div class="edit-modal__row">
               <!-- ref inside v-for hack -->
-              <textarea :ref="el => item.ref = el" class="textarea-base" :id="item.id" :name="item.name" required></textarea>
+              <textarea :ref="//@ts-ignore
+                                el => item.ref = el" class="textarea-base" :id="item.id" :name="item.name" required></textarea>
               <base-select :name="item.langName" :options="item.langOptions" :current="item.currentOption" />
             </div>
           </div>
