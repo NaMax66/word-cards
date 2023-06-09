@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import WordsList from '@/components/WordsList.vue'
-import AddPair from '@/components/AddPair.vue'
+import AddPair from '@/components/AddPair/AddPair.vue'
 </script>
 
 <template>

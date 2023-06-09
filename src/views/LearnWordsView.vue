@@ -7,7 +7,7 @@
  import ButtonBase from '@/components/base/BaseButton.vue'
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
- import AddPair from '@/components/AddPair.vue'
+ import AddPair from '@/components/AddPair/AddPair.vue'
 
  export default defineComponent({
    components: { AddPair, ButtonBase },
