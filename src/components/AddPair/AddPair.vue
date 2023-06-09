@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, ref, nextTick } from 'vue'
+  import { computed, ref } from 'vue'
   import { storeToRefs } from 'pinia'
 
   import { useLangStore } from '@/stores/languages'
@@ -144,7 +144,7 @@
             </label>
             <div class="edit-modal__row">
               <!-- ref inside v-for hack -->
-              <textarea :ref="el => item.ref = el" class="textarea-base" :id="item.id" :name="item.name"></textarea>
+              <textarea :ref="el => item.ref = el" class="textarea-base" :id="item.id" :name="item.name" required></textarea>
               <base-select :name="item.langName" :options="item.langOptions" :current="item.currentOption" />
             </div>
           </div>
