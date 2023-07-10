@@ -22,8 +22,9 @@ export function getAllFromCash(prefix: Prefix = PAIR): any[] {
   return data
 }
 
-export function removeElementByIdAndPrefix(id: string | number, prefix: Prefix) {
-  localStorage.removeItem(`${prefix}_${id}`)
+export function removeElementById(id: string | number) {
+  localStorage.removeItem(`${PAIR}_${id}`)
+  localStorage.removeItem(`${UNSYNC_PAIR}_${id}`)
 }
 
 export function clearCash(prefix: Prefix = PAIR) {

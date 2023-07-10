@@ -4,7 +4,7 @@ import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
 import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
-import { getAllFromCash, putToCash, removeElementByIdAndPrefix, syncCash } from '@/services/cashControl'
+import { getAllFromCash, putToCash, removeElementById, syncCash } from '@/services/cashControl'
 import cloneDeep from 'lodash.clonedeep'
 
 export const useWordListStore = defineStore('word-list', () => {
@@ -40,10 +40,10 @@ export const useWordListStore = defineStore('word-list', () => {
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
       /* todo make without prefix logic */
-      removeElementByIdAndPrefix(pairId, 'pair')
+      removeElementById(pairId)
     } catch (e) {
       // remove only if the element exist locally
-      removeElementByIdAndPrefix(pairId, 'unsync_pair')
+      removeElementById(pairId)
       console.error(e)
     }
   }
@@ -79,7 +79,7 @@ function syncUnsincedData(cb: (el: DetailedPair) => Promise<void>) {
 
   unsynced.forEach(el => {
     cb(el).then(() => {
-      removeElementByIdAndPrefix(el.id, 'unsync_pair')
+      removeElementById(el.id)
     })
   })
 }
