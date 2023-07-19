@@ -20,3 +20,7 @@ app.use(router)
 app.use(i18n)
 
 app.mount('#app')
+
+const firstCommit = 'First commit'
+
+console.log(firstCommit)
