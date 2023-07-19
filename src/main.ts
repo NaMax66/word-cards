@@ -21,6 +21,10 @@ app.use(i18n)
 
 app.mount('#app')
 
+const firstCommit = 'First commit'
+
+console.log(firstCommit)
+
 const secondCommit = 'Second commit'
 
 console.log(secondCommit)
