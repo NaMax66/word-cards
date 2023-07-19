@@ -24,3 +24,7 @@ app.mount('#app')
 const firstCommit = 'First commit'
 
 console.log(firstCommit)
+
+const secondCommit = 'Second commit'
+
+console.log(secondCommit)
