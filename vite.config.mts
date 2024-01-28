@@ -18,7 +18,7 @@ export default ({ mode }) => {
     },
     server: {
       host: env.APP_IP,
-      port: Number(env.APP_PORT),
+      port: Number(env.APP_PORT)
     },
     envPrefix: ENV_PREFIX,
 
