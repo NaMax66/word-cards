@@ -8,9 +8,10 @@
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
  import AddPair from '@/components/AddPair/AddPair.vue'
+ import IconCopy from '@/components/icons/IconCopy.vue'
 
  export default defineComponent({
-   components: { AddPair, ButtonBase },
+   components: { IconCopy, AddPair, ButtonBase },
    setup() {
      const { fetchWordList } = useWordListStore()
      fetchWordList()
@@ -93,22 +94,16 @@
          <article @click="flipMobileOnly" v-if="currentView === 'origin'" class="word-card">
            <h2 class="grow">{{ currentCard.origin.value }}</h2>
            <button-base @click="copyToClipboard(currentCard.origin.value)" class="word-card__btn" @click.stop>
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
-               <path d="M0 0h24v24H0z" fill="none"/>
-               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-             </svg>
+             <icon-copy />
            </button-base>
-           <span class="word-card__lang">{{ currentCard.origin.lang }}</span>
+           <span class="word-card__lang">{{ currentCard.origin.lang }} &#8594; {{ currentCard.translation.lang }}</span>
          </article>
          <article @click="flipMobileOnly" v-else class="word-card">
            <h2 class="grow color-accent">{{ currentCard.translation.value }}</h2>
            <button-base @click="copyToClipboard(currentCard.translation.value)" class="word-card__btn" @click.stop>
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
-               <path d="M0 0h24v24H0z" fill="none"/>
-               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-             </svg>
+             <icon-copy />
            </button-base>
-           <span class="word-card__lang">{{ currentCard.translation.lang }}</span>
+           <span class="word-card__lang">{{ currentCard.translation.lang }} &#8594; {{ currentCard.origin.lang }}</span>
          </article>
        </Transition>
 

@@ -3,10 +3,11 @@
     <div v-show="!isSignedIn" ref="googleLoginBtn"></div>
     <div class="signed-out-controller" v-show="isSignedIn">
       <img v-show="isImgLoaded" @load="onImgLoad" class="user-photo" :src="userInfo.picture" alt="user photo">
-      <div v-show="!isImgLoaded" class="user-photo-stab">U</div>
+      <div v-show="!isImgLoaded" class="user-photo-stab"><p>:-)</p></div>
       <div class="ml-2">
-        <h4 class="user-name">{{ userInfo.name }}</h4>
-        <a class="sign-out" href="#" @click.prevent="logout">sign out</a>
+        <a class="sign-out" href="#" @click.prevent="logout">
+          <icon-logout />
+        </a>
       </div>
     </div>
   </div>
@@ -19,6 +20,7 @@ import { ref } from 'vue'
 import { GoogleAuth } from '@/services/auth'
 import { observeTabOpen } from '@/services/tabOpenObserver'
 import { useUserDataStore } from '@/stores/userData'
+import IconLogout from '@/components/icons/IconLogout.vue'
 
 const { userInfo, clearUserInfo, fetchUserInfo } = useUserDataStore()
 
@@ -75,19 +77,14 @@ function onImgLoad() {
   background-color: var(--main-color);
   box-shadow: var(--main-shodow-top);
   border-radius: var(--default-b-radius);
-  padding: 8px 12px;
+  padding: 6px 8px;
 }
 
 .user-photo-stab,
 .user-photo {
-  width: 45px;
-  height: 45px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-
-  @include devices-tablet {
-    width: 35px;
-    height: 35px;
-  }
 }
 
 .user-photo-stab {
@@ -112,6 +109,8 @@ function onImgLoad() {
 
 .sign-out {
   font-size: 14px;
+  margin-left: var(--space);
+  text-align: center;
 
   @include devices-tablet {
     font-size: 12px;
