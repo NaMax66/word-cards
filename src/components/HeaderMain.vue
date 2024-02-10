@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { RouterLink } from 'vue-router'
 import GoogleAuth from '@/components/GoogleAuth.vue'
-import UserSettigns from '@/components/UserSettigns.vue'
+import UserSettings from '@/components/UserSettings.vue'
+import IconList from '@/components/icons/IconList.vue'
+import IconBook from '@/components/icons/IconBook.vue'
 </script>
 
 <template>
@@ -9,12 +11,16 @@ import UserSettigns from '@/components/UserSettigns.vue'
     <div class="container header-content">
       <nav class="d-flex align-center gap-2">
         <div class="link-row">
-          <RouterLink to="/">{{ $t('learn words') }}</RouterLink>
-          <RouterLink to="/words-list">{{ $t('words list') }}</RouterLink>
+          <RouterLink to="/" :title="$t('learn words')">
+            <icon-book />
+          </RouterLink>
+          <RouterLink to="/words-list" :title="$t('words list')">
+            <icon-list />
+          </RouterLink>
         </div>
       </nav>
       <div class="ml-auto d-flex">
-        <UserSettigns />
+        <UserSettings />
         <GoogleAuth class="ml-2" />
       </div>
     </div>
@@ -44,10 +50,6 @@ import UserSettigns from '@/components/UserSettigns.vue'
 .link-row {
   display: flex;
   gap: 8px;
-
-  @include devices-tablet {
-    flex-direction: column;
-  }
 }
 
 .router-link-active {

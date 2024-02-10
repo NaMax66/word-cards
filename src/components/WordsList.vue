@@ -209,7 +209,10 @@ export default defineComponent(  {
 }
 
 .hidden-controls {
-  margin-top: 4px;
+  position: absolute;
+  right: calc(var(--space) * 2);
+  top: 50%;
+  transform: translateY(-50%);
   visibility: hidden;
   opacity: 0;
   display: flex;
