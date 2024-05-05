@@ -9,6 +9,7 @@
 
 - `npm run dev` - starts client
 - `npm run start-dev-srv` - starts local server
+- `npm install --include dev` - install all dependencies on production
 
 todo
 -----
