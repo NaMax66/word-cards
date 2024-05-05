@@ -2,7 +2,7 @@ import axios from 'axios'
 import httpErrors from './httpErrors'
 import { initDefaultAuth } from '@/services/auth'
 
-axios.defaults.baseURL = import.meta.env.APP_API_URL
+axios.defaults.baseURL = '/api'
 
 axios.interceptors.response.use(
   (response) => response,
