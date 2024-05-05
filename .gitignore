@@ -30,4 +30,3 @@ coverage
 .env
 /server/main.db
 /_archive/
-certificates
