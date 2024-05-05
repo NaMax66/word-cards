@@ -1,7 +1,7 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import mkcert from "vite-plugin-mkcert"
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig, loadEnv } from 'vite'
 
 const ENV_PREFIX = 'APP_'
 
@@ -10,7 +10,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), ENV_PREFIX)
 
   return defineConfig({
-    plugins: [vue()],
+    plugins: [mkcert(), vue()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -18,7 +18,10 @@ export default ({ mode }) => {
     },
     server: {
       host: env.APP_IP,
-      port: Number(env.APP_PORT)
+      port: Number(env.APP_PORT),
+      proxy: {
+        "/api": env.APP_API_URL
+      }
     },
     envPrefix: ENV_PREFIX,
 
