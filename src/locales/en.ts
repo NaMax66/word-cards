@@ -20,5 +20,6 @@ export default {
   'other language': 'other language',
   'add pair order': 'add pair order',
   'your language on top': 'your language on top',
-  'other language on top': 'other language on top'
+  'other language on top': 'other language on top',
+  spelling: 'spelling'
 }

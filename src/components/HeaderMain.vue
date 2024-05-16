@@ -4,6 +4,7 @@ import GoogleAuth from '@/components/GoogleAuth.vue'
 import UserSettings from '@/components/UserSettings.vue'
 import IconList from '@/components/icons/IconList.vue'
 import IconBook from '@/components/icons/IconBook.vue'
+import IconEdit from '@/components/icons/IconEdit.vue'
 </script>
 
 <template>
@@ -16,6 +17,9 @@ import IconBook from '@/components/icons/IconBook.vue'
           </RouterLink>
           <RouterLink to="/words-list" :title="$t('words list')">
             <icon-list />
+          </RouterLink>
+          <RouterLink to="/spelling" :title="$t('spelling')">
+            <icon-edit />
           </RouterLink>
         </div>
       </nav>
