@@ -24,5 +24,5 @@ export default {
   spelling: 'spelling',
   'add word': 'add word',
   'the word': 'The word',
-  hint: 'Hint'
+  hint: 'Hint',
 }
