@@ -23,5 +23,6 @@ export default {
   'other language on top': 'other language on top',
   spelling: 'spelling',
   'add word': 'add word',
-  'The word': 'The word'
+  'the word': 'The word',
+  hint: 'Hint'
 }

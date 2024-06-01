@@ -23,5 +23,6 @@ export default {
   'other language on top': 'другой язык сверху',
   spelling: 'правописание',
   'add word': 'добавить слово',
-  'The word': 'Слово'
+  'the word': 'Слово',
+  'hint': 'Подсказка'
 }
