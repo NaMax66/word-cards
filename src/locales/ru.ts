@@ -21,5 +21,7 @@ export default {
   'add pair order': 'порядок в форме добавления пары',
   'your language on top': 'ваш язык сверху',
   'other language on top': 'другой язык сверху',
-  spelling: 'правописание'
+  spelling: 'правописание',
+  'add word': 'добавить слово',
+  'The word': 'Слово'
 }

@@ -21,5 +21,7 @@ export default {
   'add pair order': 'add pair order',
   'your language on top': 'your language on top',
   'other language on top': 'other language on top',
-  spelling: 'spelling'
+  spelling: 'spelling',
+  'add word': 'add word',
+  'The word': 'The word'
 }
