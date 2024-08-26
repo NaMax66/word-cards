@@ -57,7 +57,7 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
     withCredentials: true
   })
 
-  fetchUserInfo()
+  await fetchUserInfo()
 
   isSignedIn.value = checkIsSignedIn()
   window.location.reload()
