@@ -56,6 +56,10 @@
   align-items: center !important;
 }
 
+.justify-center {
+  justify-content: center !important;
+}
+
 .justify-self-end {
   justify-self: end !important;
 }
@@ -77,6 +81,10 @@
 
 .p-3 {
   padding: calc(var(--space) * 3) !important;
+}
+
+.p-2 {
+  padding: calc(var(--space) * 2) !important;
 }
 
 .p-1 {

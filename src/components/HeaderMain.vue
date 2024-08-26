@@ -17,6 +17,10 @@ import IconBook from '@/components/icons/IconBook.vue'
           <RouterLink to="/words-list" :title="$t('words list')">
             <icon-list />
           </RouterLink>
+        <!--  developing...        -->
+        <!-- <RouterLink to="/spelling" :title="$t('spelling')">
+            <icon-edit />
+          </RouterLink>-->
         </div>
       </nav>
       <div class="ml-auto d-flex">

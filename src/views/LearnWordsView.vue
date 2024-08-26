@@ -156,7 +156,7 @@
     position: absolute;
     line-height: 1;
     top: calc(var(--space) * 0.5);
-    right: calc(var(--space) * 0.5);
+    right: calc(var(--space) * 2);
     color: var(--main-contrast-light);
   }
 
