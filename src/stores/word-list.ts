@@ -4,7 +4,6 @@ import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
 import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
-import { getAllFromCash, putToCash, removeElementById, syncCash } from '@/services/cashControl'
 import cloneDeep from 'lodash.clonedeep'
 
 export const useWordListStore = defineStore('word-list', () => {
@@ -19,10 +18,8 @@ export const useWordListStore = defineStore('word-list', () => {
 
       element.id = uid
       element.isSyncing = false
-      putToCash(element)
     } catch (e) {
       console.error(e)
-      putToCash(Object.assign(pair, { id: tmpId }), 'unsync_pair')
     }
   }
 
@@ -39,11 +36,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
-      /* todo make without prefix logic */
-      removeElementById(pairId)
     } catch (e) {
-      // remove only if the element exist locally
-      removeElementById(pairId)
       console.error(e)
     }
   }
@@ -54,14 +47,11 @@ export const useWordListStore = defineStore('word-list', () => {
         withCredentials: true
       }) as { data: { data: unknown[] } }
 
-     if(!data.every(isDetailedPair)) throw new Error('wrong data from the server!')
-
-      list.value = data
-      syncCash(data)
-      syncUnsincedData(addPair)
+     if(data.every(isDetailedPair)) {
+       list.value = data
+     }
     } catch (e) {
       console.error(e)
-      list.value = getAllFromCash('pair').concat(getAllFromCash('unsync_pair'))
     }
   }
 
@@ -73,13 +63,3 @@ export const useWordListStore = defineStore('word-list', () => {
     fetchWordList
   }
 })
-
-function syncUnsincedData(cb: (el: DetailedPair) => Promise<void>) {
-  const unsynced = getAllFromCash('unsync_pair')
-
-  unsynced.forEach(el => {
-    cb(el).then(() => {
-      removeElementById(el.id)
-    })
-  })
-}

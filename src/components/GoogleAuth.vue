@@ -2,8 +2,8 @@
   <div class="google-auth">
     <div v-show="!isSignedIn" ref="googleLoginBtn"></div>
     <div class="signed-out-controller" v-show="isSignedIn">
-      <img v-show="isImgLoaded" @load="onImgLoad" class="user-photo" :src="userInfo.picture" alt="user photo">
-      <div v-show="!isImgLoaded" class="user-photo-stab"><p>:-)</p></div>
+      <img v-if="userInfo.picture" class="user-photo" :src="userInfo.picture" alt="user photo">
+      <div v-else class="user-photo-stab"><p>:-)</p></div>
       <div class="ml-2">
         <a class="sign-out" href="#" @click.prevent="logout">
           <icon-logout />
@@ -61,12 +61,6 @@ async function handleCredentialResponse({ credential }: { credential: string }) 
 
   isSignedIn.value = checkIsSignedIn()
   window.location.reload()
-}
-
-const isImgLoaded = ref(false)
-
-function onImgLoad() {
-  isImgLoaded.value = true
 }
 </script>
 
