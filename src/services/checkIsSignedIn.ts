@@ -6,7 +6,7 @@ export default function checkIsSignedIn() {
   const sessionToken = Cookies.get('session-token')
   if(typeof sessionToken === 'string') {
     try {
-      result = new Date(Number(jwtDecode(sessionToken).exp)).getTime() <= Date.now()
+      result = new Date(Number(jwtDecode(sessionToken).exp) * 1000).getTime() > Date.now()
     } catch (error) {
       console.log(error)
     }
