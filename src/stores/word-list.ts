@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Pair } from '@/types/Pair'
@@ -8,6 +8,15 @@ import cloneDeep from 'lodash.clonedeep'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
+
+  const filterPhrase = ref<string>('')
+  const filteredList = computed(() => {
+    if(!filterPhrase.value) return list.value
+
+    return list.value.filter(el => {
+      return el.origin.value.toLowerCase().includes(filterPhrase.value.toLowerCase()) || el.translation.value.toLowerCase().includes(filterPhrase.value.toLowerCase())
+    })
+  })
 
   async function addPair(pair: Omit<DetailedPair, 'id'>) {
     const tmpId = Date.now()
@@ -60,6 +69,9 @@ export const useWordListStore = defineStore('word-list', () => {
     addPair,
     removePair,
     updatePair,
-    fetchWordList
+    fetchWordList,
+
+    filteredList,
+    filterPhrase
   }
 })

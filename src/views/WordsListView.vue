@@ -4,12 +4,15 @@ import AddPair from '@/components/AddPair/AddPair.vue'
 import IconSearch from '@/components/icons/IconSearch.vue'
 import ButtonBase from '@/components/base/BaseButton.vue'
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useWordListStore } from '@/stores/word-list'
+
+const { filterPhrase } = storeToRefs(useWordListStore())
 
 const viewType = ref<'add-pair' | 'search'>('add-pair')
-const searchPhrase = ref<string>('')
 
 function toggleSearch() {
-  searchPhrase.value = ''
+  filterPhrase.value = ''
   viewType.value === 'add-pair' ? viewType.value = 'search' : viewType.value = 'add-pair'
 }
 </script>
@@ -19,7 +22,7 @@ function toggleSearch() {
     <words-list class="word-table under-header" />
     <div class="add-pair gap-3">
       <add-pair v-if="viewType === 'add-pair'" class="grow" />
-      <input v-else v-model="searchPhrase" class="textarea-base grow" />
+      <input v-else v-model="filterPhrase" class="textarea-base grow" />
 
       <button-base @click="toggleSearch" class="p-2">
         <icon-search />

@@ -23,7 +23,7 @@ export default defineComponent(  {
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
-    const { list } = storeToRefs(useWordListStore())
+    const { filteredList } = storeToRefs(useWordListStore())
     const { userInfo } = storeToRefs(useUserDataStore())
 
     const isEditOpened = ref(false)
@@ -40,7 +40,7 @@ export default defineComponent(  {
     }
 
     function openEdit(pairId: string | number) {
-      const pair: Pair | undefined = list.value.find(el => el.id === pairId)
+      const pair: Pair | undefined = filteredList.value.find(el => el.id === pairId)
       if(pair) editPair.value = cloneDeep(pair)
       isEditOpened.value = true
     }
@@ -92,7 +92,7 @@ export default defineComponent(  {
 
     return {
       allLangs,
-      wordList: list,
+      wordList: filteredList,
       remove,
       isEditOpened,
       openEdit,
