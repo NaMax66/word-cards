@@ -14,7 +14,11 @@ export const useWordListStore = defineStore('word-list', () => {
     if(!filterPhrase.value) return list.value
 
     return list.value.filter(el => {
-      return el.origin.value.toLowerCase().includes(filterPhrase.value.toLowerCase()) || el.translation.value.toLowerCase().includes(filterPhrase.value.toLowerCase())
+      const origin = el.origin.value.toLowerCase()
+      const translation = el.translation.value.toLowerCase()
+      const search = filterPhrase.value.toLowerCase().trim()
+
+      return origin.includes(search) || translation.includes(search)
     })
   })
 

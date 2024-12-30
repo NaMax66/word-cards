@@ -22,7 +22,7 @@ function toggleSearch() {
     <words-list class="word-table under-header" />
     <div class="add-pair gap-3">
       <add-pair v-if="viewType === 'add-pair'" class="grow" />
-      <input v-else v-model="filterPhrase" class="textarea-base grow" />
+      <input v-else type="search" v-model="filterPhrase" class="textarea-base grow" />
 
       <button-base @click="toggleSearch" class="p-2">
         <icon-search />

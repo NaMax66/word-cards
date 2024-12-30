@@ -34,7 +34,7 @@ modals-container {
 .textarea-base {
   border: none;
   outline: none;
-  background: none;
+  background-color: var(--c-background);
   padding: 8px 12px;
   box-shadow: var(--main-shodow-inside);
   border-radius: var(--default-b-radius);
