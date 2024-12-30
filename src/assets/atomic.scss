@@ -70,6 +70,9 @@
 .gap-2 {
   gap: calc(var(--space) * 2) !important;
 }
+.gap-3 {
+  gap: calc(var(--space) * 3) !important;
+}
 
 .grow {
   flex-grow: 1 !important;

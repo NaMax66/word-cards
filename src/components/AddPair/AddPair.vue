@@ -135,7 +135,7 @@
 </script>
 
 <template>
-  <div class="add-pair">
+  <div>
     <button-base @click="openAddForm" class="add-pair-btn" theme="accent">{{ $t('add pair') }}</button-base>
     <Teleport to="modals-container">
       <AppModal :show="isAddFormShown" @close="closeAddForm" @endAnimation="focusOnFirstInput">
