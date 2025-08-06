@@ -112,35 +112,44 @@ export default defineComponent(  {
 </script>
 
 <template>
-  <div class="words-list-wrap">
+  <div class="">
     <div v-if="!filteredList.length">
       <h2 class="text-center">{{ $t('wordListStub') }}</h2>
     </div>
     <DynamicScroller
       class="words-list"
       :items="filteredList"
-      :item-size="10"
+      :min-item-size="50"
       key-field="id"
+      listTag="ul"
+      itemTag="li"
     >
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
+          class="word-list"
           :item="item"
           :active="active"
           :data-index="index"
+          :size-dependencies="[
+            item.origin.value,
+            item.translation.value,
+          ]"
         >
-          <li class="words-list__item">
-            <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
-            <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
-            <div class="separator"></div>
-            <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
-            <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
-            <div class="hidden-controls">
-              <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
-                <icon-pencil class="hidden-controls__icon" />
-              </button-base>
-              <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+          <div class="pt-1 pb-1">
+            <div class="words-list__item">
+              <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
+              <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
+              <div class="separator"></div>
+              <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
+              <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
+              <div class="hidden-controls">
+                <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
+                  <icon-pencil class="hidden-controls__icon" />
+                </button-base>
+                <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+              </div>
             </div>
-          </li>
+          </div>
         </DynamicScrollerItem>
       </template>
     </DynamicScroller>
@@ -172,15 +181,13 @@ export default defineComponent(  {
 .words-list {
   display: flex;
   flex-direction: column-reverse;
-  margin-bottom: 10rem;
-  height: 90%;
 
   &__item {
     display: flex;
     background-color: var(--main-color);
     box-shadow: var(--main-shodow-bottom);
     border-radius: var(--default-b-radius);
-    margin-bottom: 12px;
+    margin: 8px;
     padding: 4px 8px;
     transition: all .3s;
 

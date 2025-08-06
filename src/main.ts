@@ -7,6 +7,7 @@ import VueVirtualScroller from 'vue-virtual-scroller'
 import './assets/main.scss'
 import en from '@/locales/en'
 import ru from '@/locales/ru'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp(App)
 const i18n = createI18n({
