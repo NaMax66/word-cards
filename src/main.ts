@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
-
+import VueVirtualScroller from 'vue-virtual-scroller'
 import './assets/main.scss'
 import en from '@/locales/en'
 import ru from '@/locales/ru'
@@ -18,5 +18,6 @@ const i18n = createI18n({
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
+app.use(VueVirtualScroller)
 
 app.mount('#app')

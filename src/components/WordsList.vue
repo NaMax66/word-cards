@@ -92,7 +92,7 @@ export default defineComponent(  {
 
     return {
       allLangs,
-      wordList: filteredList,
+      filteredList,
       remove,
       isEditOpened,
       openEdit,
@@ -113,24 +113,37 @@ export default defineComponent(  {
 
 <template>
   <div class="words-list-wrap">
-    <div v-if="!wordList.length">
+    <div v-if="!filteredList.length">
       <h2 class="text-center">{{ $t('wordListStub') }}</h2>
     </div>
-    <TransitionGroup v-else name="word-list" class="word-list" tag="ul">
-      <li class="words-list__item" v-for="item in wordList" :key="item.id">
-        <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
-        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
-        <div class="separator"></div>
-        <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
-        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
-        <div class="hidden-controls">
-          <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
-            <icon-pencil class="hidden-controls__icon" />
-          </button-base>
-          <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
-        </div>
-      </li>
-    </TransitionGroup>
+    <DynamicScroller
+      class="words-list"
+      :items="filteredList"
+      :item-size="10"
+      key-field="id"
+    >
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :data-index="index"
+        >
+          <li class="words-list__item">
+            <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
+            <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
+            <div class="separator"></div>
+            <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
+            <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
+            <div class="hidden-controls">
+              <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
+                <icon-pencil class="hidden-controls__icon" />
+              </button-base>
+              <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+            </div>
+          </li>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
         <div class="edit-modal d-flex flex-column" v-if="editPair">
@@ -159,6 +172,8 @@ export default defineComponent(  {
 .words-list {
   display: flex;
   flex-direction: column-reverse;
+  margin-bottom: 10rem;
+  height: 90%;
 
   &__item {
     display: flex;

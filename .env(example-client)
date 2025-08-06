@@ -2,4 +2,4 @@ APP_GOOGLE_CLIENT_ID=<your-google-client-id>
 APP_PORT=5173
 APP_IP=localhost
 #for local development
-APP_API_URL=https://localhost:8080
+APP_API_URL=http://localhost:8080
