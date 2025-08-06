@@ -92,7 +92,7 @@ export default defineComponent(  {
 
     return {
       allLangs,
-      wordList: filteredList,
+      filteredList,
       remove,
       isEditOpened,
       openEdit,
@@ -113,11 +113,11 @@ export default defineComponent(  {
 
 <template>
   <div class="words-list-wrap">
-    <div v-if="!wordList.length">
+    <div v-if="!filteredList.length">
       <h2 class="text-center">{{ $t('wordListStub') }}</h2>
     </div>
-    <TransitionGroup v-else name="word-list" class="word-list" tag="ul">
-      <li class="words-list__item" v-for="item in wordList" :key="item.id">
+    <ul v-else class="word-list">
+      <li class="words-list__item" v-for="item in filteredList" :key="item.id">
         <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
         <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
         <div class="separator"></div>
@@ -130,7 +130,7 @@ export default defineComponent(  {
           <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
         </div>
       </li>
-    </TransitionGroup>
+    </ul>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
         <div class="edit-modal d-flex flex-column" v-if="editPair">
