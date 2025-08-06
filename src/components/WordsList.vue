@@ -159,6 +159,8 @@ export default defineComponent(  {
 .words-list {
   display: flex;
   flex-direction: column-reverse;
+  margin-bottom: 10rem;
+  height: 90%;
 
   &__item {
     display: flex;
