@@ -3,25 +3,30 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p type-check type-check:worker build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
+    "type-check:worker": "tsc --noEmit -p tsconfig.worker.json",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "start": "cd server && npm run start",
     "start-dev-srv": "cd server && npm run dev",
-    "start-all": "npm-run-all --parallel dev start-dev-srv"
+    "start-all": "npm-run-all --parallel dev start-dev-srv",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
+    "cf:types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local"
   },
   "dependencies": {
     "axios": "^1.7.9",
     "js-cookie": "^3.0.1",
+    "jwt-decode": "^4.0.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.isequal": "^4.5.0",
     "pinia": "^2.0.23",
     "vue": "^3.2.41",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.1.5",
-    "lodash.isequal": "^4.5.0",
-    "lodash.clonedeep": "^4.5.0",
-    "jwt-decode": "^4.0.0"
+    "vue-router": "^4.1.5"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
@@ -39,6 +44,7 @@
     "typescript": "~4.7.4",
     "vite": "^5.4.2",
     "vite-plugin-mkcert": "^1.17.5",
-    "vue-tsc": "^1.0.8"
+    "vue-tsc": "^1.0.8",
+    "wrangler": "^4.94.0"
   }
 }
