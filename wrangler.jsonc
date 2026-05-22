@@ -13,8 +13,7 @@
     {
       "binding": "DB",
       "database_name": "word-cards-dev",
-      // Replace this after creating the development D1 database.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "537a5f65-a993-460b-8ac3-ca067fce9d2e",
       "migrations_dir": "./migrations"
     }
   ]
