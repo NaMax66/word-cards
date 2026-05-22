@@ -5,6 +5,7 @@ import type { Pair } from '@/types/Pair'
 import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
 import cloneDeep from 'lodash.clonedeep'
+import checkIsSignedIn from '@/services/checkIsSignedIn'
 
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
@@ -55,6 +56,8 @@ export const useWordListStore = defineStore('word-list', () => {
   }
 
   async function fetchWordList() {
+    if(!checkIsSignedIn()) return
+
     try {
       const { data: { data } } = await httpClient.get('/word-list', {
         withCredentials: true

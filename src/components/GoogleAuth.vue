@@ -27,7 +27,9 @@ const { userInfo, clearUserInfo, fetchUserInfo } = useUserDataStore()
 const googleLoginBtn = ref(null)
 
 observeTabOpen(() => {
-  fetchUserInfo()
+  if (checkIsSignedIn()) {
+    fetchUserInfo()
+  }
 })
 
 /* @ts-ignore */

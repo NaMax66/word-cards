@@ -1,5 +1,5 @@
 import { routeApiRequest } from './routes'
-import { json } from './responses'
+import { withAppHeaders } from './responses'
 
 export default {
   async fetch(request: Request, env: Env) {
@@ -9,6 +9,10 @@ export default {
       return routeApiRequest(request, env)
     }
 
-    return new Response('Not found', { status: 404 })
+    if (env.ASSETS) {
+      return withAppHeaders(await env.ASSETS.fetch(request))
+    }
+
+    return withAppHeaders(new Response('Not found', { status: 404 }))
   }
 }
