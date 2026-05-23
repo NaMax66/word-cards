@@ -3,18 +3,32 @@ import WordsList from '@/components/WordsList.vue'
 import AddPair from '@/components/AddPair/AddPair.vue'
 import IconSearch from '@/components/icons/IconSearch.vue'
 import ButtonBase from '@/components/base/BaseButton.vue'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWordListStore } from '@/stores/word-list'
 
+const { fetchWordList } = useWordListStore()
 const { filterPhrase } = storeToRefs(useWordListStore())
 
 const viewType = ref<'add-pair' | 'search'>('add-pair')
+let searchTimeout: ReturnType<typeof setTimeout> | undefined
 
 function toggleSearch() {
   filterPhrase.value = ''
   viewType.value === 'add-pair' ? viewType.value = 'search' : viewType.value = 'add-pair'
 }
+
+watch(filterPhrase, () => {
+  if(searchTimeout) clearTimeout(searchTimeout)
+
+  searchTimeout = setTimeout(() => {
+    fetchWordList()
+  }, 300)
+})
+
+onBeforeUnmount(() => {
+  if(searchTimeout) clearTimeout(searchTimeout)
+})
 </script>
 
 <template>

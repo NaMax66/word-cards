@@ -23,7 +23,7 @@ export default defineComponent(  {
     const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
     fetchWordList()
 
-    const { filteredList } = storeToRefs(useWordListStore())
+    const { filteredList, hasMore, isLoading } = storeToRefs(useWordListStore())
     const { userInfo } = storeToRefs(useUserDataStore())
 
     const isEditOpened = ref(false)
@@ -37,6 +37,10 @@ export default defineComponent(  {
 
     function remove(pairId: string | number) {
       removePair(pairId)
+    }
+
+    function loadMore() {
+      fetchWordList({ reset: false })
     }
 
     function openEdit(pairId: string | number) {
@@ -93,7 +97,10 @@ export default defineComponent(  {
     return {
       allLangs,
       filteredList,
+      hasMore,
+      isLoading,
       remove,
+      loadMore,
       isEditOpened,
       openEdit,
       closeEdit,
@@ -113,10 +120,13 @@ export default defineComponent(  {
 
 <template>
   <div class="words-list-wrap">
-    <div v-if="!filteredList.length">
+    <div v-if="!filteredList.length && !isLoading">
       <h2 class="text-center">{{ $t('wordListStub') }}</h2>
     </div>
-    <ul v-else class="word-list">
+    <button-base v-if="filteredList.length && hasMore" class="load-more" :disabled="isLoading" @click="loadMore">
+      {{ isLoading ? 'Loading...' : 'Load more' }}
+    </button-base>
+    <ul v-if="filteredList.length" class="word-list">
       <li class="words-list__item" v-for="item in filteredList" :key="item.id">
         <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
         <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
@@ -201,6 +211,12 @@ export default defineComponent(  {
     color: var(--main-contrast-lighter);
     margin-right: calc(var(--space) * 2);
   }
+}
+
+.load-more {
+  width: 100%;
+  height: 4rem;
+  margin-bottom: 12px;
 }
 
 .separator {

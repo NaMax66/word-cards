@@ -1,5 +1,5 @@
 <script lang="ts">
- import { computed, ref, defineComponent } from 'vue'
+ import { computed, ref, defineComponent, onBeforeUnmount } from 'vue'
  import type { ComputedRef } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
  import { storeToRefs } from 'pinia'
@@ -13,23 +13,21 @@
  export default defineComponent({
    components: { IconCopy, AddPair, ButtonBase },
    setup() {
-     const { fetchWordList } = useWordListStore()
-     fetchWordList()
+     const { fetchRandomPair } = useWordListStore()
+     fetchRandomPair()
 
-     const { list } = storeToRefs(useWordListStore())
-
-     const getRandomIndex = (maxIndex: number) => {
-       return Math.floor(Math.random() * maxIndex)
-     }
-
-     let index = ref(getRandomIndex(list.value.length))
-
-     setInterval(() => {
-       index.value = getRandomIndex(list.value.length)
+     const refreshIntervalId = setInterval(() => {
+       fetchRandomPair()
      }, 60000 * 5)
 
+     onBeforeUnmount(() => {
+       clearInterval(refreshIntervalId)
+     })
+
+     const { randomPair, pairsCount } = storeToRefs(useWordListStore())
+
      const currentCard = computed<Pair>(() => {
-       return list.value[index.value] || cardStub
+       return randomPair.value || cardStub
      })
 
      const currentView = ref<'origin' | 'translation'>('origin')
@@ -39,16 +37,7 @@
      }
 
      const next = () => {
-       const id = index.value
-       let newIndex = getRandomIndex(list.value.length)
-       if(id === newIndex) {
-         if(newIndex === list.value.length - 1) {
-           newIndex = 0
-         } else {
-           newIndex++
-         }
-       }
-       index.value = newIndex
+       fetchRandomPair()
      }
 
      const flipMobileOnly = () => {
@@ -61,13 +50,14 @@
      }
 
      function setCurrent(pair: Omit<Pair, 'id'>) {
-       index.value = list.value.findIndex(el =>
-           el.translation.value === pair.translation.value &&
-           el.origin.value === pair.origin.value
-       )
+       randomPair.value = {
+         ...pair,
+         id: Date.now()
+       }
+       pairsCount.value += 1
      }
 
-     const isNextBtnActive: ComputedRef<boolean> = computed((): boolean => list.value.length > 1)
+     const isNextBtnActive: ComputedRef<boolean> = computed((): boolean => pairsCount.value > 1)
 
      return {
        currentCard,

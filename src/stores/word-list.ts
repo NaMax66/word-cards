@@ -7,26 +7,35 @@ import type { DetailedPair } from '@/DTO/DetailedPair'
 import cloneDeep from 'lodash.clonedeep'
 import checkIsSignedIn from '@/services/checkIsSignedIn'
 
+type WordListPage = {
+  items: unknown[]
+  nextCursor: string | null
+}
+
+type RandomPairResponse = {
+  pair: unknown
+  count: number
+}
+
 export const useWordListStore = defineStore('word-list', () => {
   const list = ref<Array<Pair>>([])
 
   const filterPhrase = ref<string>('')
-  const filteredList = computed(() => {
-    if(!filterPhrase.value) return list.value
-
-    return list.value.filter(el => {
-      const origin = el.origin.value.toLowerCase()
-      const translation = el.translation.value.toLowerCase()
-      const search = filterPhrase.value.toLowerCase().trim()
-
-      return origin.includes(search) || translation.includes(search)
-    })
-  })
+  const filteredList = computed(() => list.value)
+  const nextCursor = ref<string | null>(null)
+  const hasMore = computed(() => Boolean(nextCursor.value))
+  const isLoading = ref(false)
+  const randomPair = ref<Pair | null>(null)
+  const pairsCount = ref(0)
+  let activeListRequest = 0
 
   async function addPair(pair: Omit<DetailedPair, 'id'>) {
     const tmpId = Date.now()
     const element = { ...pair, id: tmpId, isSyncing: true }
-    list.value.push(element)
+    if(!filterPhrase.value) {
+      list.value.push(element)
+    }
+
     try {
       const { data: { data: { uid } } } = await httpClient.post('/add-pair', pair, postOptions)
 
@@ -40,7 +49,13 @@ export const useWordListStore = defineStore('word-list', () => {
   async function updatePair(pair: DetailedPair) {
     try {
       await httpClient.post('/update-pair', pair, postOptions)
-      list.value.splice(list.value.findIndex((el) => el.id === pair.id), 1, cloneDeep(pair))
+      const index = list.value.findIndex((el) => el.id === pair.id)
+      if(index !== -1) {
+        list.value.splice(index, 1, cloneDeep(pair))
+      }
+      if(randomPair.value?.id === pair.id) {
+        randomPair.value = cloneDeep(pair)
+      }
     } catch (e) {
       console.error(e)
     }
@@ -55,17 +70,58 @@ export const useWordListStore = defineStore('word-list', () => {
     }
   }
 
-  async function fetchWordList() {
+  async function fetchWordList({ reset = true } = {}) {
     if(!checkIsSignedIn()) return
+    if(!reset && isLoading.value) return
+
+    if(reset) {
+      nextCursor.value = null
+    } else if(!nextCursor.value) {
+      return
+    }
+
+    const requestId = activeListRequest + 1
+    activeListRequest = requestId
+    isLoading.value = true
 
     try {
       const { data: { data } } = await httpClient.get('/word-list', {
-        withCredentials: true
-      }) as { data: { data: unknown[] } }
+        withCredentials: true,
+        params: {
+          limit: 50,
+          cursor: reset ? undefined : nextCursor.value,
+          search: filterPhrase.value.trim() || undefined
+        }
+      }) as { data: { data: WordListPage } }
 
-     if(data.every(isDetailedPair)) {
-       list.value = data
-     }
+      const items = data.items.filter(isDetailedPair).reverse()
+      if(requestId !== activeListRequest) return
+
+      nextCursor.value = data.nextCursor
+
+      list.value = reset ? items : [...items, ...list.value]
+    } catch (e) {
+      console.error(e)
+    } finally {
+      if(requestId === activeListRequest) {
+        isLoading.value = false
+      }
+    }
+  }
+
+  async function fetchRandomPair() {
+    if(!checkIsSignedIn()) return
+
+    try {
+      const { data: { data } } = await httpClient.get('/random-pair', {
+        withCredentials: true,
+        params: {
+          exclude: randomPair.value?.id
+        }
+      }) as { data: { data: RandomPairResponse } }
+
+      pairsCount.value = data.count
+      randomPair.value = isDetailedPair(data.pair) ? data.pair : null
     } catch (e) {
       console.error(e)
     }
@@ -77,8 +133,13 @@ export const useWordListStore = defineStore('word-list', () => {
     removePair,
     updatePair,
     fetchWordList,
+    fetchRandomPair,
 
     filteredList,
-    filterPhrase
+    filterPhrase,
+    hasMore,
+    isLoading,
+    randomPair,
+    pairsCount
   }
 })

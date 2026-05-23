@@ -1,5 +1,5 @@
 import { expiredSessionCookies, getRequestUser, sessionCookies, verifyGoogleCredential } from './auth'
-import { addPair, ensureUser, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
+import { addPair, ensureUser, getPairsCount, getRandomPair, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -22,7 +22,29 @@ export async function routeApiRequest(request: Request, env: Env) {
     }
 
     if (route === 'GET /api/word-list') {
-      return json({ status: 'success', data: await getWordList(env.DB, user.userUid) })
+      const { searchParams } = new URL(request.url)
+
+      return json({
+        status: 'success',
+        data: await getWordList(env.DB, user.userUid, {
+          limit: readNumber(searchParams.get('limit')),
+          cursor: searchParams.get('cursor'),
+          search: searchParams.get('search')
+        })
+      })
+    }
+
+    if (route === 'GET /api/random-pair') {
+      const { searchParams } = new URL(request.url)
+      const currentId = searchParams.get('exclude')
+
+      return json({
+        status: 'success',
+        data: {
+          pair: await getRandomPair(env.DB, user.userUid, currentId),
+          count: await getPairsCount(env.DB, user.userUid)
+        }
+      })
     }
 
     if (route === 'POST /api/add-pair') {
@@ -161,6 +183,14 @@ function requireString(value: string | null, field: string) {
   }
 
   return value
+}
+
+function readNumber(value: string | null) {
+  if (!value) return undefined
+
+  const parsed = Number(value)
+
+  return Number.isFinite(parsed) ? parsed : undefined
 }
 
 function getCredentialMaxAge(credential: string) {

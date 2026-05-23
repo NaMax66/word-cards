@@ -24,6 +24,11 @@
 - `npm run build` - type-checks and builds the app
 - `npm run cf:deploy` - deploys the Worker and static assets
 
+## product notes
+
+- In the words list, new words should appear visually at the bottom near the fixed add form. The API loads pages newest-first for efficient cursor pagination, then the store reverses each page into oldest-first. The UI intentionally renders the list with `column-reverse`, matching the original behavior where adding a word with `push` immediately shows it next to the add controls.
+- Older pages should be prepended to the store list and loaded from the top of the UI, away from the add form.
+
 todo
 -----
 - add check internet (Promise.any)
