@@ -19,7 +19,8 @@ const { userInfo } = storeToRefs(useUserDataStore())
 const { locale, t, availableLocales } = useI18n()
 
 const isSettingsOpened = ref(false)
-
+const appVersion = __APP_VERSION__
+const repoUrl = __APP_REPO_URL__
 
 
 watch(userInfo.value, (a) => {
@@ -132,6 +133,12 @@ function saveSettings(e: Event) {
             </li>
           </ul>
 
+          <div class="app-info" aria-label="Application information">
+            <strong>Word Cards</strong>
+            <span>{{ appVersion }}</span>
+            <a :href="repoUrl" target="_blank" rel="noreferrer">repo</a>
+          </div>
+
           <button-base class="save-btn" type="submit" theme="accent">{{ $t('save') }}</button-base>
         </form>
       </AppModal>
@@ -170,6 +177,29 @@ function saveSettings(e: Event) {
 .save-btn {
   padding: 12px 16px;
   align-self: flex-end;
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 18px;
+  color: var(--main-contrast-light);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.app-info strong {
+  color: var(--main-contrast);
+}
+
+.app-info a {
+  color: var(--c-accent);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .list-item {
