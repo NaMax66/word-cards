@@ -1,10 +1,17 @@
-# word-cards https://word-cards.na4u.ru/
+# word-cards https://words.selfkit.org
 
 - App for learning new lexical units
+
+## production
+
+- production domain: https://words.selfkit.org
+- Cloudflare Worker serves the Vue assets and `/api/*`
+- D1 stores user word lists and settings
 
 ## local development
 
 - add the local Worker origin to your Google OAuth client: `https://127.0.0.1:8787`
+- add the production origin to your Google OAuth client: `https://words.selfkit.org`
 - set `APP_GOOGLE_CLIENT_ID=<your-google-client-id>` in ignored local env files
 
 - `npm install` - install dependencies
