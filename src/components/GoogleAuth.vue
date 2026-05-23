@@ -14,17 +14,17 @@
 </template>
 
 <script lang="ts" setup>
-import httpClient from '@/services/httpClient'
 import checkIsSignedIn from '@/services/checkIsSignedIn'
-import { ref } from 'vue'
-import { GoogleAuth } from '@/services/auth'
+import { onUnmounted, ref } from 'vue'
+import { authApi, GoogleAuth } from '@/services/auth'
+import { onAuthenticationRequired } from '@/services/authEvents'
 import { observeTabOpen } from '@/services/tabOpenObserver'
 import { useUserDataStore } from '@/stores/userData'
 import IconLogout from '@/components/icons/IconLogout.vue'
 
 const { userInfo, clearUserInfo, fetchUserInfo } = useUserDataStore()
 
-const googleLoginBtn = ref(null)
+const googleLoginBtn = ref<HTMLElement | null>(null)
 
 observeTabOpen(() => {
   if (checkIsSignedIn()) {
@@ -32,9 +32,13 @@ observeTabOpen(() => {
   }
 })
 
-/* @ts-ignore */
+const stopAuthRequiredListener = onAuthenticationRequired(() => {
+  GoogleAuth.prompt()
+})
+
+onUnmounted(stopAuthRequiredListener)
+
 GoogleAuth.init(handleCredentialResponse).then(() => {
-  /* @ts-ignore */
   GoogleAuth.renderButton(googleLoginBtn.value)
 })
 
@@ -45,19 +49,14 @@ if (isSignedIn.value) {
 }
 
 async function logout() {
-  await httpClient.get('/logout', { withCredentials: true })
+  await authApi.logout()
   isSignedIn.value = checkIsSignedIn()
   clearUserInfo()
   window.location.reload()
 }
 
 async function handleCredentialResponse({ credential }: { credential: string }) {
-  await httpClient.post('/login', { credential }, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    withCredentials: true
-  })
+  await authApi.login(GoogleAuth, credential)
 
   await fetchUserInfo()
 

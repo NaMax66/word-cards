@@ -37,3 +37,7 @@ coverage
 /backups/
 /exports/
 /_archive/
+
+# Private product notes
+*.private.md
+ROADMAP.md

@@ -1,4 +1,4 @@
-import { expiredSessionCookies, getRequestUser, sessionCookies, verifyGoogleCredential } from './auth'
+import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
 import { addPair, ensureUser, getPairsCount, getRandomPair, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
 import { json } from './responses'
 
@@ -100,8 +100,9 @@ export async function routeApiRequest(request: Request, env: Env) {
 
 async function login(request: Request, env: Env) {
   const body = await readForm(request)
+  const provider = body.get('provider') || 'google'
   const credential = requireString(body.get('credential'), 'credential')
-  const user = await verifyLoginUser(credential, env)
+  const user = await verifyLoginUser(provider, credential, env)
 
   if (!user) {
     return json({ status: 'error', error: 'unverified' }, { status: 403 })
@@ -110,9 +111,9 @@ async function login(request: Request, env: Env) {
   await ensureUser(env.DB, user)
 
   const headers = new Headers()
-  const maxAge = getCredentialMaxAge(credential)
+  const maxAge = getLoginMaxAge(provider, credential)
 
-  for (const value of sessionCookies(credential, maxAge)) {
+  for (const value of sessionCookies({ providerId: provider, credential }, maxAge)) {
     headers.append('Set-Cookie', value)
   }
 
@@ -128,11 +129,11 @@ async function login(request: Request, env: Env) {
   )
 }
 
-async function verifyLoginUser(credential: string, env: Env) {
+async function verifyLoginUser(provider: string, credential: string, env: Env) {
   try {
-    return await verifyGoogleCredential(credential, env)
+    return await verifyLoginCredential(provider, credential, env)
   } catch (error) {
-    console.error('Google login verification failed', error)
+    console.error(`${provider} login verification failed`, error)
     return null
   }
 }
@@ -191,29 +192,6 @@ function readNumber(value: string | null) {
   const parsed = Number(value)
 
   return Number.isFinite(parsed) ? parsed : undefined
-}
-
-function getCredentialMaxAge(credential: string) {
-  const payload = credential.split('.')[1]
-
-  if (!payload) {
-    throw new BadRequestError('Invalid credential')
-  }
-
-  const jsonPayload = JSON.parse(decodeBase64Url(payload)) as { exp?: unknown }
-
-  if (typeof jsonPayload.exp !== 'number') {
-    throw new BadRequestError('Credential has no expiry')
-  }
-
-  return Math.max(0, jsonPayload.exp - Math.floor(Date.now() / 1000))
-}
-
-function decodeBase64Url(value: string) {
-  const base64 = value.replace(/-/g, '+').replace(/_/g, '/')
-  const padding = '='.repeat((4 - base64.length % 4) % 4)
-
-  return atob(base64 + padding)
 }
 
 class BadRequestError extends Error {}
