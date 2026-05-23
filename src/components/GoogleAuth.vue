@@ -33,7 +33,7 @@ observeTabOpen(() => {
 })
 
 const stopAuthRequiredListener = onAuthenticationRequired(() => {
-  GoogleAuth.prompt()
+  isSignedIn.value = false
 })
 
 onUnmounted(stopAuthRequiredListener)

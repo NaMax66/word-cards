@@ -21,6 +21,8 @@ Commercial use requires the author's prior written consent. See `LICENSE`.
 - for FedCM experiments, prefer `localhost` origins in Google OAuth client, for example `http://localhost:8787` or `https://localhost:8787`
 - add the production origin to your Google OAuth client: `https://words.selfkit.org`
 - set `APP_GOOGLE_CLIENT_ID=<your-google-client-id>` in ignored local env files
+- Google FedCM is enabled by default; set `APP_USE_FEDCM=false` to disable it
+  for a build
 - local dev uses the `dev` Wrangler environment and `word-cards-dev`
 
 - `npm install` - install dependencies
@@ -86,6 +88,9 @@ frontends.
 ### Google and COOP/FedCM notes
 
 - The default web flow uses Google Identity Services with `ux_mode: 'popup'`.
+- FedCM is enabled by default and can be disabled with `APP_USE_FEDCM=false`.
+- If FedCM fails to issue a credential, the client falls back to the classic
+  Google popup/button flow.
 - Worker and Vite responses send
   `Cross-Origin-Opener-Policy: same-origin-allow-popups` so the Google popup can
   communicate with the app.
@@ -99,3 +104,6 @@ frontends.
 - Older pages should be prepended to the store list and loaded from the top of the UI, away from the add form.
 - Product roadmap and business notes are tracked privately outside the public
   README.
+- Avoid hostname-specific feature toggles. Use explicit environment flags
+  instead, so staging, production, and future custom domains can opt in without
+  code changes.
