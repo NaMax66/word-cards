@@ -14,9 +14,21 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "word-cards-dev",
-      "database_id": "537a5f65-a993-460b-8ac3-ca067fce9d2e",
+      "database_name": "word-cards-prod",
+      "database_id": "2299e84b-21c9-43fc-ae1f-0b653aaa4686",
       "migrations_dir": "./migrations"
     }
-  ]
+  ],
+  "env": {
+    "dev": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "word-cards-dev",
+          "database_id": "537a5f65-a993-460b-8ac3-ca067fce9d2e",
+          "migrations_dir": "./migrations"
+        }
+      ]
+    }
+  }
 }
