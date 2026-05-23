@@ -19,6 +19,7 @@
 
 - `npm install` - install dependencies
 - `npm run db:migrate:local` - apply D1 migrations locally
+- `npm run db:migrate:prod` - apply D1 migrations to production
 - `npm run dev` - starts the local Cloudflare Worker over HTTPS
 - `npm run dev:vite` - starts Vite only, without Worker API or D1
 - `npm run build` - type-checks and builds the app
