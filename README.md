@@ -2,19 +2,20 @@
 
 - App for learning new lexical units
 
-## new-start
+## local development
 
-- add localhost to your Google auth `https://console.cloud.google.com/apis/credentials/oauthclient`
-- replace <your-google-client-id> in your server and client `.env`
+- add the local Worker origin to your Google OAuth client: `https://127.0.0.1:8787`
+- set `APP_GOOGLE_CLIENT_ID=<your-google-client-id>` in ignored local env files
 
-- `npm run dev` - starts client
-- `npm run start-dev-srv` - starts local server
-- `npm install --include dev` - install all dependencies on production
+- `npm install` - install dependencies
+- `npm run db:migrate:local` - apply D1 migrations locally
+- `npm run cf:dev` - starts the local Cloudflare Worker over HTTPS
+- `npm run build` - type-checks and builds the app
+- `npm run cf:deploy` - deploys the Worker and static assets
 
 todo
 -----
 - add check internet (Promise.any)
-- TS on the server
 - create native app with a widget(need react native)
 - add the nav pane on the mobile's bottom
 - add drag and drop for modals

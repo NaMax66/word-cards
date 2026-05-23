@@ -5,9 +5,6 @@ interface __BaseEnv_Env {
 	DB: D1Database;
 	ASSETS: Fetcher;
 	APP_GOOGLE_CLIENT_ID: string;
-	APP_PORT: string;
-	APP_IP: string;
-	APP_API_URL: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {
