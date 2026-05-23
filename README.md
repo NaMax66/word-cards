@@ -6,17 +6,21 @@
 
 - production domain: https://words.selfkit.org
 - Cloudflare Worker serves the Vue assets and `/api/*`
-- D1 stores user word lists and settings
+- production D1 binding: `word-cards-prod`
+- Cloudflare build command: `npm run build`
+- Cloudflare deploy command: `npm run cf:deploy`
 
 ## local development
 
 - add the local Worker origin to your Google OAuth client: `https://127.0.0.1:8787`
 - add the production origin to your Google OAuth client: `https://words.selfkit.org`
 - set `APP_GOOGLE_CLIENT_ID=<your-google-client-id>` in ignored local env files
+- local dev uses the `dev` Wrangler environment and `word-cards-dev`
 
 - `npm install` - install dependencies
 - `npm run db:migrate:local` - apply D1 migrations locally
-- `npm run cf:dev` - starts the local Cloudflare Worker over HTTPS
+- `npm run dev` - starts the local Cloudflare Worker over HTTPS
+- `npm run dev:vite` - starts Vite only, without Worker API or D1
 - `npm run build` - type-checks and builds the app
 - `npm run cf:deploy` - deploys the Worker and static assets
 

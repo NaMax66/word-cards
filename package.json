@@ -2,14 +2,13 @@
   "name": "word-cards",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "wrangler dev --env dev --local-protocol=https",
     "build": "run-p type-check type-check:worker build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "type-check:worker": "tsc --noEmit -p tsconfig.worker.json",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "cf:dev": "wrangler dev --env dev --local-protocol=https",
     "cf:deploy": "wrangler deploy --env=\"\"",
     "cf:types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply DB --env dev --local"
