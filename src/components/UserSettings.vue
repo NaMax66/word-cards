@@ -23,12 +23,13 @@ const appVersion = __APP_VERSION__
 const repoUrl = __APP_REPO_URL__
 
 
-watch(userInfo.value, (a) => {
-  updateInterfaceLang(a.settings.interfaceLang)
-})
-function updateInterfaceLang(lang: string) {
-  locale.value = lang
-}
+watch(
+  () => userInfo.value.settings.interfaceLang,
+  (lang) => {
+    locale.value = lang
+  },
+  { immediate: true }
+)
 
 function openSettings() {
   isSettingsOpened.value = true

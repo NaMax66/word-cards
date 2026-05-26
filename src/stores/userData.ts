@@ -2,27 +2,36 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Settings } from '@/types/Settings'
-import defaultSettings from '@/defaultData/settings'
+import { createDefaultSettings } from '@/defaultData/settings'
+
+type UserInfoPayload = {
+    name: string | null
+    picture: string | null
+    settings: string | null
+}
 
 export const useUserDataStore = defineStore('user-data', () => {
     const userInfo = ref({
         name: '',
         picture: '',
-        settings: defaultSettings
+        settings: createDefaultSettings()
     })
 
-    function setUserInfo({ name, picture, settings }: { name: string, picture: string, settings: string }) {
-        userInfo.value.name = name
-        userInfo.value.picture = picture
+    function setUserInfo({ name, picture, settings }: UserInfoPayload) {
+        userInfo.value.name = name || ''
+        userInfo.value.picture = picture || ''
 
-        if(settings) {
-            userInfo.value.settings = JSON.parse(settings)
-        }
+        userInfo.value.settings = settings
+            ? normalizeSettings(JSON.parse(settings))
+            : createDefaultSettings()
+
+        return Boolean(settings)
     }
 
     function clearUserInfo() {
         userInfo.value.name = ''
         userInfo.value.picture = ''
+        userInfo.value.settings = createDefaultSettings()
     }
 
     async function fetchUserInfo() {
@@ -30,7 +39,11 @@ export const useUserDataStore = defineStore('user-data', () => {
             withCredentials: true
         })
 
-        setUserInfo(data)
+        const hasSavedSettings = setUserInfo(data)
+
+        if (!hasSavedSettings) {
+            await saveSettings(userInfo.value.settings)
+        }
     }
 
     function saveSettings(settings: Settings) {
@@ -51,3 +64,13 @@ export const useUserDataStore = defineStore('user-data', () => {
         saveSettings
     }
 })
+
+function normalizeSettings(settings: Partial<Settings>): Settings {
+    const defaults = createDefaultSettings()
+
+    return {
+        interfaceLang: settings.interfaceLang || defaults.interfaceLang,
+        columnOrder: settings.columnOrder || defaults.columnOrder,
+        fillFormOrder: settings.fillFormOrder || defaults.fillFormOrder
+    }
+}

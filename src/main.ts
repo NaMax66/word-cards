@@ -7,11 +7,12 @@ import router from './router'
 import './assets/main.scss'
 import en from '@/locales/en'
 import ru from '@/locales/ru'
+import { getBrowserInterfaceLanguage } from '@/services/interfaceLanguage'
 
 const app = createApp(App)
 const i18n = createI18n({
   legacy: false,
-  locale: 'en',
+  locale: getBrowserInterfaceLanguage(),
   messages: { en, ru }
 })
 
