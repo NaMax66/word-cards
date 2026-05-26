@@ -3,9 +3,14 @@ export type InterfaceLanguage = 'en' | 'ru'
 const supportedLanguages: InterfaceLanguage[] = ['en', 'ru']
 
 export function getBrowserInterfaceLanguage(): InterfaceLanguage {
-  if (typeof navigator === 'undefined') return 'en'
+  if (typeof navigator === 'undefined') {
+    return 'en'
+  }
 
-  return detectInterfaceLanguage(navigator.languages || [navigator.language])
+  const navigatorLanguages = navigator.languages || [navigator.language]
+  const interfaceLanguage = detectInterfaceLanguage(navigatorLanguages)
+
+  return interfaceLanguage
 }
 
 export function detectInterfaceLanguage(languages: readonly string[]): InterfaceLanguage {
@@ -13,8 +18,12 @@ export function detectInterfaceLanguage(languages: readonly string[]): Interface
     .filter(Boolean)
     .map(language => language.toLowerCase())
 
-  for (const supportedLanguage of supportedLanguages) {
-    if (normalizedLanguages.some(language => language === supportedLanguage || language.startsWith(`${supportedLanguage}-`))) {
+  for (const language of normalizedLanguages) {
+    const supportedLanguage = supportedLanguages.find(
+      supported => language === supported || language.startsWith(`${supported}-`)
+    )
+
+    if (supportedLanguage) {
       return supportedLanguage
     }
   }

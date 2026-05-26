@@ -10,9 +10,11 @@ import ru from '@/locales/ru'
 import { getBrowserInterfaceLanguage } from '@/services/interfaceLanguage'
 
 const app = createApp(App)
+const interfaceLanguage = getBrowserInterfaceLanguage()
+
 const i18n = createI18n({
   legacy: false,
-  locale: getBrowserInterfaceLanguage(),
+  locale: interfaceLanguage,
   messages: { en, ru }
 })
 

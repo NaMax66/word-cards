@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import httpClient, { postOptions } from '@/services/httpClient'
 import type { Settings } from '@/types/Settings'
 import { createDefaultSettings } from '@/defaultData/settings'
+import { getBrowserInterfaceLanguage } from '@/services/interfaceLanguage'
 
 type UserInfoPayload = {
     name: string | null
@@ -21,11 +22,17 @@ export const useUserDataStore = defineStore('user-data', () => {
         userInfo.value.name = name || ''
         userInfo.value.picture = picture || ''
 
-        userInfo.value.settings = settings
+        const savedSettings = settings
             ? normalizeSettings(JSON.parse(settings))
             : createDefaultSettings()
+        const browserInterfaceLang = getBrowserInterfaceLanguage()
 
-        return Boolean(settings)
+        userInfo.value.settings = {
+            ...savedSettings,
+            interfaceLang: browserInterfaceLang
+        }
+
+        return Boolean(settings) && savedSettings.interfaceLang === browserInterfaceLang
     }
 
     function clearUserInfo() {

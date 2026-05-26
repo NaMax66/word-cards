@@ -2,7 +2,9 @@
   "name": "word-cards",
   "version": "0.0.0",
   "scripts": {
-    "dev": "wrangler dev --env dev --local-protocol=https",
+    "dev": "vite --host 127.0.0.1",
+    "dev:worker": "wrangler dev --env dev --local-protocol=https",
+    "dev:vite": "vite --host 127.0.0.1",
     "build": "run-p type-check type-check:worker build-only",
     "preview": "vite preview",
     "build-only": "vite build",

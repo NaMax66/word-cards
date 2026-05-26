@@ -3,7 +3,7 @@
  import type { ComputedRef } from 'vue'
  import { useWordListStore } from '@/stores/word-list'
  import { storeToRefs } from 'pinia'
- import cardStub from '@/defaultData/flipCard'
+ import { createFlipCardStub } from '@/defaultData/flipCard'
  import ButtonBase from '@/components/base/BaseButton.vue'
  import isMobile from '@/utils/isMobile'
  import type { Pair } from '@/types/Pair'
@@ -14,6 +14,7 @@
    components: { IconCopy, AddPair, ButtonBase },
    setup() {
      const { fetchRandomPair } = useWordListStore()
+     const cardStub = createFlipCardStub()
      fetchRandomPair()
 
      const refreshIntervalId = setInterval(() => {
@@ -27,7 +28,9 @@
      const { randomPair, pairsCount } = storeToRefs(useWordListStore())
 
      const currentCard = computed<Pair>(() => {
-       return randomPair.value || cardStub
+       const card = randomPair.value || cardStub
+
+       return card
      })
 
      const currentView = ref<'origin' | 'translation'>('origin')
