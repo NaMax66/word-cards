@@ -134,6 +134,18 @@ export async function getRandomPair(db: D1Database, userUid: string, excludedPai
   return row ? toPair(row) : null
 }
 
+export async function getRandomPairs(db: D1Database, userUid: string, count?: number) {
+  const { results } = await db.prepare(
+    `SELECT id, pair_uid, origin, origin_lang, translation, translation_lang
+     FROM pairs
+     WHERE user_uid = ?
+     ORDER BY RANDOM()
+     LIMIT ?`
+  ).bind(userUid, clampRandomPairsCount(count)).all<PairRow>()
+
+  return results.map(toPair)
+}
+
 export async function getPairsCount(db: D1Database, userUid: string) {
   const row = await db.prepare(
     `SELECT COUNT(*) AS count
@@ -235,6 +247,12 @@ function clampLimit(limit: number | undefined) {
   if (!limit || Number.isNaN(limit)) return 50
 
   return Math.min(Math.max(Math.floor(limit), 1), 100)
+}
+
+function clampRandomPairsCount(count: number | undefined) {
+  if (!count || Number.isNaN(count)) return 1
+
+  return Math.min(Math.max(Math.floor(count), 1), 100)
 }
 
 function normalizeCursor(cursor: string | null | undefined) {

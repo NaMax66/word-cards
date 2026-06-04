@@ -103,12 +103,10 @@ frontends.
 
 - In the words list, new words should appear visually at the bottom near the fixed add form. The API loads pages newest-first for efficient cursor pagination, then the store reverses each page into oldest-first. The UI intentionally renders the list with `column-reverse`, matching the original behavior where adding a word with `push` immediately shows it next to the add controls.
 - Older pages should be prepended to the store list and loaded from the top of the UI, away from the add form.
-- Android widget API follow-up: add a backend endpoint that can return a batch
-  of random word pairs in one request. The endpoint should accept a requested
-  `count` and should later support optional date range and topic/theme range
-  filters. When this backend contract is implemented, notify/update the Android
-  app so it can replace repeated single
-  `/api/random-pair` calls with the batch endpoint.
+- Android widget API: `GET /api/random-pairs?count=10` returns a batch of
+  random word pairs in one request. It should later support optional date range
+  and topic/theme range filters. Notify/update the Android app so it can replace
+  repeated single `/api/random-pair` calls with the batch endpoint.
 - Product roadmap and business notes are tracked privately outside the public
   README.
 - Avoid hostname-specific feature toggles. Use explicit environment flags

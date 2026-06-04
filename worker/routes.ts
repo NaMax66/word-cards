@@ -1,5 +1,5 @@
 import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
-import { addPair, ensureUser, getPairsCount, getRandomPair, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
+import { addPair, ensureUser, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -42,6 +42,19 @@ export async function routeApiRequest(request: Request, env: Env) {
         status: 'success',
         data: {
           pair: await getRandomPair(env.DB, user.userUid, currentId),
+          count: await getPairsCount(env.DB, user.userUid)
+        }
+      })
+    }
+
+    if (route === 'GET /api/random-pairs') {
+      const { searchParams } = new URL(request.url)
+      const count = readNumber(searchParams.get('count'))
+
+      return json({
+        status: 'success',
+        data: {
+          pairs: await getRandomPairs(env.DB, user.userUid, count),
           count: await getPairsCount(env.DB, user.userUid)
         }
       })
