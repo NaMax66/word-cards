@@ -1,5 +1,5 @@
 import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
-import { addPair, ensureUser, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
+import { addPair, ensureUser, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -45,6 +45,18 @@ export async function routeApiRequest(request: Request, env: Env) {
           count: await getPairsCount(env.DB, user.userUid)
         }
       })
+    }
+
+    const pairId = readPairId(pathname)
+
+    if (request.method === 'GET' && pairId) {
+      const pair = await getPair(env.DB, user.userUid, pairId)
+
+      if (!pair) {
+        return json({ status: 'error', error: 'not_found' }, { status: 404 })
+      }
+
+      return json({ status: 'success', data: pair })
     }
 
     if (route === 'GET /api/random-pairs') {
@@ -205,6 +217,18 @@ function readNumber(value: string | null) {
   const parsed = Number(value)
 
   return Number.isFinite(parsed) ? parsed : undefined
+}
+
+function readPairId(pathname: string) {
+  const match = /^\/api\/pairs\/([^/]+)$/.exec(pathname)
+
+  if (!match?.[1]) return null
+
+  try {
+    return decodeURIComponent(match[1])
+  } catch {
+    throw new BadRequestError('Invalid pair id')
+  }
 }
 
 class BadRequestError extends Error {}

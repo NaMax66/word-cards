@@ -134,6 +134,17 @@ export async function getRandomPair(db: D1Database, userUid: string, excludedPai
   return row ? toPair(row) : null
 }
 
+export async function getPair(db: D1Database, userUid: string, pairUid: string) {
+  const row = await db.prepare(
+    `SELECT id, pair_uid, origin, origin_lang, translation, translation_lang
+     FROM pairs
+     WHERE user_uid = ? AND pair_uid = ?
+     LIMIT 1`
+  ).bind(userUid, pairUid).first<PairRow>()
+
+  return row ? toPair(row) : null
+}
+
 export async function getRandomPairs(db: D1Database, userUid: string, count?: number) {
   const { results } = await db.prepare(
     `SELECT id, pair_uid, origin, origin_lang, translation, translation_lang
