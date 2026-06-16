@@ -1,121 +1,80 @@
-<script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
-import { useWordListStore } from '@/stores/word-list'
+<script lang="ts" setup>
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import cloneDeep from 'lodash.clonedeep'
 
 import ButtonBase from '@/components/base/BaseButton.vue'
 import IconPencil from '@/components/icons/IconPencil.vue'
-import AppModal from './AppModal.vue'
-import type { Pair } from '@/types/Pair'
-
-import { useLangStore } from '@/stores/languages'
-import { useUserDataStore } from '@/stores/userData'
+import AppModal from '@/components/AppModal.vue'
 import BaseSelect from '@/components/base/BaseSelect.vue'
+import type { Pair } from '@/types/Pair'
 import type { Option } from '@/components/base/Option'
+import { useWordListStore } from '@/stores/word-list'
+import { useUserDataStore } from '@/stores/userData'
+import { useMarkerStore } from '@/stores/markers'
 
-export default defineComponent(  {
-  components: { BaseSelect, AppModal, IconPencil, ButtonBase },
+const wordListStore = useWordListStore()
+const markerStore = useMarkerStore()
+const { fetchWordList, removePair, updatePair: updatePairApi } = wordListStore
+const { filteredList, hasMore, isLoading } = storeToRefs(wordListStore)
+const { userInfo } = storeToRefs(useUserDataStore())
+const { markers } = storeToRefs(markerStore)
 
-  setup( ) {
-    const { allLangs, originLang, translationLang } = useLangStore()
+fetchWordList()
+markerStore.fetchMarkers()
 
-    const { fetchWordList, removePair, updatePair: updatePairApi } = useWordListStore()
-    fetchWordList()
+const isEditOpened = ref(false)
+const editPair = ref<Pair>()
 
-    const { filteredList, hasMore, isLoading } = storeToRefs(useWordListStore())
-    const { userInfo } = storeToRefs(useUserDataStore())
+const markerOptions = computed<Option<string>[]>(() => markers.value.map((marker, index) => ({
+  value: marker.id,
+  title: marker.code,
+  id: index + 1
+})))
 
-    const isEditOpened = ref(false)
-    const editPair = ref<Pair | undefined>(undefined)
+const originMarkerOption = computed(() => currentMarkerOption(editPair.value?.origin.markerId))
+const translationMarkerOption = computed(() => currentMarkerOption(editPair.value?.translation.markerId))
 
-    async function updatePair() {
-      if(!editPair.value) return
-      await updatePairApi(editPair.value)
-      closeEdit()
-    }
-
-    function remove(pairId: string | number) {
-      removePair(pairId)
-    }
-
-    function loadMore() {
-      fetchWordList({ reset: false })
-    }
-
-    function openEdit(pairId: string | number) {
-      const pair: Pair | undefined = filteredList.value.find(el => el.id === pairId)
-      if(pair) editPair.value = cloneDeep(pair)
-      isEditOpened.value = true
-    }
-
-    function closeEdit() {
-      editPair.value = undefined
-      isEditOpened.value = false
-    }
-
-    const langOptions = computed<Option<string>[]>(() => {
-      const langs = Object.values(allLangs)
-      return langs.reduce((acc: Option<string>[], el: string, index: number) => {
-        const opt: Option<string> = {
-          value: el,
-          title: el,
-          id: index + 1
-        }
-        acc.push(opt)
-        return acc
-      }, [])
-    })
-    const originLangOption = computed<Option<string>>(() => {
-      const lang = editPair.value?.origin.lang
-      return langOptions.value.find(el => el.value === lang) || {
-        value: originLang,
-        title: originLang,
-        id: 1
-      }
-    })
-    function setOriginLang({ target }: { target: HTMLSelectElement }) {
-      if (editPair.value) {
-        editPair.value.origin.lang = target.value
-      }
-    }
-
-    const translationLangOption = computed<Option<string>>(() => {
-      const lang = editPair.value?.translation.lang
-      return langOptions.value.find(el => el.value === lang) || {
-        value: translationLang,
-        title: translationLang,
-        id: 1
-      }
-    })
-    function setTranslationLang({ target }: { target: HTMLSelectElement }) {
-      if (editPair.value) {
-        editPair.value.translation.lang = target.value
-      }
-    }
-
-    return {
-      allLangs,
-      filteredList,
-      hasMore,
-      isLoading,
-      remove,
-      loadMore,
-      isEditOpened,
-      openEdit,
-      closeEdit,
-      editPair,
-      updatePair,
-      userInfo,
-
-      langOptions,
-      originLangOption,
-      translationLangOption,
-      setOriginLang,
-      setTranslationLang
-    }
+function currentMarkerOption(markerId?: string): Option<string> {
+  return markerOptions.value.find(option => option.value === markerId) || {
+    value: markerId || '',
+    title: '',
+    id: 0
   }
-})
+}
+
+function markerTitle(markerId: string, fallback?: string) {
+  return markerStore.markerTitle(markerId, fallback)
+}
+
+async function updatePair() {
+  if (!editPair.value) return
+  await updatePairApi(editPair.value)
+  closeEdit()
+}
+
+function loadMore() {
+  fetchWordList({ reset: false })
+}
+
+function openEdit(pairId: string | number) {
+  const pair = filteredList.value.find(item => item.id === pairId)
+  if (pair) editPair.value = cloneDeep(pair)
+  isEditOpened.value = true
+}
+
+function closeEdit() {
+  editPair.value = undefined
+  isEditOpened.value = false
+}
+
+function setOriginMarker({ target }: { target: HTMLSelectElement }) {
+  if (editPair.value) editPair.value.origin.markerId = target.value
+}
+
+function setTranslationMarker({ target }: { target: HTMLSelectElement }) {
+  if (editPair.value) editPair.value.translation.markerId = target.value
+}
 </script>
 
 <template>
@@ -129,34 +88,34 @@ export default defineComponent(  {
     <ul v-if="filteredList.length" class="word-list">
       <li class="words-list__item" v-for="item in filteredList" :key="item.id">
         <p class="words-list__text">{{ item[userInfo.settings.columnOrder[0]].value }}</p>
-        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[0]].lang }}</small>
+        <small class="words-list__lang">
+          {{ markerTitle(item[userInfo.settings.columnOrder[0]].markerId, item[userInfo.settings.columnOrder[0]].lang) }}
+        </small>
         <div class="separator"></div>
         <p class="words-list__text">{{ item[userInfo.settings.columnOrder[1]].value }}</p>
-        <small class="words-list__lang">{{ item[userInfo.settings.columnOrder[1]].lang }}</small>
+        <small class="words-list__lang">
+          {{ markerTitle(item[userInfo.settings.columnOrder[1]].markerId, item[userInfo.settings.columnOrder[1]].lang) }}
+        </small>
         <div class="hidden-controls">
           <button-base class="hidden-controls__btn" @click="openEdit(item.id)">
             <icon-pencil class="hidden-controls__icon" />
           </button-base>
-          <button-base class="hidden-controls__btn" @click="remove(item.id)">x</button-base>
+          <button-base class="hidden-controls__btn" @click="removePair(item.id)">x</button-base>
         </div>
       </li>
     </ul>
     <Teleport to="modals-container">
       <AppModal :show="isEditOpened" @close="closeEdit">
         <div class="edit-modal d-flex flex-column" v-if="editPair">
-          <label for="origin">
-            {{ $t('origin') }}
-          </label>
+          <label for="origin">{{ $t('translation side') }}</label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="origin" v-model="editPair.origin.value"></textarea>
-            <base-select :current="originLangOption" :options="langOptions" @input="setOriginLang" />
+            <base-select :current="originMarkerOption" :options="markerOptions" @input="setOriginMarker" />
           </div>
-          <label for="translation">
-            {{ $t('translation') }}
-          </label>
+          <label for="translation">{{ $t('word side') }}</label>
           <div class="edit-modal__row">
             <textarea class="textarea-base" id="translation" v-model="editPair.translation.value"></textarea>
-            <base-select :current="translationLangOption" :options="langOptions" @input="setTranslationLang" />
+            <base-select :current="translationMarkerOption" :options="markerOptions" @input="setTranslationMarker" />
           </div>
           <button-base class="save-edit-btn" @click="updatePair">Save</button-base>
         </div>
@@ -171,13 +130,13 @@ export default defineComponent(  {
   flex-direction: column-reverse;
 
   &__item {
+    position: relative;
     display: flex;
     background-color: var(--main-color);
     box-shadow: var(--main-shodow-bottom);
     border-radius: var(--default-b-radius);
     margin-bottom: 12px;
     padding: 4px 8px;
-    transition: all .3s;
 
     &:hover,
     &:active {
@@ -192,24 +151,16 @@ export default defineComponent(  {
     width: 50%;
     padding: var(--space) calc(var(--space) * 2);
     overflow: hidden;
-
-    &:last-child {
-      border-bottom-right-radius: var(--default-b-radius);
-      border-top-right-radius: var(--default-b-radius);
-    }
-
-    &:first-child {
-      border-top-left-radius: var(--default-b-radius);
-      border-bottom-left-radius: var(--default-b-radius);
-    }
   }
 
   &__lang {
     display: flex;
     align-items: center;
-    width: 2rem;
+    max-width: 7rem;
     color: var(--main-contrast-lighter);
     margin-right: calc(var(--space) * 2);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -235,9 +186,6 @@ export default defineComponent(  {
   gap: 8px;
 
   &__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 22px;
     height: 22px;
   }
@@ -246,23 +194,6 @@ export default defineComponent(  {
     width: 18px;
     height: 18px;
   }
-}
-
-.word-list-move,
-.word-list-enter-active,
-.word-list-leave-active {
-  transition: all 0.3s;
-}
-
-.word-list-enter-from,
-.word-list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.word-list-leave-active {
-  position: absolute;
-  width: 100%;
 }
 
 .edit-modal {
@@ -276,7 +207,7 @@ export default defineComponent(  {
 
   &__row {
     display: grid;
-    grid-template-columns: 1fr 6.5rem;
+    grid-template-columns: 1fr minmax(8rem, 12rem);
     gap: calc(var(--space) * 3);
     margin-bottom: 2rem;
     align-items: start;
@@ -286,6 +217,5 @@ export default defineComponent(  {
 .save-edit-btn {
   height: 4rem;
   margin-top: auto;
-  flex-shrink: 0;
 }
 </style>

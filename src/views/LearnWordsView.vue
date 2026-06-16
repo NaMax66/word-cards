@@ -9,13 +9,16 @@
  import type { Pair } from '@/types/Pair'
  import AddPair from '@/components/AddPair/AddPair.vue'
  import IconCopy from '@/components/icons/IconCopy.vue'
+ import { useMarkerStore } from '@/stores/markers'
 
  export default defineComponent({
    components: { IconCopy, AddPair, ButtonBase },
    setup() {
      const { fetchRandomPair } = useWordListStore()
+     const markerStore = useMarkerStore()
      const cardStub = createFlipCardStub()
      fetchRandomPair()
+     markerStore.fetchMarkers()
 
      const refreshIntervalId = setInterval(() => {
        fetchRandomPair()
@@ -74,7 +77,8 @@
 
        isNextBtnActive,
 
-       isMobile
+       isMobile,
+       markerTitle: markerStore.markerTitle
      }
    }
  })
@@ -89,14 +93,14 @@
            <button-base @click="copyToClipboard(currentCard.origin.value)" class="word-card__btn" @click.stop>
              <icon-copy />
            </button-base>
-           <span class="word-card__lang">{{ currentCard.origin.lang }} &#8594; {{ currentCard.translation.lang }}</span>
+           <span class="word-card__lang">{{ markerTitle(currentCard.origin.markerId, currentCard.origin.lang) }} &#8594; {{ markerTitle(currentCard.translation.markerId, currentCard.translation.lang) }}</span>
          </article>
          <article @click="flipMobileOnly" v-else class="word-card">
            <h2 class="grow color-accent">{{ currentCard.translation.value }}</h2>
            <button-base @click="copyToClipboard(currentCard.translation.value)" class="word-card__btn" @click.stop>
              <icon-copy />
            </button-base>
-           <span class="word-card__lang">{{ currentCard.translation.lang }} &#8594; {{ currentCard.origin.lang }}</span>
+           <span class="word-card__lang">{{ markerTitle(currentCard.translation.markerId, currentCard.translation.lang) }} &#8594; {{ markerTitle(currentCard.origin.markerId, currentCard.origin.lang) }}</span>
          </article>
        </Transition>
 

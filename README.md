@@ -112,3 +112,177 @@ frontends.
 - Avoid hostname-specific feature toggles. Use explicit environment flags
   instead, so staging, production, and future custom domains can opt in without
   code changes.
+
+## marker management specification
+
+### Purpose
+
+The values currently called languages on the two sides of a card should become
+user-managed markers. A marker may represent a language, but it may also
+represent any other card-side role.
+
+Examples:
+
+- `Русский` -> `English`
+- `Вопрос` -> `Ответ`
+- `Термин` -> `Определение`
+- `Страна` -> `Столица`
+
+Each side of every card must have a marker. Markers are not optional.
+
+### Initial markers
+
+There is no global language directory in the database. The application keeps
+the initial marker template in code and copies it into a user's personal marker
+list when that list is empty.
+
+The initial template contains short codes and descriptions for the six official
+UN languages:
+
+- `en` - English
+- `ru` - Русский
+- `fr` - Français
+- `es` - Español
+- `zh` - 中文
+- `ar` - العربية
+
+These markers are only defaults. After creation they are ordinary personal
+markers and may be renamed or deleted.
+
+The backend must create the initial markers transactionally and idempotently to
+avoid duplicates when several first requests are made concurrently.
+
+### Minimum marker count
+
+A user must always have at least two markers.
+
+- If a user has no markers, the backend creates the initial template.
+- The UI and API must reject deletion when it would leave fewer than two
+  markers.
+- Because reaching zero markers is forbidden after initialization, an empty
+  marker list can safely mean that the user has not been initialized yet.
+- A separate `markers_initialized` flag is not required while this invariant is
+  enforced.
+
+### Data model
+
+Markers belong to a user and do not reference a global language table.
+
+Proposed table:
+
+```sql
+CREATE TABLE user_markers (
+  id INTEGER PRIMARY KEY,
+  marker_uid TEXT NOT NULL UNIQUE,
+  user_uid TEXT NOT NULL,
+  code TEXT NOT NULL,
+  description TEXT,
+  sort_order INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_uid) REFERENCES users(user_uid) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_user_markers_user_uid
+  ON user_markers(user_uid, sort_order);
+```
+
+The marker code is required, trimmed, and limited to four characters. The
+description is optional and limited to 100 characters. Cards reference the
+stable marker identifier, so changing either field does not rewrite cards.
+
+The intended card-side shape is:
+
+```ts
+type CardSide = {
+  value: string
+  markerId: string
+}
+```
+
+### Marker operations
+
+The marker settings screen must allow the user to:
+
+- view markers in their display order;
+- see whether each marker is used and how many card sides reference it;
+- add a marker with a required code and optional description;
+- edit a marker code and description;
+- change marker order;
+- delete a marker when the minimum-count and usage rules allow it.
+
+Each marker row should display a usage indicator, for example `24 cards` or
+`Not used`. This information must be visible before the user attempts deletion,
+not only in an error message.
+
+Marker codes and descriptions are trimmed. Empty codes and codes longer than
+four characters must be rejected by both the UI and API.
+
+### Deleting a used marker
+
+A marker referenced by cards must not be silently deleted. The first
+implementation may reject deletion and show how many cards use the marker.
+
+A later version may support replacing the marker in all affected cards before
+deletion. The replacement must belong to the same user and the update and
+deletion must be performed atomically.
+
+### API requirements
+
+The backend remains the authority for marker ownership and invariants. Required
+operations:
+
+- list the current user's markers;
+- create a marker;
+- update a marker code and description;
+- reorder markers;
+- delete an unused marker;
+- return marker usage count or a conflict response when deletion is blocked.
+
+The API must verify that every marker assigned to a card belongs to the same
+authenticated user. Client-provided marker codes or descriptions are not stored
+on cards.
+
+### UI changes
+
+- Replace the hardcoded card-language list with the authenticated user's
+  markers.
+- Keep a marker dropdown for each card side.
+- Show only the short marker code in card dropdowns and on cards.
+- Add a separate marker-management screen accessible from settings.
+- Show a usage badge or counter next to every marker on that screen.
+- Visually distinguish unused markers from markers that cannot currently be
+  deleted because they are referenced by cards.
+- Use the first two markers as defaults for new cards.
+- Use language terminology in the UI (`Languages`, `Language code`, and
+  `Language name`). Marker remains an internal implementation term.
+- Interface localization remains separate and continues to use the supported
+  `vue-i18n` locales.
+
+### Existing data migration
+
+Existing cards currently store free-form values in `origin_lang` and
+`translation_lang`. Migration must:
+
+1. Collect distinct language values for each user.
+2. Create one personal marker for each distinct value.
+3. Add marker-reference columns to `pairs`.
+4. Map each existing card side to the corresponding personal marker.
+5. Verify that every card side has a valid marker.
+6. Remove the legacy language columns only after the application no longer
+   reads them.
+
+The migration must preserve custom existing values such as `sr`, `it`, `kz`,
+and `fr`; they must not be limited to the new initial template.
+
+### Acceptance criteria
+
+- A new user automatically receives the six initial markers once.
+- A user can add arbitrary short markers such as `q` and `a`, with optional
+  descriptions `Вопрос` and `Ответ`.
+- Initial markers can be renamed and deleted like any other marker.
+- A user can never have fewer than two markers.
+- Every card side references a marker owned by that card's user.
+- Changing a marker code changes its displayed value on all related cards.
+- The marker-management screen shows the current usage count for every marker.
+- Deleting a used marker is blocked until its cards are reassigned.
+- No complete list of world languages is stored or maintained on the backend.

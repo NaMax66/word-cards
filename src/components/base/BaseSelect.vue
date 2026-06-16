@@ -1,6 +1,6 @@
 <template>
-  <select class="base-select">
-    <option v-for="option in options" :value="option.value" :key="option.id" :selected="option.id === current.id">
+  <select class="base-select" :value="current.value">
+    <option v-for="option in options" :value="option.value" :key="option.id">
       {{ option.title }}
     </option>
   </select>

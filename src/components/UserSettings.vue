@@ -13,6 +13,7 @@ import type { Order } from '@/types/Settings'
 import type { Option } from '@/components/base/Option'
 import type { Locale } from '@/types/Locale'
 import defaultSettings from '@/defaultData/settings'
+import MarkerSettings from '@/components/MarkerSettings.vue'
 
 const { saveSettings: saveSettingsStore } = useUserDataStore()
 const { userInfo } = storeToRefs(useUserDataStore())
@@ -42,12 +43,12 @@ const columnOrderOptions = computed<Option<Order>[]>(() => {
   return [
     {
       id: 1,
-      title: t('your language left'),
+      title: t('translation left'),
       value: 'origin'
     },
     {
       id: 2,
-      title: t('other language left'),
+      title: t('word left'),
       value: 'translation'
     }
   ]
@@ -60,12 +61,12 @@ const fillFormOrderOptions = computed<Option<Order>[]>(() => {
   return [
     {
       id: 1,
-      title: t('your language on top'),
+      title: t('translation on top'),
       value: 'origin'
     },
     {
       id: 2,
-      title: t('other language on top'),
+      title: t('word on top'),
       value: 'translation'
     }
   ]
@@ -131,6 +132,10 @@ function saveSettings(e: Event) {
             <li class="list-item">
               <label for="language" class="setting-header">{{ $t('interface language') }}</label>
               <base-select id="language" name="language" :current="currentLocale" :options="localeOptions" />
+            </li>
+            <li class="list-item">
+              <label class="setting-header">{{ $t('card markers') }}</label>
+              <marker-settings />
             </li>
           </ul>
 

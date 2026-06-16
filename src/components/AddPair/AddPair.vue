@@ -2,7 +2,7 @@
   import { computed, ref } from 'vue'
   import { storeToRefs } from 'pinia'
 
-  import { useLangStore } from '@/stores/languages'
+  import { useMarkerStore } from '@/stores/markers'
   import { useWordListStore } from '@/stores/word-list'
   import { useUserDataStore } from '@/stores/userData'
 
@@ -15,41 +15,36 @@
   import type { Option } from '@/components/base/Option'
   import type { LocaleKey } from '@/locales/LocaleKey'
 
-  const { originLang, translationLang } = useLangStore()
   const { addPair: addPairInStore } = useWordListStore()
-  const { allLangs } = useLangStore()
+  const markerStore = useMarkerStore()
+  const { markers, firstMarkerId, secondMarkerId } = storeToRefs(markerStore)
   const { userInfo } = storeToRefs(useUserDataStore())
 
   const isAddFormShown = ref(false)
 
   const emit = defineEmits(['added'])
 
-  const langOptions = computed<Option<string>[]>(() => {
-    const langs = Object.values(allLangs)
-    return langs.reduce((acc: Option<string>[], el: string, index: number) => {
-      const opt: Option<string> = {
-        value: el,
-        title: el,
-        id: index + 1
-      }
-      acc.push(opt)
-      return acc
-    }, [])
+  const markerOptions = computed<Option<string>[]>(() => {
+    return markers.value.map((marker, index) => ({
+      value: marker.id,
+      title: marker.code,
+      id: index + 1
+    }))
   })
 
-  const originLangOption = computed<Option<string>>(() => {
-    return langOptions.value.find(el => el.value === originLang) || {
-      value: originLang,
-      title: originLang,
+  const originMarkerOption = computed<Option<string>>(() => {
+    return markerOptions.value.find(el => el.value === firstMarkerId.value) || {
+      value: firstMarkerId.value,
+      title: '',
       id: 1
     }
   })
 
-  const translationLangOption = computed<Option<string>>(() => {
-    return langOptions.value.find(el => el.value === translationLang) || {
-      value: translationLang,
-      title: translationLang,
-      id: 1
+  const translationMarkerOption = computed<Option<string>>(() => {
+    return markerOptions.value.find(el => el.value === secondMarkerId.value) || {
+      value: secondMarkerId.value,
+      title: '',
+      id: 2
     }
   })
 
@@ -58,40 +53,37 @@
     label: LocaleKey,
     ref: HTMLTextAreaElement | null
     name: string,
-    langName: string,
-    langOptions: Option<string>[],
+    markerName: string,
     currentOption: Option<string>
   }
 
-  const formItems: formItem[] = [
+  const formItems = computed<formItem[]>(() => [
     {
       id: 'origin',
-      label: 'your language',
+      label: 'translation side',
       ref: null,
       name: 'originValue',
-      langName: 'originLang',
-      langOptions: langOptions.value,
-      currentOption: originLangOption.value
+      markerName: 'originMarkerId',
+      currentOption: originMarkerOption.value
     },
     {
       id: 'translation',
-      label: 'other language',
+      label: 'word side',
       ref: null,
       name: 'translationValue',
-      langName: 'translationLang',
-      langOptions: langOptions.value,
-      currentOption: translationLangOption.value
+      markerName: 'translationMarkerId',
+      currentOption: translationMarkerOption.value
     }
-  ]
+  ])
 
   const orderedItems = computed(() => {
     const order = userInfo.value.settings.fillFormOrder
-    if (order.length !== formItems.length) throw new Error('wrong form elements count')
+    if (order.length !== formItems.value.length) throw new Error('wrong form elements count')
 
     const result = []
 
     for(let item of order) {
-      const el = formItems.find(el => el.id === item)
+      const el = formItems.value.find(el => el.id === item)
       if(el) result.push(el)
     }
 
@@ -103,11 +95,11 @@
     const formData = new FormData(form)
     const pair: Omit<Pair, 'id'> = {
       origin: {
-        lang: formData.get('originLang') as string,
+        markerId: formData.get('originMarkerId') as string,
         value: formData.get('originValue') as string
       },
       translation: {
-        lang: formData.get('translationLang') as string,
+        markerId: formData.get('translationMarkerId') as string,
         value: formData.get('translationValue') as string
       }
     }
@@ -125,7 +117,8 @@
     textarea?.focus()
   }
 
-  function openAddForm() {
+  async function openAddForm() {
+    if (!markerStore.isLoaded) await markerStore.fetchMarkers()
     isAddFormShown.value = true
   }
 
@@ -148,7 +141,7 @@
               <!-- ref inside v-for hack -->
               <textarea :ref="//@ts-ignore
                                 el => item.ref = el" class="textarea-base" :id="item.id" :name="item.name" required></textarea>
-              <base-select :name="item.langName" :options="item.langOptions" :current="item.currentOption" />
+              <base-select :name="item.markerName" :options="markerOptions" :current="item.currentOption" />
             </div>
           </div>
           <button-base class="submit-btn" type="submit" theme="accent">{{ $t('add') }}</button-base>

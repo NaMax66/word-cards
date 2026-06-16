@@ -7,10 +7,12 @@ export function createFlipCardStub() {
     const stub = {
       origin: {
         value: 'добавь слово, чтобы запомнить',
+        markerId: '',
         lang: 'ru'
       },
       translation: {
         value: 'add a word to remember',
+        markerId: '',
         lang: 'en'
       },
       id: 1
@@ -22,10 +24,12 @@ export function createFlipCardStub() {
   const stub = {
     origin: {
       value: 'add a word to remember',
+      markerId: '',
       lang: 'en'
     },
     translation: {
       value: 'добавь слово, чтобы запомнить',
+      markerId: '',
       lang: 'ru'
     },
     id: 1

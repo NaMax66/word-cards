@@ -6,6 +6,7 @@ import { isDetailedPair } from '@/DTO/DetailedPair'
 import type { DetailedPair } from '@/DTO/DetailedPair'
 import cloneDeep from 'lodash.clonedeep'
 import checkIsSignedIn from '@/services/checkIsSignedIn'
+import { useMarkerStore } from '@/stores/markers'
 
 type WordListPage = {
   items: unknown[]
@@ -18,6 +19,7 @@ type RandomPairResponse = {
 }
 
 export const useWordListStore = defineStore('word-list', () => {
+  const markerStore = useMarkerStore()
   const list = ref<Array<Pair>>([])
 
   const filterPhrase = ref<string>('')
@@ -41,6 +43,7 @@ export const useWordListStore = defineStore('word-list', () => {
 
       element.id = uid
       element.isSyncing = false
+      await markerStore.fetchMarkers()
     } catch (e) {
       console.error(e)
     }
@@ -56,6 +59,7 @@ export const useWordListStore = defineStore('word-list', () => {
       if(randomPair.value?.id === pair.id) {
         randomPair.value = cloneDeep(pair)
       }
+      await markerStore.fetchMarkers()
     } catch (e) {
       console.error(e)
     }
@@ -65,6 +69,7 @@ export const useWordListStore = defineStore('word-list', () => {
     list.value = list.value.filter(el => el.id !== pairId)
     try {
       await httpClient.post('/remove-pair', { pair_uid: pairId }, postOptions)
+      await markerStore.fetchMarkers()
     } catch (e) {
       console.error(e)
     }

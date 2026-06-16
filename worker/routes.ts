@@ -1,5 +1,5 @@
 import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
-import { addPair, ensureUser, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, updatePair, updateUserSettings, type Pair, type PairInput } from './db'
+import { addPair, createMarker, deleteMarker, ensureUser, getMarkers, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, reorderMarkers, updateMarker, updatePair, updateUserSettings, type PairInput, type PairUpdate } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -96,6 +96,67 @@ export async function routeApiRequest(request: Request, env: Env) {
       return json({ status: 'success' })
     }
 
+    if (route === 'GET /api/markers') {
+      return json({ status: 'success', data: await getMarkers(env.DB, user.userUid) })
+    }
+
+    if (route === 'POST /api/markers') {
+      const body = await readForm(request)
+      const uid = crypto.randomUUID()
+
+      await createMarker(
+        env.DB,
+        user.userUid,
+        uid,
+        requireString(body.get('code'), 'code'),
+        body.get('description')
+      )
+
+      return json({ status: 'success', data: { uid } })
+    }
+
+    const markerId = readMarkerId(pathname)
+
+    if (request.method === 'PATCH' && markerId) {
+      const body = await readForm(request)
+      const updated = await updateMarker(
+        env.DB,
+        user.userUid,
+        markerId,
+        requireString(body.get('code'), 'code'),
+        body.get('description')
+      )
+
+      return updated
+        ? json({ status: 'success' })
+        : json({ status: 'error', error: 'not_found' }, { status: 404 })
+    }
+
+    if (request.method === 'DELETE' && markerId) {
+      const result = await deleteMarker(env.DB, user.userUid, markerId)
+
+      if (result === 'in_use') {
+        return json({ status: 'error', error: 'marker_in_use' }, { status: 409 })
+      }
+      if (result === 'minimum') {
+        return json({ status: 'error', error: 'minimum_markers' }, { status: 409 })
+      }
+      if (result === 'not_found') {
+        return json({ status: 'error', error: 'not_found' }, { status: 404 })
+      }
+
+      return json({ status: 'success' })
+    }
+
+    if (route === 'POST /api/markers/reorder') {
+      const body = await readForm(request)
+      const markerIds = requireString(body.get('marker_ids'), 'marker_ids').split(',')
+
+      await reorderMarkers(env.DB, user.userUid, markerIds)
+
+      return json({ status: 'success' })
+    }
+
     if (route === 'GET /api/user-data') {
       const data = await getUserData(env.DB, user.userUid)
 
@@ -115,6 +176,14 @@ export async function routeApiRequest(request: Request, env: Env) {
   } catch (error) {
     if (error instanceof BadRequestError) {
       return json({ status: 'error', error: 'bad_request', message: error.message }, { status: 400 })
+    }
+    if (error instanceof Error && [
+      'invalid_marker',
+      'invalid_marker_order',
+      'invalid_marker_code',
+      'invalid_marker_description'
+    ].includes(error.message)) {
+      return json({ status: 'error', error: error.message }, { status: 400 })
     }
 
     console.error('API request failed', error)
@@ -182,7 +251,7 @@ async function readPairInput(request: Request): Promise<PairInput> {
   }
 }
 
-async function readPair(request: Request): Promise<Pair> {
+async function readPair(request: Request): Promise<PairUpdate> {
   const body = await readForm(request)
 
   return {
@@ -199,7 +268,7 @@ async function readForm(request: Request) {
 function readWordValue(body: URLSearchParams, key: string) {
   return {
     value: requireString(body.get(`${key}[value]`), `${key}.value`),
-    lang: requireString(body.get(`${key}[lang]`), `${key}.lang`)
+    markerId: requireString(body.get(`${key}[markerId]`), `${key}.markerId`)
   }
 }
 
@@ -228,6 +297,18 @@ function readPairId(pathname: string) {
     return decodeURIComponent(match[1])
   } catch {
     throw new BadRequestError('Invalid pair id')
+  }
+}
+
+function readMarkerId(pathname: string) {
+  const match = /^\/api\/markers\/([^/]+)$/.exec(pathname)
+
+  if (!match?.[1]) return null
+
+  try {
+    return decodeURIComponent(match[1])
+  } catch {
+    throw new BadRequestError('Invalid marker id')
   }
 }
 

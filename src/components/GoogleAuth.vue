@@ -21,8 +21,10 @@ import { onAuthenticationRequired } from '@/services/authEvents'
 import { observeTabOpen } from '@/services/tabOpenObserver'
 import { useUserDataStore } from '@/stores/userData'
 import IconLogout from '@/components/icons/IconLogout.vue'
+import { useMarkerStore } from '@/stores/markers'
 
 const { userInfo, clearUserInfo, fetchUserInfo } = useUserDataStore()
+const markerStore = useMarkerStore()
 
 const googleLoginBtn = ref<HTMLElement | null>(null)
 
@@ -52,6 +54,7 @@ async function logout() {
   await authApi.logout()
   isSignedIn.value = checkIsSignedIn()
   clearUserInfo()
+  markerStore.clearMarkers()
   window.location.reload()
 }
 
