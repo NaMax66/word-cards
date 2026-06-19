@@ -112,6 +112,15 @@ frontends.
 - Avoid hostname-specific feature toggles. Use explicit environment flags
   instead, so staging, production, and future custom domains can opt in without
   code changes.
+- Before changing API request or response shapes, explicitly check dependent
+  clients such as the separate `words` app. Add backward compatibility or
+  coordinate a client update when those clients still use the old contract.
+- Account deletion and recovery idea: the current deletion flow is a hard
+  delete and should be treated as irreversible after normal D1 backup windows.
+  If the product should support restoring a user's words months later, replace
+  hard deletion with a soft-delete grace period (`deleted_at`), hide the account
+  immediately, and physically purge it with a scheduled cleanup after the chosen
+  retention period.
 
 ## marker management specification
 

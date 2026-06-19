@@ -294,6 +294,15 @@ export async function removePair(db: D1Database, userUid: string, pairUid: strin
   return result.meta.changes > 0
 }
 
+export async function deleteUserAccount(db: D1Database, userUid: string) {
+  await db.batch([
+    db.prepare('DELETE FROM pairs WHERE user_uid = ?').bind(userUid),
+    db.prepare('DELETE FROM user_settings WHERE user_uid = ?').bind(userUid),
+    db.prepare('DELETE FROM user_markers WHERE user_uid = ?').bind(userUid),
+    db.prepare('DELETE FROM users WHERE user_uid = ?').bind(userUid)
+  ])
+}
+
 export async function getUserData(db: D1Database, userUid: string) {
   return db.prepare(
     `SELECT users.name, users.picture, user_settings.settings

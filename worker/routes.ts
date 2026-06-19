@@ -1,5 +1,5 @@
 import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
-import { addPair, createMarker, deleteMarker, ensureUser, getMarkers, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, reorderMarkers, updateMarker, updatePair, updateUserSettings, type PairInput, type PairUpdate } from './db'
+import { addPair, createMarker, deleteMarker, deleteUserAccount, ensureUser, getMarkers, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, reorderMarkers, updateMarker, updatePair, updateUserSettings, type PairInput, type PairUpdate } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -170,6 +170,12 @@ export async function routeApiRequest(request: Request, env: Env) {
       await updateUserSettings(env.DB, user.userUid, settings)
 
       return json({ status: 'success' })
+    }
+
+    if (route === 'DELETE /api/account') {
+      await deleteUserAccount(env.DB, user.userUid)
+
+      return logout()
     }
 
     return json({ status: 'error', error: 'not_found' }, { status: 404 })

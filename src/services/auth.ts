@@ -132,5 +132,9 @@ export const authApi = {
 
   logout() {
     return httpClient.get('/logout', { withCredentials: true })
+  },
+
+  deleteAccount() {
+    return httpClient.delete('/account', { withCredentials: true })
   }
 }
