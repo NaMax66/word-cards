@@ -27,6 +27,14 @@ export type UserData = {
   settings: string | null
 }
 
+export type SessionUser = {
+  userUid: string
+  name: string | null
+  givenName: string | null
+  email: string | null
+  picture: string | null
+}
+
 type WordValueInput = {
   value: string
   markerId: string
@@ -101,6 +109,72 @@ export async function ensureUser(db: D1Database, user: UserInput) {
     user.email,
     user.picture
   ).run()
+}
+
+export async function createSession(
+  db: D1Database,
+  sessionHash: string,
+  userUid: string,
+  expiresAt: number,
+  now: number
+) {
+  await db.prepare(
+    `INSERT INTO sessions (session_hash, user_uid, expires_at, created_at, last_seen_at)
+     VALUES (?, ?, ?, ?, ?)`
+  ).bind(sessionHash, userUid, expiresAt, now, now).run()
+}
+
+export async function getSessionUser(db: D1Database, sessionHash: string, now: number): Promise<SessionUser | null> {
+  const user = await db.prepare(
+    `SELECT
+       users.user_uid,
+       users.name,
+       users.given_name,
+       users.email,
+       users.picture
+     FROM sessions
+     JOIN users ON users.user_uid = sessions.user_uid
+     WHERE sessions.session_hash = ?
+       AND sessions.revoked_at IS NULL
+       AND sessions.expires_at > ?
+     LIMIT 1`
+  ).bind(sessionHash, now).first<{
+    user_uid: string
+    name: string | null
+    given_name: string | null
+    email: string | null
+    picture: string | null
+  }>()
+
+  if (!user) return null
+
+  await db.prepare(
+    'UPDATE sessions SET last_seen_at = ? WHERE session_hash = ? AND last_seen_at < ?'
+  ).bind(now, sessionHash, now - sessionTouchIntervalSeconds).run()
+
+  return {
+    userUid: user.user_uid,
+    name: user.name,
+    givenName: user.given_name,
+    email: user.email,
+    picture: user.picture
+  }
+}
+
+export async function revokeSession(db: D1Database, sessionHash: string, now: number) {
+  await db.prepare(
+    `UPDATE sessions
+     SET revoked_at = ?
+     WHERE session_hash = ? AND revoked_at IS NULL`
+  ).bind(now, sessionHash).run()
+}
+
+export async function revokeUserSessions(db: D1Database, userUid: string, now: number) {
+  await db.prepare(
+    `UPDATE sessions
+     SET revoked_at = ?
+     WHERE user_uid = ? AND revoked_at IS NULL`
+  ).bind(now, userUid).run()
 }
 
 export async function getWordList(db: D1Database, userUid: string, params: WordListParams = {}): Promise<WordListPage> {
@@ -640,3 +714,5 @@ function toSearchValue(value: string) {
 function escapeLike(value: string) {
   return value.replace(/[\\%_]/g, match => `\\${match}`)
 }
+
+const sessionTouchIntervalSeconds = 60 * 60 * 24

@@ -1,5 +1,5 @@
-import { expiredSessionCookies, getLoginMaxAge, getRequestUser, sessionCookies, verifyLoginCredential } from './auth'
-import { addPair, createMarker, deleteMarker, deleteUserAccount, ensureUser, getMarkers, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, reorderMarkers, updateMarker, updatePair, updateUserSettings, type PairInput, type PairUpdate } from './db'
+import { createSessionToken, expiredSessionCookies, getAppSessionHash, getAppSessionMaxAge, getRequestUser, hashSessionToken, sessionCookies, verifyLoginCredential } from './auth'
+import { addPair, createMarker, createSession, deleteMarker, deleteUserAccount, ensureUser, getMarkers, getPair, getPairsCount, getRandomPair, getRandomPairs, getUserData, getWordList, removePair, reorderMarkers, revokeSession, revokeUserSessions, updateMarker, updatePair, updateUserSettings, type PairInput, type PairUpdate } from './db'
 import { json } from './responses'
 
 export async function routeApiRequest(request: Request, env: Env) {
@@ -12,7 +12,7 @@ export async function routeApiRequest(request: Request, env: Env) {
     }
 
     if (route === 'GET /api/logout') {
-      return logout()
+      return logout(request, env)
     }
 
     const user = await getRequestUser(request, env)
@@ -173,9 +173,10 @@ export async function routeApiRequest(request: Request, env: Env) {
     }
 
     if (route === 'DELETE /api/account') {
+      await revokeUserSessions(env.DB, user.userUid, nowInSeconds())
       await deleteUserAccount(env.DB, user.userUid)
 
-      return logout()
+      return logout(request, env)
     }
 
     return json({ status: 'error', error: 'not_found' }, { status: 404 })
@@ -211,9 +212,19 @@ async function login(request: Request, env: Env) {
   await ensureUser(env.DB, user)
 
   const headers = new Headers()
-  const maxAge = getLoginMaxAge(provider, credential)
+  const maxAge = getAppSessionMaxAge()
+  const now = nowInSeconds()
+  const token = createSessionToken()
 
-  for (const value of sessionCookies({ providerId: provider, credential }, maxAge)) {
+  await createSession(
+    env.DB,
+    await hashSessionToken(token),
+    user.userUid,
+    now + maxAge,
+    now
+  )
+
+  for (const value of sessionCookies(token, maxAge)) {
     headers.append('Set-Cookie', value)
   }
 
@@ -238,7 +249,13 @@ async function verifyLoginUser(provider: string, credential: string, env: Env) {
   }
 }
 
-function logout() {
+async function logout(request: Request, env: Env) {
+  const sessionHash = await getAppSessionHash(request)
+
+  if (sessionHash) {
+    await revokeSession(env.DB, sessionHash, nowInSeconds())
+  }
+
   const headers = new Headers()
 
   for (const value of expiredSessionCookies()) {
@@ -319,3 +336,7 @@ function readMarkerId(pathname: string) {
 }
 
 class BadRequestError extends Error {}
+
+function nowInSeconds() {
+  return Math.floor(Date.now() / 1000)
+}

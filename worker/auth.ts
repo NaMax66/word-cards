@@ -1,10 +1,13 @@
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
+import { getSessionUser } from './db'
 
 const googleKeys = createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'))
 const googleIssuers = ['accounts.google.com', 'https://accounts.google.com']
 const sessionCookieName = 'session-token'
 const signedInCookieName = 'signed-in'
 const defaultProviderId = 'google'
+const appSessionPrefix = 'v2:'
+const appSessionMaxAge = 60 * 60 * 24 * 30
 
 export type AuthUser = {
   userUid: string
@@ -17,18 +20,15 @@ export type AuthUser = {
 type AuthProvider = {
   id: string
   verifyCredential(credential: string, env: Env): Promise<AuthUser>
-  getCredentialMaxAge(credential: string): number
 }
 
-type AuthSession = {
-  providerId: string
-  credential: string
-}
+type ParsedSession =
+  | { type: 'app', token: string }
+  | { type: 'legacy', providerId: string, credential: string }
 
 const googleProvider: AuthProvider = {
   id: defaultProviderId,
-  verifyCredential: verifyGoogleCredential,
-  getCredentialMaxAge: getJwtMaxAge
+  verifyCredential: verifyGoogleCredential
 }
 
 const providers = new Map<string, AuthProvider>([
@@ -40,6 +40,15 @@ export async function getRequestUser(request: Request, env: Env) {
 
   if (!session) {
     return null
+  }
+
+  if (session.type === 'app') {
+    try {
+      return await getSessionUser(env.DB, await hashSessionToken(session.token), nowInSeconds())
+    } catch (error) {
+      console.error('App session verification failed', error)
+      return null
+    }
   }
 
   const provider = providers.get(session.providerId)
@@ -67,14 +76,30 @@ export async function verifyLoginCredential(providerId: string, credential: stri
   return provider.verifyCredential(credential, env)
 }
 
-export function getLoginMaxAge(providerId: string, credential: string) {
-  const provider = providers.get(providerId)
+export function getAppSessionMaxAge() {
+  return appSessionMaxAge
+}
 
-  if (!provider) {
-    throw new Error(`Unknown auth provider: ${providerId}`)
-  }
+export function createSessionToken() {
+  const bytes = new Uint8Array(32)
+  crypto.getRandomValues(bytes)
 
-  return provider.getCredentialMaxAge(credential)
+  return base64UrlEncode(bytes)
+}
+
+export async function hashSessionToken(token: string) {
+  const data = new TextEncoder().encode(token)
+  const digest = await crypto.subtle.digest('SHA-256', data)
+
+  return base64UrlEncode(new Uint8Array(digest))
+}
+
+export async function getAppSessionHash(request: Request) {
+  const session = readSession(request)
+
+  if (session?.type !== 'app') return null
+
+  return hashSessionToken(session.token)
 }
 
 export async function verifyGoogleCredential(credential: string, env: Env): Promise<AuthUser> {
@@ -86,9 +111,9 @@ export async function verifyGoogleCredential(credential: string, env: Env): Prom
   return toGoogleUser(payload)
 }
 
-export function sessionCookies(session: AuthSession, maxAge: number) {
+export function sessionCookies(token: string, maxAge: number) {
   return [
-    cookie(sessionCookieName, serializeSession(session), `Max-Age=${maxAge}; HttpOnly`),
+    cookie(sessionCookieName, serializeAppSession(token), `Max-Age=${maxAge}; HttpOnly`),
     cookie(signedInCookieName, 'true', `Max-Age=${maxAge}`)
   ]
 }
@@ -100,7 +125,7 @@ export function expiredSessionCookies() {
   ]
 }
 
-function readSession(request: Request): AuthSession | null {
+function readSession(request: Request): ParsedSession | null {
   const credential = getCookie(request.headers.get('Cookie'), sessionCookieName)
 
   if (!credential) {
@@ -110,21 +135,30 @@ function readSession(request: Request): AuthSession | null {
   return parseSession(credential)
 }
 
-function serializeSession({ providerId, credential }: AuthSession) {
-  return `${providerId}:${credential}`
+function serializeAppSession(token: string) {
+  return `${appSessionPrefix}${token}`
 }
 
-function parseSession(value: string): AuthSession {
+function parseSession(value: string): ParsedSession {
+  if (value.startsWith(appSessionPrefix)) {
+    return {
+      type: 'app',
+      token: value.slice(appSessionPrefix.length)
+    }
+  }
+
   const separator = value.indexOf(':')
 
   if (separator === -1) {
     return {
+      type: 'legacy',
       providerId: defaultProviderId,
       credential: value
     }
   }
 
   return {
+    type: 'legacy',
     providerId: value.slice(0, separator),
     credential: value.slice(separator + 1)
   }
@@ -168,25 +202,19 @@ function cookie(name: string, value: string, lifetime: string) {
   return `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax; Secure; ${lifetime}`
 }
 
-function getJwtMaxAge(credential: string) {
-  const payload = credential.split('.')[1]
+function base64UrlEncode(bytes: Uint8Array) {
+  let value = ''
 
-  if (!payload) {
-    throw new Error('Invalid credential')
+  for (const byte of bytes) {
+    value += String.fromCharCode(byte)
   }
 
-  const jsonPayload = JSON.parse(decodeBase64Url(payload)) as { exp?: unknown }
-
-  if (typeof jsonPayload.exp !== 'number') {
-    throw new Error('Credential has no expiry')
-  }
-
-  return Math.max(0, jsonPayload.exp - Math.floor(Date.now() / 1000))
+  return btoa(value)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '')
 }
 
-function decodeBase64Url(value: string) {
-  const base64 = value.replace(/-/g, '+').replace(/_/g, '/')
-  const padding = '='.repeat((4 - base64.length % 4) % 4)
-
-  return atob(base64 + padding)
+function nowInSeconds() {
+  return Math.floor(Date.now() / 1000)
 }
